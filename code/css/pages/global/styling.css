@@ -1,13 +1,13 @@
 /* Selected text has custom background color */
 ::-moz-selection {
   /* Code for Firefox */
-  color: #13333a;
-  background: #5999a6;
+  color: #fefefe;
+  background: #06458c;
 }
 
 ::selection {
-  color: #13333a;
-  background: #5999a6;
+  color: #fefefe;
+  background: #06458c;
 }
 
 /* Hide blue highlight when moving to a section */

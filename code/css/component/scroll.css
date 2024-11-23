@@ -1,5 +1,4 @@
 /* Scrollbar */
-/* Dark */
 ::-webkit-scrollbar {
   width: 8px;
   /* Controls the overall width of the scrollbar */
@@ -11,13 +10,13 @@
 
 /* Track - this is the part that contains the bit you click and drag */
 ::-webkit-scrollbar-track {
-  background: #2f7f90;
+  background: #fefefe;
   /* Sets the background to transparent, change to a Hex or RGB value if you would like */
 }
 
 /* Handle - this is the bit you actually click and drag */
 ::-webkit-scrollbar-thumb {
-  background: #155e68;
+  background: #06458c;
   /* Change the Hex value to change the scroll handle */
   border-radius: 6px;
   /* Change the "px" to adjust the scroll handle's border radius*/
@@ -25,5 +24,5 @@
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #1c4c56;
+  background: #053b77;
 }

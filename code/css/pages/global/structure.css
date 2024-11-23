@@ -1,0 +1,14 @@
+/* Structure */
+:root {
+  /* Page */
+  --page--padding: 5vw; /* Horizontal padding */
+  --page--max-width: 100rem; /* Maximum width of the page */
+
+  /* Containers */
+  /* MAIN */
+  --container--main: calc(
+    min(100%, var(--page--max-width)) - var(--page--padding) * 2
+  );
+  /* FULL WIDTH */
+  --container--full: calc(100% - var(--page--padding) * 2);
+}
