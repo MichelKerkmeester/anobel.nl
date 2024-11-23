@@ -1,0 +1,127 @@
+/* Fluid responsive text */
+/* Stop scaling at max breakpoint */
+html {
+  font-size: 1.0625rem;
+}
+
+/* 2560px and below */
+@media screen and (max-width: 2560px) {
+  html {
+    font-size: calc(0.8750000000000001rem + 0.15624999999999994vw);
+  }
+}
+
+/* 1920px and below */
+@media screen and (max-width: 1920px) {
+  html {
+    font-size: calc(0.75rem + 0.20833333333333337vw);
+  }
+}
+
+/* 1440px and below */
+@media screen and (max-width: 1440px) {
+  html {
+    font-size: calc(0.3749999999999999rem + 0.6250000000000001vw);
+  }
+}
+
+/* 1280px and below */
+@media screen and (max-width: 1280px) {
+  html {
+    font-size: calc(0.5356833910034603rem + 0.34602076124567466vw);
+  }
+}
+
+/* 991px and below */
+@media screen and (max-width: 991px) {
+  html {
+    font-size: 1rem;
+  }
+}
+
+/* Heading sizes*/
+/* Tablet */
+@media only screen and (max-width: 991px) and (min-width: 720px) {
+  .display--xl {
+    font-size: 16rem;
+  }
+
+  .display--lg {
+    font-size: 14rem;
+  }
+
+  .display--base {
+    font-size: 10rem;
+  }
+
+  .display--sm {
+    font-size: 8rem;
+  }
+
+  .h1 {
+    font-size: 5rem;
+  }
+
+  .h2 {
+    font-size: 4.5rem;
+  }
+
+  .h3 {
+    font-size: 4rem;
+  }
+
+  .h4 {
+    font-size: 3.5rem;
+  }
+
+  .h5 {
+    font-size: 3rem;
+  }
+
+  .h6 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Mobile, Large */
+@media only screen and (max-width: 479px) and (min-width: 410px) {
+  .display--xl {
+    font-size: 10rem;
+  }
+
+  .display--lg {
+    font-size: 8rem;
+  }
+
+  .display--base {
+    font-size: 5rem;
+  }
+
+  .display--sm {
+    font-size: 4.5rem;
+  }
+
+  .h1 {
+    font-size: 4rem;
+  }
+
+  .h2 {
+    font-size: 3.5rem;
+  }
+
+  .h3 {
+    font-size: 3rem;
+  }
+
+  .h4 {
+    font-size: 2.5rem;
+  }
+
+  .h5 {
+    font-size: 2rem;
+  }
+
+  .h6 {
+    font-size: 1.64rem;
+  }
+}

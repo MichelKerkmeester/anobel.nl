@@ -1,0 +1,44 @@
+/* Projects */
+/* CMS List - Alternate Direction per Item */
+
+@media (min-width: 992px) {
+  .project--list .w-dyn-item:nth-child(even) .project--card {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .project--list .w-dyn-item:nth-child(even) .project--image,
+  .project--list .w-dyn-item:nth-child(even) .project--about {
+    direction: ltr;
+  }
+}
+
+/* Process */
+/* Base CSS for all CMS List Items */
+
+.process--list-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+/* Process */
+/* Overrides for Individual CMS List Items */
+
+@media (min-width: 992px) {
+  .process--list-item[cms-item="process-1"],
+  .process--list-item[cms-item="process-4"] {
+    align-items: flex-start;
+  }
+
+  .process--list-item[cms-item="process-3"],
+  .process--list-item[cms-item="process-6"] {
+    align-items: center;
+  }
+
+  .process--list-item[cms-item="process-2"],
+  .process--list-item[cms-item="process-5"] {
+    align-items: flex-end;
+  }
+}

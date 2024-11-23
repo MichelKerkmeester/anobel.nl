@@ -1,0 +1,90 @@
+/* Global */
+/* Section spacing */
+
+/* Desktop */
+@media (min-width: 992px) {
+  .section--hero.is--about {
+    padding-top: clamp(10rem, 20vh, 20rem);
+    padding-bottom: clamp(5rem, 10vh, 10rem);
+  }
+
+  .section--about {
+    padding-top: clamp(7.5rem, 15vh, 15rem);
+    padding-bottom: clamp(10rem, 20vh, 20rem);
+  }
+
+  .section--team {
+    padding-top: clamp(10rem, 20vh, 20rem);
+    padding-bottom: clamp(20rem, 30vh, 30rem);
+  }
+}
+
+/* Hero */
+/* Text */
+
+/* Tablet */
+@media only screen and (max-width: 991px) and (min-width: 720px) {
+  .header.is--about {
+    max-width: none;
+  }
+  .description.tablet {
+    display: block;
+  }
+  .description.mobile {
+    display: none;
+  }
+}
+
+/* Mobile, Large */
+@media only screen and (max-width: 479px) and (min-width: 410px) {
+  .header.is--about {
+    max-width: 25rem;
+  }
+  .description.tablet {
+    display: block;
+  }
+  .description.mobile {
+    display: none;
+  }
+}
+
+/* Hero */
+/* Illustrations */
+
+/* Tablet */
+@media only screen and (max-width: 991px) and (min-width: 720px) {
+  .illustration.about--male {
+    width: 11rem;
+    height: 11rem;
+    position: absolute;
+    right: -10.75rem;
+    bottom: -6rem;
+  }
+
+  .illustration.about--question {
+    width: 7.5rem;
+    height: 7.5rem;
+    position: absolute;
+    right: -15rem;
+    bottom: 0rem;
+  }
+}
+
+/* Mobile, Large */
+@media only screen and (max-width: 479px) and (min-width: 410px) {
+  .illustration.about--male {
+    width: 8.5rem;
+    height: 8.5rem;
+    position: absolute;
+    right: 0.5rem;
+    bottom: 4.5rem;
+  }
+
+  .illustration.about--question {
+    width: 5.5rem;
+    height: 5.5rem;
+    position: absolute;
+    right: -2.5rem;
+    bottom: 9.25rem;
+  }
+}

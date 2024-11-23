@@ -1,0 +1,48 @@
+/* Inputs */
+
+/* Caret styling */
+input,
+textarea,
+select {
+  caret-color: var(--color-primary--500); /* Color of the text cursor */
+}
+
+/* Placeholder styles */
+.w-input[data-placeholder]::placeholder,
+.w-select[data-placeholder]::placeholder {
+  content: attr(data-current-placeholder) !important;
+  transition: color 0.2s ease !important;
+  color: var(--color-neutral--600) !important;
+}
+
+.w-input[data-placeholder].hovered::placeholder,
+.w-select[data-placeholder].hovered::placeholder {
+  color: var(--color-primary--800) !important;
+}
+
+/* Custom focus style for mouse/touch */
+input.w--focus,
+textarea.w--focus,
+select.w--focus {
+  border: 2px solid var(--color-neutral--600) !important;
+  outline: 0px solid var(--color-neutral--500) !important;
+  transition: border 0.2s ease;
+}
+
+/* Custom focus style for keyboard navigation */
+input.w--focus-visible,
+textarea.w--focus-visible,
+select.w--focus-visible {
+  border: 2px solid var(--color-neutral--600) !important;
+  outline: 6px solid var(--color-neutral--500) !important;
+  transition: border 0.2s ease;
+}
+
+/* Text area */
+/* Resize handling */
+textarea {
+  resize: vertical;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
