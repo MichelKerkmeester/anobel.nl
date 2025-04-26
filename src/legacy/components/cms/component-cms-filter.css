@@ -1,13 +1,20 @@
 /* Hero section - CMS filter (Component) */
 /* Hide all list items by default */
 
-.hero--video-container.slug .slug {
+.hero--video-list-w.slug .slug {
   display: flex;
 }
 
 /* CTA section - CMS filter (Component) */
 /* Hide all list items by default */
 
-.cta--card-w.slug .slug {
+.cta--list-w.slug .slug {
+  display: flex;
+}
+
+/* Nobel section - CMS filter (Component) */
+/* Hide all list items by default */
+
+.nobel--list-w.filter .filter {
   display: flex;
 }
