@@ -1,0 +1,106 @@
+/* Link: General */
+/*----------------------
+  WEIGHT
+----------------------*/
+/* Regular */
+[data-link-weight='Regular'] {
+  font-weight: 400;
+}
+
+/* Semi Bold */
+[data-link-weight='Semi Bold'] {
+  font-weight: 600;
+}
+
+/*----------------------
+  DIRECTION
+----------------------*/
+/* Default */
+[data-link-direction='Horizontal'] {
+  flex-direction: row;
+}
+
+/* Space Between */
+[data-link-direction='Vertical'] {
+  flex-direction: column;
+}
+
+/*----------------------
+  TYPE
+----------------------*/
+/* Dark
+----------------------*/
+/* Enabled */
+[data-link-type='Dark'] {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-link-type='Dark'] .link--heading {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-link-type='Dark'] .link--description {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-link-type='Dark'] .link--divider-line {
+  background-color: var(--_color-tokens---border-brand--base);
+}
+
+[data-link-type='Dark'] .link--divider-track {
+  background-color: var(--_color-tokens---border-neutral--dark);
+}
+
+/* Light
+----------------------*/
+/* Enabled */
+[data-link-type='Light'] {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type='Light'] .link--heading {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type='Light'] .link--description {
+  color: var(--_color-tokens---content-neutral--base);
+}
+
+[data-link-type='Light'] .link--divider-line {
+  background-color: var(--_color-tokens---border-highlight--primary);
+}
+
+[data-link-type='Light'] .link--divider-track {
+  background-color: var(--_color-tokens---bg-neutral--white);
+}
+
+/* Card
+----------------------*/
+/* Enabled */
+[data-link-type='Card'] {
+  color: var(--_color-tokens---content-neutral--white);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+[data-link-type='Card'] .link--heading {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type='Card'] .link--description {
+  color: var(--_color-tokens---content-neutral--base);
+}
+
+[data-link-type='Card'] .link--divider-track {
+  background-color: var(--_color-tokens---bg-neutral--white);
+}
+
+/* Hover */
+[data-link-type='Card']:hover {
+  background-color: var(--_color-tokens---bg-brand--dark);
+}
+
+/* Pressed */
+[data-link-type='Card']:active {
+  background-color: rgba(3, 29, 60, 0.8);
+}

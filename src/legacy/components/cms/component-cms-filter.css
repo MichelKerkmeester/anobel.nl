@@ -1,0 +1,13 @@
+/* Hero section - CMS filter (Component) */
+/* Hide all list items by default */
+
+.hero--video-container.slug .slug {
+  display: flex;
+}
+
+/* CTA section - CMS filter (Component) */
+/* Hide all list items by default */
+
+.cta--card-w.slug .slug {
+  display: flex;
+}

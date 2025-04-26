@@ -1,0 +1,13 @@
+/* Hero */
+/*----------------------
+  MENU
+----------------------*/
+/* Hide menu in production */
+.hero--menu-wf {
+  display: none;
+}
+
+/* Show menu in Webflow editor */
+.wf-design-mode .hero--menu-wf {
+  display: block;
+}

@@ -1,0 +1,28 @@
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  /* Controls the overall width of the scrollbar */
+  padding: 2.5px;
+  /* Controls the padding of the Scrollbar */
+  transition: width 0.2s ease-in-out;
+  /* Add a transition effect for the width property with a duration of 200ms */
+}
+
+/* Track - this is the part that contains the bit you click and drag */
+::-webkit-scrollbar-track {
+  background: var(--_color-tokens---bg-neutral--white);
+  /* Sets the background to transparent, change to a Hex or RGB value if you would like */
+}
+
+/* Handle - this is the bit you actually click and drag */
+::-webkit-scrollbar-thumb {
+  background: var(--_color-tokens---bg-brand--base);
+  /* Change the Hex value to change the scroll handle */
+  border-radius: 6px;
+  /* Change the "px" to adjust the scroll handle's border radius*/
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--_color-tokens---bg-brand--darkest);
+}

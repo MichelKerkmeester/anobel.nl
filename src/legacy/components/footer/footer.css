@@ -1,0 +1,15 @@
+/* Footer */
+
+/* Team */
+/* Photo overlap effect */
+.footer--contact-team-list-w .w-dyn-item:nth-child(2) {
+  margin-left: -1.5rem;
+}
+
+/* Mobile */
+/* Column direction */
+@media screen and (max-width: 540px) {
+  .footer--nav {
+    flex-direction: column;
+  }
+}

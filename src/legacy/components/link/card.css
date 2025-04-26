@@ -1,0 +1,15 @@
+/* Link: Card */
+/*----------------------
+  INTERACTION
+----------------------*/
+/* Hide container based on presence of link */
+.link--card-interaction a[href='#'] {
+  display: none;
+}
+.link--card-interaction a[href='#'] ~ button {
+  display: block;
+}
+
+.wf-design-mode .link--card-interaction {
+  z-index: 1;
+}

@@ -1,0 +1,131 @@
+// Footer
+// Shows the appropriate team contacts in footer based on the current service page URL
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Get the current URL path
+  const fullPath = window.location.pathname;
+
+  // Default contact details that should appear on every page except for unique Diensten items
+  const defaultContactDetails = {
+    whatsapp:
+      'https://api.whatsapp.com/send/?phone=31786250970&text&type=phone_number&app_absent=0',
+    phone: '+310786250960',
+    email: 'info@anobel.com',
+  };
+
+  // Check if we're on a service page that needs custom contact content
+  const isServicePage =
+    fullPath.includes('/diensten/scheepsbunkering') ||
+    fullPath.includes('/diensten/filtratie-seperatie') ||
+    fullPath.includes('/diensten/scheepsuitrusting') ||
+    fullPath.includes('/diensten/inspectie-reiniging');
+
+  // Exit early if not on a service page
+  if (!isServicePage) return;
+
+  // Apply diensten attributes to desktop and mobile footer lists
+  applyAttributesToList('.footer--contact-links-list-w.is--desktop .w-dyn-item');
+  applyAttributesToList('.footer--contact-links-list-w.is--mobile .w-dyn-item');
+
+  // Show appropriate contact details based on URL
+  showContactForCurrentPage();
+
+  // Function to copy cms-item to diensten--attribute
+  function applyAttributesToList(selector) {
+    const items = document.querySelectorAll(selector);
+    if (items.length === 0) return;
+
+    items.forEach((item) => {
+      const attributeField = item.getAttribute('cms-item');
+      if (attributeField) {
+        item.setAttribute('diensten--attribute', attributeField);
+      }
+    });
+  }
+
+  // Function to show the appropriate contact content from Diensten CMS
+  function showContactForCurrentPage() {
+    // Determine which diensten item to show based on URL
+    let dienstToShow = '';
+
+    if (fullPath.includes('/diensten/scheepsbunkering')) {
+      dienstToShow = 'scheepsbunkering';
+    } else if (fullPath.includes('/diensten/filtratie-seperatie')) {
+      dienstToShow = 'filtratie-seperatie';
+    } else if (fullPath.includes('/diensten/scheepsuitrusting')) {
+      dienstToShow = 'scheepsuitrusting';
+    } else if (fullPath.includes('/diensten/inspectie-reiniging')) {
+      dienstToShow = 'inspectie-reiniging';
+    }
+
+    // Selectors for footer contact lists
+    const selectors = [
+      '.footer--contact-links-list-w.is--desktop .w-dyn-item',
+      '.footer--contact-links-list-w.is--mobile .w-dyn-item',
+    ];
+
+    // Process each selector
+    selectors.forEach((selector) => {
+      const contactItems = document.querySelectorAll(selector);
+      if (contactItems.length === 0) return;
+
+      // Hide all items initially
+      contactItems.forEach((item) => {
+        item.style.display = 'none';
+      });
+
+      // Show matching diensten contact items
+      let foundMatch = false;
+      contactItems.forEach((item) => {
+        const dienstAttribute = item.getAttribute('diensten--attribute');
+        if (dienstAttribute && dienstAttribute.toLowerCase() === dienstToShow) {
+          item.style.display = 'block';
+          foundMatch = true;
+        }
+      });
+
+      // If no match was found, display the default contact info
+      if (!foundMatch) {
+        // Get the parent container to add default contact info to
+        const contactList = document.querySelector(selector.split(' ')[0]);
+        if (!contactList) return;
+
+        // Check if default contact elements already exist to avoid duplicates
+        const existingDefault = contactList.querySelector('.default-contact');
+        if (existingDefault) {
+          existingDefault.style.display = 'block';
+          return;
+        }
+
+        // Create default contact elements
+        const defaultContactElement = document.createElement('div');
+        defaultContactElement.className = 'w-dyn-item default-contact';
+
+        // Add WhatsApp link
+        const whatsappLink = document.createElement('a');
+        whatsappLink.href = defaultContactDetails.whatsapp;
+        whatsappLink.className = 'footer--contact-link w-inline-block';
+        whatsappLink.target = '_blank';
+        whatsappLink.innerHTML = '<div>WhatsApp</div>';
+        defaultContactElement.appendChild(whatsappLink);
+
+        // Add Phone link
+        const phoneLink = document.createElement('a');
+        phoneLink.href = `tel:${defaultContactDetails.phone}`;
+        phoneLink.className = 'footer--contact-link w-inline-block';
+        phoneLink.innerHTML = `<div>${defaultContactDetails.phone}</div>`;
+        defaultContactElement.appendChild(phoneLink);
+
+        // Add Email link
+        const emailLink = document.createElement('a');
+        emailLink.href = `mailto:${defaultContactDetails.email}`;
+        emailLink.className = 'footer--contact-link w-inline-block';
+        emailLink.innerHTML = `<div>${defaultContactDetails.email}</div>`;
+        defaultContactElement.appendChild(emailLink);
+
+        // Append to contact list
+        contactList.appendChild(defaultContactElement);
+      }
+    });
+  }
+});

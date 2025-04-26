@@ -1,0 +1,230 @@
+/* Button: Text link */
+/*----------------------
+  SIZE
+----------------------*/
+/* Large */
+[data-text-link-size='Large'] {
+  font-size: var(--_typography---size--large);
+}
+
+[data-text-link-size='Large'] .icon--svg.is--text-link {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+[data-btn-size='Large'] .btn--content.is--text-link {
+  grid-column-gap: 0.75rem;
+  grid-row-gap: 0.75rem;
+}
+
+/* Base */
+[data-text-link-size='Base'] {
+  font-size: var(--_typography---size--base);
+}
+
+[data-text-link-size='Base'] .icon--svg.is--text-link {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+[data-btn-size='Base'] .btn--content.is--text-link {
+  grid-column-gap: 0.5rem;
+  grid-row-gap: 0.5rem;
+}
+
+/* Small */
+[data-text-link-size='Small'] {
+  font-size: var(--_typography---size--small);
+}
+
+[data-text-link-size='Small'] .icon--svg.is--text-link {
+  width: 1rem;
+  height: 1rem;
+}
+
+[data-btn-size='Small'] .btn--content.is--text-link {
+  grid-column-gap: 0.375rem;
+  grid-row-gap: 0.375rem;
+}
+
+/*----------------------
+  WEIGHT
+----------------------*/
+/* Regular */
+[data-text-link-weight='Regular'] {
+  font-weight: 400;
+}
+
+/* Semi Bold */
+[data-text-link-weight='Semi Bold'] {
+  font-weight: 600;
+}
+
+/*----------------------
+  STATE
+----------------------*/
+/* Enabled */
+[data-text-link-state='Enabled'] {
+  /* No additional styles needed for enabled state */
+}
+
+/* Disabled */
+[data-text-link-state='Disabled'] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/*----------------------
+  TYPE
+----------------------*/
+/* Blue
+----------------------*/
+/* Enabled */
+[data-text-link-type='Blue'] {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-text-link-type='Blue'] .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-brand--base);
+}
+
+/* Hover — Color */
+[data-text-link-type='Blue']:hover {
+  color: var(--_color-tokens---content-brand--darkest);
+}
+
+[data-text-link-type='Blue']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-brand--darkest);
+}
+
+/* Hover — Underline*/
+[data-text-link-type='Blue'][data-text-link-hover='Underline']:hover {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-text-link-type='Blue'][data-text-link-hover='Underline']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-brand--base);
+}
+
+/* Pressed */
+[data-text-link-type='Blue']:active {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-text-link-type='Blue']:active .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--black);
+}
+
+/* Gray
+----------------------*/
+/* Enabled */
+[data-text-link-type='Gray'] {
+  color: var(--_color-tokens---content-neutral--base);
+}
+
+[data-text-link-type='Gray'] .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--darkest);
+}
+
+/* Hover — Color */
+[data-text-link-type='Gray']:hover {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-text-link-type='Gray']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-brand--base);
+}
+
+/* Hover — Underline*/
+[data-text-link-type='Gray'][data-text-link-hover='Underline']:hover {
+  color: var(--_color-tokens---content-neutral--dark);
+}
+
+[data-text-link-type='Gray'][data-text-link-hover='Underline']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--darkest);
+}
+
+/* Pressed */
+[data-text-link-type='Gray']:active {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-text-link-type='Gray']:active .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--black);
+}
+
+/* White
+----------------------*/
+/* Enabled */
+[data-text-link-type='White'] {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-text-link-type='White'] .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--white);
+}
+
+/* Hover — Color */
+[data-text-link-type='White']:hover {
+  color: var(--_color-tokens---content-neutral--light);
+}
+
+[data-text-link-type='White']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--base);
+}
+
+/* Hover — Underline*/
+[data-text-link-type='White'][data-text-link-hover='Underline']:hover {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-text-link-type='White'][data-text-link-hover='Underline']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--white);
+}
+
+/* Pressed */
+[data-text-link-type='White']:active {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-text-link-type='White']:active .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--black);
+}
+
+/* Red
+----------------------*/
+/* Enabled */
+[data-text-link-type='Red'] {
+  color: var(--_color-tokens---state--warning);
+}
+
+[data-text-link-type='Red'] .btn--text-link-hover {
+  background-color: var(--_color-tokens---state--warning);
+}
+
+/* Hover — Color */
+[data-text-link-type='Red']:hover {
+  color: var(--_color-shades---warning--darkest);
+}
+
+[data-text-link-type='Red']:hover .btn--text-link-hover {
+  background-color: var(--_color-shades---warning--darkest);
+}
+
+/* Hover — Underline*/
+[data-text-link-type='Red'][data-text-link-hover='Underline']:hover {
+  color: var(--_color-tokens---state--warning);
+}
+
+[data-text-link-type='Red'][data-text-link-hover='Underline']:hover .btn--text-link-hover {
+  background-color: var(--_color-tokens---state--warning);
+}
+
+/* Pressed */
+[data-text-link-type='Red']:active {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-text-link-type='Red']:active .btn--text-link-hover {
+  background-color: var(--_color-tokens---border-neutral--black);
+}

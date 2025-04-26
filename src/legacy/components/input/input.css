@@ -1,0 +1,48 @@
+/* Input field */
+
+/* Caret styling */
+input,
+textarea,
+select {
+  caret-color: var(--_color-tokens---content-highlight--primary); /* Color of the text cursor */
+}
+
+/* Placeholder styles */
+.w-input[data-placeholder]::placeholder,
+.w-select[data-placeholder]::placeholder {
+  content: attr(data-current-placeholder) !important;
+  transition: color 0.3s ease-out !important;
+  color: var(--_color-tokens---content-neutral--base) !important;
+}
+
+.w-input[data-placeholder].hovered::placeholder,
+.w-select[data-placeholder].hovered::placeholder {
+  color: var(--_color-tokens---content-neutral--dark) !important;
+}
+
+/* Custom focus style for mouse/touch */
+input.w--focus,
+textarea.w--focus,
+select.w--focus {
+  border: 2px solid var(--secondary--base) !important;
+  outline: 0px solid var(--_color-tokens---state--focused) !important;
+  transition: border 0.3s ease-out;
+}
+
+/* Custom focus style for keyboard navigation */
+input.w--focus-visible,
+textarea.w--focus-visible,
+select.w--focus-visible {
+  border: 2px solid var(--_color-tokens---border-brand--base) !important;
+  outline: 4px solid var(--_color-tokens---state--focused) !important;
+  transition: border 0.3s ease-out;
+}
+
+/* Text area */
+/* Resize handling */
+textarea {
+  resize: vertical;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}

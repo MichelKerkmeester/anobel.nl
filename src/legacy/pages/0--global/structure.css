@@ -1,0 +1,56 @@
+/* Structure */
+:root {
+  /* Page */
+  --_structure---page-padding--desktop: 5vw; /* Desktop/default horizontal padding */
+  --_structure---page-padding--tablet: 4rem; /* Tablet horizontal padding */
+  --_structure---page-padding--mobile-large: 3rem; /* Mobile horizontal padding */
+  --_structure---page-padding--mobile: 2rem; /* Mobile horizontal padding */
+  --_structure---max-width--main: 100rem; /* Maximum width of the page */
+
+  /* Containers */
+  /* MAIN */
+  --_structure---container--main: calc(
+    min(100%, var(--_structure---max-width--main)) - var(--_structure---page-padding--desktop) * 2
+  );
+
+  /* FULL WIDTH */
+  --_structure---container--full-width: calc(100% - var(--_structure---page-padding--desktop) * 2);
+}
+
+/* Tablet breakpoint */
+@media screen and (max-width: 991px) {
+  :root {
+    --_structure---page-padding--desktop: var(--_structure---page-padding--tablet);
+    --_structure---container--main: calc(100% - var(--_structure---page-padding--desktop) * 2);
+    --_structure---container--full-width: 100%;
+  }
+}
+
+/* Mobile large breakpoint */
+@media screen and (max-width: 767px) {
+  :root {
+    --_structure---page-padding--desktop: var(--_structure---page-padding--mobile-large);
+    --_structure---container--main: calc(100% - var(--_structure---page-padding--desktop) * 2);
+    --_structure---container--full-width: 100%;
+  }
+}
+
+/* Mobile small breakpoint */
+@media screen and (max-width: 479px) {
+  :root {
+    --_structure---page-padding--desktop: var(--_structure---page-padding--mobile);
+    --_structure---container--main: calc(100% - var(--_structure---page-padding--desktop) * 2);
+    --_structure---container--full-width: 100%;
+  }
+}
+
+/* Margin trim */
+/* Remove margin from the first and last child */
+.u--margin-trim > :first-child,
+.u--margin-trim > :not(:not(.w-condition-invisible) ~ :not(.w-condition-invisible)) {
+  margin-top: 0;
+}
+.u--margin-trim > :last-child,
+.u--margin-trim > :not(:has(~ :not(.w-condition-invisible))) {
+  margin-bottom: 0;
+}
