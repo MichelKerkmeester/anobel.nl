@@ -1,13 +1,47 @@
 // Hero
 // Intro Animation
 
+// Pre-load optimization - hide content immediately
+(function preventFlicker() {
+  // Create a style element to hide page content until JS initializes animations
+  const style = document.createElement("style");
+  style.textContent = `
+    .page--wrapper {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    .hero--video {
+      transform: scale(1.05);
+      backface-visibility: hidden;
+    }
+  `;
+  style.id = "hero-prevent-flicker";
+  document.head.appendChild(style);
+})();
+
 // Initial setup
 function initializeHeroStates() {
+  if (typeof gsap === "undefined") {
+    console.warn("GSAP not loaded, cannot initialize hero animations");
+    return false;
+  }
+
   var vw = window.innerWidth;
   var vh = window.innerHeight;
   var isDesktop = vw >= 992;
   var isTablet = vw >= 768 && vw < 992;
   var isMobileTall = vw < 480 && vh >= 650; // New breakpoint
+
+  // Remove the flicker prevention style to show the page
+  const flickerStyle = document.getElementById("hero-prevent-flicker");
+  if (flickerStyle) flickerStyle.remove();
+
+  // Make page wrapper visible with a smooth fade
+  gsap.set(".page--wrapper", {
+    opacity: 1,
+    visibility: "visible",
+    clearProps: "visibility", // Clean up the visibility property after setting
+  });
 
   gsap.set(".hero--content.is--video", {
     opacity: 0,
@@ -18,7 +52,7 @@ function initializeHeroStates() {
 
   gsap.set([".hero--header.is--video"], {
     opacity: 0,
-    y: isDesktop ? "2rem" : isTablet ? "1.5rem" : "1rem",
+    y: isDesktop ? "10vh" : isTablet ? "2rem" : "1rem",
     willChange: "opacity, transform", // Optimize for performance
   });
 
@@ -42,10 +76,14 @@ function initializeHeroStates() {
     perspective: 1000,
     willChange: "transform", // Optimize for performance
   });
+
+  return true;
 }
 
 // GSAP Timeline
 function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
+  if (typeof gsap === "undefined") return null;
+
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const isDesktop = vw >= 992;
@@ -121,7 +159,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       duration: 1.2,
       ease: "power2.out",
     },
-    "-=0.9"
+    "-=2"
   );
 
   // Increased stagger for content animation
@@ -134,48 +172,72 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       stagger: 0.2, // Adjusted stagger for better flow
       ease: "power2.out",
     },
-    "-=1.4"
+    "-=2"
   );
 
   return tl;
 }
 
-// Self-executing function that Slater can run when it loads your script
-(function () {
+// Main initialization function
+function initHeroVideo() {
+  // Exit early if GSAP is not available
+  if (typeof gsap === "undefined") {
+    console.warn("GSAP not loaded, cannot initialize hero animations");
+    // Remove the flicker style to at least show the page even if animations won't work
+    const flickerStyle = document.getElementById("hero-prevent-flicker");
+    if (flickerStyle) flickerStyle.remove();
+    return;
+  }
+
   // Function to initialize animations when ready
   function initAnimations() {
     // Check if hero elements exist before initializing
     if (!document.querySelector(".hero--section.is--video")) {
-      // Try again in a moment if elements aren't ready yet
-      requestAnimationFrame(initAnimations);
+      // Exit if no hero video section exists, but still make page visible
+      const flickerStyle = document.getElementById("hero-prevent-flicker");
+      if (flickerStyle) flickerStyle.remove();
       return;
     }
 
     // Initialize hero states
-    initializeHeroStates();
+    if (!initializeHeroStates()) return;
 
     // Create and play the animation immediately
-    createHeroIntroTimeline({
+    const timeline = createHeroIntroTimeline({
       phase1Delay: 0, // No delay to start immediately
       delayBetweenPhase1And2: 0.1, // Reduced delay between phases
     });
 
+    // Skip if timeline couldn't be created
+    if (!timeline) return;
+
     // Optional: Add ScrollTrigger for interactive animations
-    gsap.to(".hero--video", {
-      scrollTrigger: {
-        trigger: ".hero--section.is--video",
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-      scale: 1.1,
-      borderRadius: "2rem",
-    });
+    if (typeof ScrollTrigger !== "undefined") {
+      gsap.to(".hero--video", {
+        scrollTrigger: {
+          trigger: ".hero--section.is--video",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+        scale: 1.1,
+        borderRadius: "2rem",
+      });
+    }
   }
 
-  // Use requestAnimationFrame for optimal timing of first animation frame
-  requestAnimationFrame(function () {
-    // Run immediately without waiting
-    initAnimations();
-  });
-})();
+  // High priority initialization
+  initAnimations();
+}
+
+// Try to run immediately if possible
+if (
+  document.readyState === "complete" ||
+  document.readyState === "interactive"
+) {
+  initHeroVideo();
+}
+
+// Always register with Slater for safe initialization
+window.slaterCallbacks = window.slaterCallbacks || [];
+window.slaterCallbacks.unshift(initHeroVideo);
