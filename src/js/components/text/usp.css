@@ -1,0 +1,21 @@
+/* USP */
+/*----------------------
+  COLOR
+----------------------*/
+/* Dark */
+[data-usp="Dark"] .hero--usp-text {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-usp="Dark"] .hero--usp-icon-w {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+/* Light */
+[data-usp="Light"] .hero--usp-text {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-usp="Light"] .hero--usp-icon-w {
+  color: var(--_color-tokens---content-neutral--white);
+}

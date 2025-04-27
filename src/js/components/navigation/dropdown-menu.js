@@ -1,32 +1,32 @@
 // Navigation
 // Dropdown Menu
-document.addEventListener('DOMContentLoaded', () => {
+const initDropdownMenu = () => {
   // Select all dropdown containers
-  const dropdowns = Array.from(document.querySelectorAll('.nav--dropdown'));
+  const dropdowns = Array.from(document.querySelectorAll(".nav--dropdown"));
 
   if (!dropdowns.length) {
-    console.error('No dropdown elements found in the DOM!');
+    console.error("No dropdown elements found in the DOM!");
     return;
   }
 
   // Select the main navigation container once
-  const navigation = document.querySelector('.nav--bar');
+  const navigation = document.querySelector(".nav--bar");
 
   if (!navigation) {
-    console.error('Navigation container (.navigation) not found!');
+    console.error("Navigation container (.navigation) not found!");
     return;
   }
 
   // Initialize dropdown data
   const dropdownData = dropdowns
     .map((dropdown) => {
-      const dropdownToggle = dropdown.querySelector('.btn--nav-dropdown');
-      const dropdownMenu = dropdown.querySelector('.nav--dropdown-menu');
-      const dropdownIcon = dropdown.querySelector('.icon--svg.is--nav');
+      const dropdownToggle = dropdown.querySelector(".btn--nav-dropdown");
+      const dropdownMenu = dropdown.querySelector(".nav--dropdown-menu");
+      const dropdownIcon = dropdown.querySelector(".icon--svg.is--nav");
 
       if (!dropdownToggle || !dropdownMenu || !dropdownIcon) {
         console.warn(
-          'Some required elements (dropdownToggle, dropdownMenu, dropdownIcon) are missing in a .nav--dropdown!'
+          "Some required elements (dropdownToggle, dropdownMenu, dropdownIcon) are missing in a .nav--dropdown!"
         );
         return null;
       }
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Utility function to create a GSAP timeline for opening a dropdown
    */
-z  const createOpenTimeline = (d) => {
+  const createOpenTimeline = (d) => {
     const tl = gsap.timeline({
       onStart: () => {
         d.animating = true;
@@ -56,27 +56,31 @@ z  const createOpenTimeline = (d) => {
     });
 
     // Check if we're on desktop (window width > 768px)
-    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
 
     tl.fromTo(
       d.dropdownMenu,
       { opacity: 0, height: 0 },
-      { opacity: 1, height: 'auto', duration: 0.3, ease: 'power2.out' }
+      { opacity: 1, height: "auto", duration: 0.3, ease: "power2.out" }
     )
-      .to(d.icon, { rotation: 180, duration: 0.3, ease: 'power2.out' }, '<')
-      .to(d.toggle, { backgroundColor: 'var(--secondary--darkest)', duration: 0.3 }, '<');
+      .to(d.icon, { rotation: 180, duration: 0.3, ease: "power2.out" }, "<")
+      .to(
+        d.toggle,
+        { backgroundColor: "var(--secondary--darkest)", duration: 0.3 },
+        "<"
+      );
 
     // Only add border radius animation on desktop
     if (isDesktop) {
       tl.to(
         navigation,
         {
-          borderBottomLeftRadius: '0',
-          borderBottomRightRadius: '0',
+          borderBottomLeftRadius: "0",
+          borderBottomRightRadius: "0",
           duration: 0.3,
-          ease: 'power2.out',
+          ease: "power2.out",
         },
-        '<'
+        "<"
       );
     }
 
@@ -97,27 +101,27 @@ z  const createOpenTimeline = (d) => {
     });
 
     // Check if we're on desktop (window width > 768px)
-    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
 
     tl.fromTo(
       d.dropdownMenu,
       { opacity: 1, height: d.dropdownMenu.scrollHeight },
-      { opacity: 0, height: 0, duration: 0.3, ease: 'power2.in' }
+      { opacity: 0, height: 0, duration: 0.3, ease: "power2.in" }
     )
-      .to(d.icon, { rotation: 0, duration: 0.3, ease: 'power2.in' }, '<')
-      .to(d.toggle, { backgroundColor: '', duration: 0.3 }, '<');
+      .to(d.icon, { rotation: 0, duration: 0.3, ease: "power2.in" }, "<")
+      .to(d.toggle, { backgroundColor: "", duration: 0.3 }, "<");
 
     // Only add border radius animation on desktop
     if (isDesktop) {
       tl.to(
         navigation,
         {
-          borderBottomLeftRadius: '1rem',
-          borderBottomRightRadius: '1rem',
+          borderBottomLeftRadius: "1rem",
+          borderBottomRightRadius: "1rem",
           duration: 0.3,
-          ease: 'power2.in',
+          ease: "power2.in",
         },
-        '<'
+        "<"
       );
     }
 
@@ -153,7 +157,7 @@ z  const createOpenTimeline = (d) => {
 
   // Attach event listeners to each dropdown toggle
   dropdownData.forEach((d) => {
-    d.toggle.addEventListener('click', () => {
+    d.toggle.addEventListener("click", () => {
       if (d.animating) return; // Prevent action if animating
 
       // Toggle the dropdown
@@ -167,10 +171,11 @@ z  const createOpenTimeline = (d) => {
   });
 
   // Event listener to close dropdowns when clicking outside
-  document.addEventListener('click', (e) => {
+  document.addEventListener("click", (e) => {
     dropdownData.forEach((d) => {
       if (d.isOpen && !d.animating) {
-        const clickedInside = d.dropdown.contains(e.target) || d.toggle.contains(e.target);
+        const clickedInside =
+          d.dropdown.contains(e.target) || d.toggle.contains(e.target);
         if (!clickedInside) {
           closeDropdown(d);
         }
@@ -179,9 +184,12 @@ z  const createOpenTimeline = (d) => {
   });
 
   // Close dropdowns when pressing the Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
       closeAllDropdowns();
     }
   });
-});
+};
+
+// Initialize immediately without waiting for DOMContentLoaded
+initDropdownMenu();

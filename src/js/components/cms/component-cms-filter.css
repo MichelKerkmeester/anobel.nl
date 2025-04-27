@@ -1,0 +1,27 @@
+/* Hero: Video - CMS filter (Component) */
+/* Hide all list items by default */
+
+.hero--video-list-w.slug .slug {
+  display: flex;
+}
+
+/* Section: Algemeen - CMS filter (Component) */
+/* Hide all list items by default */
+
+.nobel--list-w.filter .filter {
+  display: flex;
+}
+
+/* Section: CTA - CMS filter (Component) */
+/* Hide all list items by default */
+
+.cta--list-w.slug .slug {
+  display: flex;
+}
+
+/* Footer: Contact details - CMS filter (Component) */
+/* Hide all list items by default */
+
+.footer--contact-links-list-w.slug .slg {
+  display: flex;
+}

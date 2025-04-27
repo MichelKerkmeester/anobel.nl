@@ -1,0 +1,55 @@
+/* Caption */
+/*----------------------
+  SIZE
+----------------------*/
+/* Large */
+[data-caption-size="Large"] .caption {
+  font-size: var(--_typography---size--large);
+}
+
+/* Base */
+[data-caption-size="Base"] .caption {
+  font-size: var(--_typography---size--base);
+}
+
+/*----------------------
+  COLOR
+----------------------*/
+/* Dark */
+[data-caption-type="Dark"] .caption {
+  color: var(--_color-tokens---content-brand--base);
+}
+
+[data-caption-type="Dark"] .caption--divider {
+  background-color: var(--_color-tokens---border-brand--base);
+}
+
+/* Light */
+[data-caption-type="Light"] .caption {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-caption-type="Light"] .caption--divider {
+  background-color: var(--_color-tokens---border-neutral--white);
+}
+
+/* Dynamic */
+@media screen and (min-width: 992px) {
+  [data-caption-type="Dynamic"] .caption {
+    color: var(--_color-tokens---content-brand--base);
+  }
+
+  [data-caption-type="Dynamic"] .caption--divider {
+    background-color: var(--_color-tokens---border-brand--base);
+  }
+}
+
+@media screen and (max-width: 991px) {
+  [data-caption-type="Dynamic"] .caption {
+    color: var(--_color-tokens---content-neutral--white);
+  }
+
+  [data-caption-type="Dynamic"] .caption--divider {
+    background-color: var(--_color-tokens---border-neutral--white);
+  }
+}

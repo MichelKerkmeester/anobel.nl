@@ -1,14 +1,16 @@
 // Navigation
 // Language Selector
-document.addEventListener('DOMContentLoaded', () => {
+const initLanguageSelector = () => {
   // Selectors for the language button, dropdown, and rotating icon
   const languageBtn = document.querySelector('[class*="language--btn-w"]');
-  const languageDropdown = document.querySelector('[class*="language--dropdown-w"]');
-  const languageIcon = document.querySelector('.icon--svg.is--language');
+  const languageDropdown = document.querySelector(
+    '[class*="language--dropdown-w"]'
+  );
+  const languageIcon = document.querySelector(".icon--svg.is--language");
 
   // Safety check to ensure required elements exist
   if (!languageBtn || !languageDropdown || !languageIcon) {
-    console.error('Required elements not found!');
+    console.error("Required elements not found!");
     return;
   }
 
@@ -18,21 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(languageIcon, {
       rotation: isOpen ? 180 : 0,
       duration: 0.4,
-      ease: 'power2.out',
+      ease: "power2.out",
     });
 
     // Toggle the button's background color based on state
     gsap.to(languageBtn, {
       backgroundColor: isOpen
-        ? 'var(--secondary--darkest)'
-        : 'var(--secondary--darker)',
+        ? "var(--_color-tokens---bg-brand--darkest)"
+        : "var(--_color-tokens---bg-brand--dark)",
       duration: 0.3,
     });
 
     if (isOpen) {
       // First set initial state
       gsap.set(languageDropdown, {
-        visibility: 'visible',
+        visibility: "visible",
         height: 0,
         opacity: 0,
       });
@@ -40,9 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Animate to final state
       gsap.to(languageDropdown, {
         opacity: 1,
-        height: 'auto',
+        height: "auto",
         duration: 0.5,
-        ease: 'power3.out',
+        ease: "power3.out",
       });
     } else {
       // Animate back to closed state
@@ -50,63 +52,68 @@ document.addEventListener('DOMContentLoaded', () => {
         opacity: 0,
         height: 0,
         duration: 0.5,
-        ease: 'power3.in',
+        ease: "power3.in",
         onComplete: () => {
-          gsap.set(languageDropdown, { visibility: 'hidden' });
+          gsap.set(languageDropdown, { visibility: "hidden" });
         },
       });
     }
   };
 
   // Hover effect: expand button width on hover in
-  languageBtn.addEventListener('mouseenter', () => {
-    if (!languageBtn.classList.contains('clicked')) {
+  languageBtn.addEventListener("mouseenter", () => {
+    if (!languageBtn.classList.contains("clicked")) {
       gsap.to(languageBtn, {
-        width: '4.75rem',
-        backgroundColor: 'var(--secondary--darker)',
+        width: "4.75rem",
+        backgroundColor: "var(--_color-tokens---bg-brand--dark)",
         duration: 0.3,
-        ease: 'power2.out',
+        ease: "power2.out",
       });
     }
   });
 
   // Hover effect: collapse button width on hover out
-  languageBtn.addEventListener('mouseleave', () => {
-    if (!languageBtn.classList.contains('clicked')) {
+  languageBtn.addEventListener("mouseleave", () => {
+    if (!languageBtn.classList.contains("clicked")) {
       gsap.to(languageBtn, {
-        width: '2rem',
-        backgroundColor: 'var(--secondary--darker)',
+        width: "2rem",
+        backgroundColor: "var(--_color-tokens---bg-brand--dark)",
         duration: 0.3,
-        ease: 'power2.in',
+        ease: "power2.in",
       });
     }
   });
 
   // Click event: toggle dropdown open/close
-  languageBtn.addEventListener('click', () => {
-    const isClicked = languageBtn.classList.toggle('clicked');
+  languageBtn.addEventListener("click", () => {
+    const isClicked = languageBtn.classList.toggle("clicked");
     toggleDropdown(isClicked);
   });
 
   // Close dropdown if clicking outside the button or dropdown, or on another dropdown trigger
-  document.addEventListener('click', (event) => {
-    const isInside = languageBtn.contains(event.target) || languageDropdown.contains(event.target);
-    const isDropdownTrigger = event.target.closest('.btn--nav-dropdown');
+  document.addEventListener("click", (event) => {
+    const isInside =
+      languageBtn.contains(event.target) ||
+      languageDropdown.contains(event.target);
+    const isDropdownTrigger = event.target.closest(".btn--nav-dropdown");
 
     if (
-      (!isInside && languageBtn.classList.contains('clicked')) ||
+      (!isInside && languageBtn.classList.contains("clicked")) ||
       (isDropdownTrigger && !languageDropdown.contains(isDropdownTrigger))
     ) {
-      languageBtn.classList.remove('clicked');
+      languageBtn.classList.remove("clicked");
       toggleDropdown(false);
 
       // Perform the hover-out action to reset the button width
       gsap.to(languageBtn, {
-        width: '2rem',
-        backgroundColor: 'var(--secondary--darker)',
+        width: "2rem",
+        backgroundColor: "var(--_color-tokens---bg-brand--dark)",
         duration: 0.3,
-        ease: 'power2.in',
+        ease: "power2.in",
       });
     }
   });
-});
+};
+
+// Initialize immediately
+initLanguageSelector();

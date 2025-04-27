@@ -1,0 +1,65 @@
+/* Global */
+/*----------------------
+  STYLING
+----------------------*/
+/* Font Rendering Optimization */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selected text has custom background color */
+::-moz-selection {
+  /* Code for Firefox */
+  color: var(--_color-tokens---content-neutral--white);
+  background: var(--_color-tokens---bg-brand--base);
+}
+
+::selection {
+  color: var(--_color-tokens---content-neutral--white);
+  background: var(--_color-tokens---bg-brand--base);
+}
+
+/*----------------------
+  WRAP
+----------------------*/
+[truncate] {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/*----------------------
+  LINE CLAMP
+----------------------*/
+[line-clamp] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+[line-clamp],
+[line-clamp="1"] {
+  -webkit-line-clamp: 1;
+}
+
+[line-clamp="2"] {
+  -webkit-line-clamp: 2;
+}
+
+[line-clamp="3"] {
+  -webkit-line-clamp: 3;
+}
+
+[line-clamp="4"] {
+  -webkit-line-clamp: 4;
+}
+
+[line-clamp="5"] {
+  -webkit-line-clamp: 5;
+}
+
+[line-clamp="6"] {
+  -webkit-line-clamp: 6;
+}
