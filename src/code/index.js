@@ -1,4 +1,4 @@
-import PageRouter from "./pages/index.js";
+import PageRouter from "./components/button/pages/index.js";
 import globalInit from "./global/globalInit.js";
 import { initializeComponents } from "./components/index.js";
 

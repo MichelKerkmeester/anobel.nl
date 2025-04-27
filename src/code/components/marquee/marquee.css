@@ -1,5 +1,3 @@
-/* Marquee: Clients */
-
 /* Smooth scroll */
 .marquee--container {
   -webkit-transition-timing-function: linear !important;
