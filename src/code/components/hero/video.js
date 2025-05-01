@@ -1,24 +1,6 @@
 // Hero
 // Intro Animation
 
-// Pre-load optimization - hide content immediately
-(function preventFlicker() {
-  // Create a style element to hide page content until JS initializes animations
-  const style = document.createElement("style");
-  style.textContent = `
-    .page--wrapper {
-      opacity: 0 !important;
-      visibility: hidden !important;
-    }
-    .hero--video {
-      transform: scale(1.05);
-      backface-visibility: hidden;
-    }
-  `;
-  style.id = "hero-prevent-flicker";
-  document.head.appendChild(style);
-})();
-
 // Initial setup
 function initializeHeroStates() {
   if (typeof gsap === "undefined") {
@@ -32,11 +14,7 @@ function initializeHeroStates() {
   var isTablet = vw >= 768 && vw < 992;
   var isMobileTall = vw < 480 && vh >= 650; // New breakpoint
 
-  // Remove the flicker prevention style to show the page
-  const flickerStyle = document.getElementById("hero-prevent-flicker");
-  if (flickerStyle) flickerStyle.remove();
-
-  // Make page wrapper visible with a smooth fade
+  // Make page wrapper visible
   gsap.set(".page--wrapper", {
     opacity: 1,
     visibility: "visible",
@@ -121,7 +99,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       },
       scale: 1,
       opacity: 1,
-      ease: "power2.out",
+      ease: "expo.out",
     },
     "phase1"
   );
@@ -145,7 +123,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
         ? "80svh"
         : "85svh",
       duration: 1.8,
-      ease: "power4.inOut",
+      ease: "expo.inOut",
     },
     "-=0.8"
   );
@@ -157,7 +135,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       y: "0%",
       scale: 1,
       duration: 1.2,
-      ease: "power2.out",
+      ease: "expo.out",
     },
     "-=2"
   );
@@ -170,7 +148,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       y: 0,
       duration: 1,
       stagger: 0.2, // Adjusted stagger for better flow
-      ease: "power2.out",
+      ease: "expo.out",
     },
     "-=2"
   );
@@ -184,8 +162,6 @@ function initHeroVideo() {
   if (typeof gsap === "undefined") {
     console.warn("GSAP not loaded, cannot initialize hero animations");
     // Remove the flicker style to at least show the page even if animations won't work
-    const flickerStyle = document.getElementById("hero-prevent-flicker");
-    if (flickerStyle) flickerStyle.remove();
     return;
   }
 
@@ -194,8 +170,6 @@ function initHeroVideo() {
     // Check if hero elements exist before initializing
     if (!document.querySelector(".hero--section.is--video")) {
       // Exit if no hero video section exists, but still make page visible
-      const flickerStyle = document.getElementById("hero-prevent-flicker");
-      if (flickerStyle) flickerStyle.remove();
       return;
     }
 
@@ -210,6 +184,13 @@ function initHeroVideo() {
 
     // Skip if timeline couldn't be created
     if (!timeline) return;
+
+    // Fade out loader now that setup is complete
+    gsap.to(".page--loader", {
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => gsap.set(".page--loader", { display: "none" }),
+    });
 
     // Optional: Add ScrollTrigger for interactive animations
     if (typeof ScrollTrigger !== "undefined") {
