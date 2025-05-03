@@ -28,14 +28,7 @@ function initAfdelingCtaHover() {
   });
 }
 
-// Run the function immediately if document is already loaded
-if (
-  document.readyState === "complete" ||
-  document.readyState === "interactive"
-) {
+// Initialize when Webflow is ready
+Webflow.push(() => {
   initAfdelingCtaHover();
-} else {
-  // Otherwise wait for Slater to handle DOM loading
-  window.slaterCallbacks = window.slaterCallbacks || [];
-  window.slaterCallbacks.push(initAfdelingCtaHover);
-}
+});

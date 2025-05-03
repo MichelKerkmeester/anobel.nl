@@ -122,7 +122,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
         : isMobileTall
         ? "80svh"
         : "85svh",
-      duration: 1.8,
+      duration: 1.4,
       ease: "expo.inOut",
     },
     "-=0.8"
@@ -211,14 +211,7 @@ function initHeroVideo() {
   initAnimations();
 }
 
-// Try to run immediately if possible
-if (
-  document.readyState === "complete" ||
-  document.readyState === "interactive"
-) {
+// Ensure initialization runs after Webflow is ready
+Webflow.push(() => {
   initHeroVideo();
-}
-
-// Always register with Slater for safe initialization
-window.slaterCallbacks = window.slaterCallbacks || [];
-window.slaterCallbacks.unshift(initHeroVideo);
+});

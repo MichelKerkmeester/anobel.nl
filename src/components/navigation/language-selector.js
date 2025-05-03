@@ -115,5 +115,7 @@ const initLanguageSelector = () => {
   });
 };
 
-// Initialize immediately
-initLanguageSelector();
+// Initialize when Webflow is ready
+Webflow.push(() => {
+  initLanguageSelector();
+});

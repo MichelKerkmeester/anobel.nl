@@ -39,5 +39,7 @@ const initHideNavOnScroll = () => {
   window.addEventListener("scroll", handleScroll, { passive: true });
 };
 
-// Initialize immediately
-initHideNavOnScroll();
+// Initialize when Webflow is ready
+Webflow.push(() => {
+  initHideNavOnScroll();
+});

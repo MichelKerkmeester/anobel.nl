@@ -34,7 +34,7 @@ const initDropdownMenu = () => {
       return {
         dropdown,
         toggle: dropdownToggle, // Button that triggers dropdown
-        dropdownMenu: dropdownMenu, // (Renamed from "menu" to "dropdownMenu")
+        dropdownMenu: dropdownMenu,
         icon: dropdownIcon, // Rotation indicator for dropdown state
         isOpen: false, // Tracks if menu is visible
         animating: false, // Prevents interaction during animations
@@ -191,5 +191,7 @@ const initDropdownMenu = () => {
   });
 };
 
-// Initialize immediately without waiting for DOMContentLoaded
-initDropdownMenu();
+// Initialize when Webflow is ready
+Webflow.push(() => {
+  initDropdownMenu();
+});
