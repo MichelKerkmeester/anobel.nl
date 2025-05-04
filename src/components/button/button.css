@@ -506,11 +506,10 @@ a.w-button {
   outline: 4px solid var(--_color-tokens---state--focused);
 }
 
-/* Button: CTA */
 /*----------------------
-  TYPES
+  CTA
 ----------------------*/
-/* Global: Icon
+/* Icon | Primary
 ----------------------*/
 /* Enabled */
 [data-btn-type="CTA-Icon"] {
@@ -530,8 +529,29 @@ a.w-button {
   border: 0;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
+/* Icon | Secondary
+----------------------*/
+/* Enabled */
+[data-btn-type="CTA-Icon-Secondary"] {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--base);
+  border: 0;
+}
 
-/* Background: Light
+/* Focused */
+[data-btn-type="CTA-Icon-Secondary"]:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 0;
+}
+
+/* Focused (Keyboard) */
+[data-btn-type="CTA-Icon-Secondary"]:focus-visible {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+/* Main | Primary (Light)
 ----------------------*/
 /* Enabled */
 [data-btn-type="CTA-Light"] {
@@ -553,7 +573,7 @@ a.w-button {
   outline: 4px solid var(--_color-tokens---state--focused);
 }
 
-/* Background: Dark
+/* Main | Primary (Dark)
 ----------------------*/
 /* Enabled */
 [data-btn-type="CTA-Dark"] {
@@ -575,9 +595,30 @@ a.w-button {
   outline: 4px solid var(--_color-tokens---state--focused);
 }
 
-/* Button: Navigation */
+/* Secondary
+----------------------*/
+/* Enabled */
+[data-btn-type="CTA-Secondary"] {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--base);
+  border: 0;
+}
+
+/* Focused */
+[data-btn-type="CTA-Secondary"]:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 0;
+}
+
+/* Focused (Keyboard) */
+[data-btn-type="CTA-Secondary"]:focus-visible {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
 /*----------------------
-  TYPES
+  NAVIGATION
 ----------------------*/
 /* Enabled */
 [data-btn-type="Navigation"] {

@@ -116,7 +116,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
           ? "87.5svh"
           : vh <= 1049
           ? "85svh"
-          : "77.5svh"
+          : "82.5svh"
         : isTablet
         ? "85svh"
         : isMobileTall
@@ -186,10 +186,10 @@ function initHeroVideo() {
     if (!timeline) return;
 
     // Fade out loader now that setup is complete
-    gsap.to(".page--loader", {
+    gsap.to(".loader", {
       opacity: 0,
       duration: 0.5,
-      onComplete: () => gsap.set(".page--loader", { display: "none" }),
+      onComplete: () => gsap.set(".loader", { display: "none" }),
     });
 
     // Optional: Add ScrollTrigger for interactive animations

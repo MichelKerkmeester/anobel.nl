@@ -6,7 +6,7 @@
   // Set attributes
   script.setAttribute("data-id-scroll", "");
   script.setAttribute("data-autoinit", "true");
-  script.setAttribute("data-duration", "1");
+  script.setAttribute("data-duration", "1.25");
   script.setAttribute("data-orientation", "vertical");
   script.setAttribute("data-smoothWheel", "true");
   script.setAttribute("data-smoothTouch", "false");

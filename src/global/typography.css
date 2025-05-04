@@ -2,6 +2,27 @@
 /*----------------------
   STYLING
 ----------------------*/
+/* Clear default styling */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+label {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-wrap: inherit;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* Font Rendering Optimization */
 * {
   -webkit-font-smoothing: antialiased;
@@ -12,13 +33,13 @@
 /* Selected text has custom background color */
 ::-moz-selection {
   /* Code for Firefox */
-  color: var(--_color-tokens---content-neutral--white);
-  background: var(--_color-tokens---bg-brand--base);
+  color: #fefefe;
+  background: #031d3c;
 }
 
 ::selection {
-  color: var(--_color-tokens---content-neutral--white);
-  background: var(--_color-tokens---bg-brand--base);
+  color: #fefefe;
+  background: #031d3c;
 }
 
 /*----------------------

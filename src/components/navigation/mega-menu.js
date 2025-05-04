@@ -16,11 +16,11 @@ Webflow.push(() => {
   function openMenu() {
     megaMenu.style.display = "flex"; // Set display to flex before animation
     gsap.to(megaMenu, {
-      duration: 0.8, 
-      height: "100svh", 
+      duration: 0.8,
+      height: "100svh",
       width: "100%",
-      ease: "power2.out", n
-      delay: 0.2, 
+      ease: "power2.out",
+      delay: 0.2,
       onComplete: () => {
         megaMenu.style.borderRadius = "0rem"; // Remove border radius when fully open
       },
@@ -31,10 +31,10 @@ Webflow.push(() => {
   function closeMenu() {
     megaMenu.style.borderRadius = "0.75rem"; // Restore border radius before closing
     gsap.to(megaMenu, {
-      duration: 0.4, 
-      height: "0svh"
-      width: "100%", 
-      ease: "power2.in", 
+      duration: 0.4,
+      height: "0svh",
+      width: "100%",
+      ease: "power2.in",
       onComplete: () => {
         megaMenu.style.display = "none"; // Hide menu when animation completes
       },
