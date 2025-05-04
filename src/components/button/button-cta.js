@@ -25,32 +25,8 @@ const btnContainerAnimation = () => {
 
         // Determine button type to apply appropriate style changes
         const btnType = btn.getAttribute("data-btn-type");
-        let hoverStyles = {};
 
-        // Set appropriate hover styles based on button type
-        if (btnType === "CTA-Icon") {
-          hoverStyles = {
-            backgroundColor: "var(--_color-shades---primary--darker)",
-            color: "var(--_color-tokens---content-neutral--white)",
-            borderWidth: 0,
-          };
-        } else if (btnType === "CTA-Light") {
-          hoverStyles = {
-            backgroundColor: "var(--_color-tokens---bg-neutral--white)",
-            color: "var(--_color-tokens---content-neutral--black)",
-            borderColor: "var(--_color-shades---primary--darkest)",
-            borderWidth: "2px",
-          };
-        } else if (btnType === "CTA-Dark") {
-          hoverStyles = {
-            backgroundColor: "rgba(10, 10, 10, 0.25)",
-            color: "var(--_color-tokens---content-neutral--white)",
-            borderColor: "var(--_color-shades---primary--darkest)",
-            borderWidth: "2px",
-          };
-        }
-
-        // Define the full animation including icon movement and style changes
+        // Define the animation for icons only
         timeline
           // Set initial state for the absolute icon
           .set(iconAbsolute, { opacity: 0 })
@@ -72,16 +48,6 @@ const btnContainerAnimation = () => {
               opacity: 0,
               duration: 0.3,
               ease: "power0",
-            },
-            0
-          )
-          // Apply the hover styles to the button
-          .to(
-            btn,
-            {
-              ...hoverStyles,
-              duration: 0.3,
-              ease: "power1.out",
             },
             0
           );
