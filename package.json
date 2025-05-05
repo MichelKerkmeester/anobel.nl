@@ -18,6 +18,7 @@
     "vite": "^6.3.3"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
     "gsap": "^3.12.5"
   }
 }

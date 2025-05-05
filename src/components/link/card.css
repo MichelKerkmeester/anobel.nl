@@ -3,13 +3,45 @@
   INTERACTION
 ----------------------*/
 /* Hide container based on presence of link */
-.link--card-interaction a[href='#'] {
+.link--card-interaction a[href="#"] {
   display: none;
 }
-.link--card-interaction a[href='#'] ~ button {
+.link--card-interaction a[href="#"] ~ button {
   display: block;
 }
 
 .wf-design-mode .link--card-interaction {
   z-index: 1;
+}
+
+/*----------------------
+  TYPE
+----------------------*/
+/* Enabled */
+[data-link-type="Card"] {
+  color: var(--_color-tokens---content-neutral--white);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+[data-link-type="Card"] .link--heading {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type="Card"] .link--description {
+  color: var(--_color-tokens---content-neutral--base);
+}
+
+[data-link-type="Card"] .link--divider-track {
+  background-color: var(--_color-tokens---bg-neutral--white);
+}
+
+/* Hover */
+[data-link-type="Card"]:hover {
+  background-color: var(--_color-tokens---bg-brand--dark);
+}
+
+/* Pressed */
+[data-link-type="Card"]:active {
+  background-color: rgba(3, 29, 60, 0.8);
 }

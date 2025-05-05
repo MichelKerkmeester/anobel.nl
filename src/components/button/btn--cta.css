@@ -1,0 +1,302 @@
+/* Button CTA */
+/*----------------------
+  SIZE
+----------------------*/
+/* Large CTA */
+[data-btn-size="Large-CTA"] {
+  font-size: var(--_typography---size--large);
+  width: 3rem;
+  height: 3rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+[data-btn-size="Large-CTA"] .btn--content {
+  grid-column-gap: 0.75rem;
+  grid-row-gap: 0.75rem;
+}
+
+[data-btn-size="Large-CTA"] .icon--svg.is--button {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Base CTA */
+[data-btn-size="Base-CTA"] {
+  font-size: var(--_typography---size--base);
+  width: 2.5rem;
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+[data-btn-size="Base-CTA"] .btn--content {
+  grid-column-gap: 0.5rem;
+  grid-row-gap: 0.5rem;
+}
+
+[data-btn-size="Base-CTA"] .icon--svg.is--button {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/*----------------------
+  TYPE
+----------------------*/
+/* Primary - Light
+----------------------*/
+/* Main - Enabled */
+[data-btn-type="CTA-Light"] .btn.is--main {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-shades---primary--base);
+  width: auto;
+}
+
+/* Main - Hover */
+[data-btn-type="CTA-Light"]:hover .btn.is--main,
+[data-btn-type="CTA-Light"] .btn.is--main:hover {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  width: auto;
+}
+
+/* Main - Pressed */
+[data-btn-type="CTA-Light"] .btn.is--main:active {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--black);
+  width: auto;
+}
+
+/* Main - Focused */
+[data-btn-type="CTA-Light"] .btn.is--main:focus {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  width: auto;
+}
+
+/* Main - Focused (Keyboard) */
+[data-btn-type="CTA-Light"] .btn.is--main:focus-visible {
+  color: var(--_color-tokens---content-neutral--black);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  outline: 4px solid var(--_color-tokens---state--focused);
+  width: auto;
+}
+
+/* Icon - Enabled */
+[data-btn-type="CTA-Light"] .btn.is--icon {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--base);
+  border: 0;
+}
+
+/* Icon - Hover */
+[data-btn-type="CTA-Light"]:hover .btn.is--icon,
+[data-btn-type="CTA-Light"] .btn.is--icon:hover {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--darkest);
+  border: 0;
+}
+
+/* Icon - Pressed */
+[data-btn-type="CTA-Light"] .btn.is--icon:active {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-neutral--black);
+  border: 0;
+}
+
+/* Icon - Focused */
+[data-btn-type="CTA-Light"] .btn.is--icon:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--darkest);
+  border: 0;
+}
+
+/* Icon - Focused (Keyboard) */
+[data-btn-type="CTA-Light"] .btn.is--icon:focus-visible {
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+/* Icon - Variants */
+[data-btn-variant="CTA-Light"] .btn--text,
+[data-btn-variant="CTA-Light"] .btn--text-aria,
+[data-btn-variant="CTA-Light"] .btn--icon.is--secondary {
+  display: none;
+}
+
+/*----------------------
+  Primary - Dark
+----------------------*/
+/* Main - Enabled */
+[data-btn-type="CTA-Dark"] .btn.is--main {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: rgba(10, 10, 10, 0.25);
+  border: 2px solid var(--_color-shades---primary--base);
+  width: auto;
+}
+
+/* Main - Hover */
+[data-btn-type="CTA-Dark"]:hover .btn.is--main,
+[data-btn-type="CTA-Dark"] .btn.is--main:hover {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: rgba(10, 10, 10, 0.25);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  width: auto;
+}
+
+/* Main - Pressed */
+[data-btn-type="CTA-Dark"] .btn.is--main:active {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: rgba(10, 10, 10, 0.25);
+  border: 2px solid var(--_color-tokens---border-neutral--black);
+  width: auto;
+}
+
+/* Main - Focused */
+[data-btn-type="CTA-Dark"] .btn.is--main:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: rgba(10, 10, 10, 0.25);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  width: auto;
+}
+
+/* Main - Focused (Keyboard) */
+[data-btn-type="CTA-Dark"] .btn.is--main:focus-visible {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 2px solid var(--_color-shades---primary--darkest);
+  outline: 4px solid var(--_color-tokens---state--focused);
+  width: auto;
+}
+
+/* Icon - Enabled */
+[data-btn-type="CTA-Dark"] .btn.is--icon {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--base);
+  border: 0;
+}
+
+/* Icon - Hover */
+[data-btn-type="CTA-Dark"]:hover .btn.is--icon,
+[data-btn-type="CTA-Dark"] .btn.is--icon:hover {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--darkest);
+  border: 0;
+}
+
+/* Icon - Pressed */
+[data-btn-type="CTA-Dark"] .btn.is--icon:active {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-neutral--black);
+  border: 0;
+}
+
+/* Icon - Focused */
+[data-btn-type="CTA-Dark"] .btn.is--icon:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--darkest);
+  border: 0;
+}
+
+/* Icon - Focused (Keyboard) */
+[data-btn-type="CTA-Dark"] .btn.is--icon:focus-visible {
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+/* Icon - Variants */
+[data-btn-variant="CTA-Dark"] .btn--text,
+[data-btn-variant="CTA-Dark"] .btn--text-aria,
+[data-btn-variant="CTA-Dark"] .btn--icon.is--secondary {
+  display: none;
+}
+
+/*----------------------
+  Secondary
+----------------------*/
+/* Main - Enabled */
+[data-btn-type="CTA-Secondary"] .btn.is--main {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+  width: auto;
+}
+
+/* Main - Hover */
+[data-btn-type="CTA-Secondary"]:hover .btn.is--main,
+[data-btn-type="CTA-Secondary"] .btn.is--main:hover {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-brand--dark);
+  width: auto;
+}
+
+/* Main - Pressed */
+[data-btn-type="CTA-Secondary"] .btn.is--main:active {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--black);
+  width: auto;
+}
+
+/* Main - Focused */
+[data-btn-type="CTA-Secondary"] .btn.is--main:focus {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-brand--dark);
+  width: auto;
+}
+
+/* Main - Focused (Keyboard) */
+[data-btn-type="CTA-Secondary"] .btn.is--main:focus-visible {
+  color: var(--_color-tokens---content-brand--base);
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+  outline: 4px solid var(--_color-tokens---state--focused);
+  width: auto;
+}
+
+/* Icon - Enabled */
+[data-btn-type="CTA-Secondary"] .btn.is--icon {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--base);
+  border: 0;
+}
+
+/* Icon - Hover */
+[data-btn-type="CTA-Secondary"]:hover .btn.is--icon,
+[data-btn-type="CTA-Secondary"] .btn.is--icon:hover {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--dark);
+  border: 0;
+}
+
+/* Icon - Pressed */
+[data-btn-type="CTA-Secondary"] .btn.is--icon:active {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-neutral--black);
+  border: 0;
+}
+
+/* Icon - Focused */
+[data-btn-type="CTA-Secondary"] .btn.is--icon:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--dark);
+  border: 0;
+}
+
+/* Icon - Focused (Keyboard) */
+[data-btn-type="CTA-Secondary"] .btn.is--icon:focus-visible {
+  color: var(--_color-tokens---content-neutral--white);
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+/* Icon - Variants */
+[data-btn-variant="CTA-Secondary"] .btn--text,
+[data-btn-variant="CTA-Secondary"] .btn--text-aria,
+[data-btn-variant="CTA-Secondary"] .btn--icon.is--secondary {
+  display: none;
+}
