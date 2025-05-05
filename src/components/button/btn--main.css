@@ -233,7 +233,7 @@
 /* Hover  */
 [data-btn-type="Secondary-Full"]:hover {
   color: var(--_color-tokens---content-neutral--white);
-  background-color: var(--_color-tokens---bg-brand--darkest);
+  background-color: var(--_color-tokens---bg-brand--darker);
   border: 0;
 }
 
@@ -247,7 +247,7 @@
 /* Focused */
 [data-btn-type="Secondary-Full"]:focus {
   color: var(--_color-tokens---content-neutral--white);
-  background-color: var(--_color-tokens---bg-brand--darkest);
+  background-color: var(--_color-tokens---bg-brand--darker);
   border: 0;
 }
 

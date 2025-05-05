@@ -11,7 +11,7 @@ function initAfdelingCtaHover() {
     // Hover in
     card.addEventListener("mouseenter", () => {
       gsap.to(btn, {
-        backgroundColor: "var(--secondary--darker)",
+        backgroundColor: "var(--_color-tokens---bg-brand--darker)",
         duration: 0.2,
         ease: "power1.out",
       });
@@ -20,7 +20,7 @@ function initAfdelingCtaHover() {
     // Hover out - return to original color
     card.addEventListener("mouseleave", () => {
       gsap.to(btn, {
-        backgroundColor: "var(--secondary--base)",
+        backgroundColor: "var(--_color-tokens---bg-brand--base)",
         duration: 0.2,
         ease: "power1.out",
       });
