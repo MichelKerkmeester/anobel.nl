@@ -1,10 +1,11 @@
 // Navigation
 // Hide Nav on Scroll
+
 const initHideNavOnScroll = () => {
   let lastScrollTop = 0;
   const navbar = document.querySelector(".nav--bar");
   const scrollThreshold = 50; // Minimum scroll amount before hiding/showing
-  const mobileBreakpoint = 768; // Adjust this based on your mobile breakpoint
+  const tabletBreakpoint = 1200; // Increased to include iPad Pro and other tablets
 
   if (!navbar) {
     console.error("Navigation bar (.nav--bar) not found!");
@@ -12,8 +13,8 @@ const initHideNavOnScroll = () => {
   }
 
   function handleScroll() {
-    // Only run on desktop
-    if (window.innerWidth <= mobileBreakpoint) return;
+    // Check for touch devices or smaller screens
+    if (isMobileOrTablet()) return;
 
     const currentScroll = window.scrollY || document.documentElement.scrollTop;
 
@@ -32,6 +33,15 @@ const initHideNavOnScroll = () => {
     lastScrollTop = currentScroll;
   }
 
+  // Function to detect mobile or tablet devices
+  function isMobileOrTablet() {
+    const touchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const smallScreen = window.innerWidth <= tabletBreakpoint;
+
+    return touchDevice || smallScreen;
+  }
+
   // Add smooth transition to the navbar
   navbar.style.transition = "transform 0.3s ease-in-out";
 
@@ -39,7 +49,8 @@ const initHideNavOnScroll = () => {
   window.addEventListener("scroll", handleScroll, { passive: true });
 };
 
-// Initialize when Webflow is ready
-Webflow.push(() => {
+// Initialize with Webflow (Slater already handles DOM ready)
+window.Webflow = window.Webflow || [];
+window.Webflow.push(function () {
   initHideNavOnScroll();
 });

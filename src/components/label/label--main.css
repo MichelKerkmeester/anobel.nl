@@ -1,0 +1,107 @@
+/* Label: Main */
+/*----------------------
+  COLOR
+----------------------*/
+/* Orange */
+.label--main[data-label-color="Orange"] {
+  background-color: var(--_color-tokens---bg-highlight--primary);
+  border-color: #6c220b40;
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+/* Blue */
+.label--main[data-label-color="Blue"] {
+  background-color: var(--_color-tokens---bg-brand--base);
+  border-color: #8591b340;
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+/* Dark Blue */
+.label--main[data-label-color="Dark-Blue"] {
+  background-color: var(--_color-tokens---bg-brand--darkest);
+  border-color: #8591b340;
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+/* White */
+.label--main[data-label-color="White"] {
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border-color: var(--_color-tokens---border-neutral--dark);
+  color: var(--_color-tokens---content-brand--base);
+}
+
+/* Gray */
+.label--main[data-label-color="Gray"] {
+  background-color: var(--_color-tokens---bg-neutral--light);
+  border-color: var(--_color-tokens---border-neutral--dark);
+  color: var(--_color-tokens---content-brand--base);
+}
+
+/* Red */
+.label--main[data-label-color="Red"] {
+  background-color: var(--_color-tokens---state--warning);
+  border-color: #e8adac40;
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+/* Green */
+.label--main[data-label-color="Green"] {
+  background-color: var(--_color-tokens---state--success);
+  border-color: #acc1ae40;
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+/*----------------------
+  SIZE
+----------------------*/
+/* Base */
+.label--main[data-label-size="Base"] {
+  height: 2rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.label--main[data-label-size="Base"] .label--content {
+  font-size: var(--_typography---size--base);
+  gap: 0.5rem;
+}
+
+.label--main[data-label-size="Base"] .label--icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Small */
+.label--main[data-label-size="Small"] {
+  height: 1.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.label--main[data-label-size="Small"] .label--content {
+  font-size: var(--_typography---size--small);
+  gap: 0.5rem;
+}
+
+.label--main[data-label-size="Small"] .label--icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/*----------------------
+  WEIGHT
+----------------------*/
+/* Regular */
+.label--main[data-label-weight="Regular"] .label--content {
+  font-weight: 400;
+}
+
+/* Medium */
+.label--main[data-label-weight="Medium"] .label--content {
+  font-weight: 500;
+}
+
+/* Semi Bold */
+.label--main[data-label-weight="Semi-Bold"] .label--content {
+  font-weight: 600;
+}

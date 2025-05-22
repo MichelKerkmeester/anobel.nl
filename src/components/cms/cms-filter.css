@@ -1,17 +1,3 @@
-/* Hero: General - CMS filter (Component) */
-/* Hide all list items by default */
-
-.hero--list-w.slug .slug {
-  display: flex;
-}
-
-/* Hero: Video - CMS filter (Component) */
-/* Hide all list items by default */
-
-.hero--video-list-w.slug .slug {
-  display: flex;
-}
-
 /* Section: Algemeen - CMS filter (Component) */
 /* Hide all list items by default */
 

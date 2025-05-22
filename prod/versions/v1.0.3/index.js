@@ -523,24 +523,20 @@
       }
     });
     tl.to({}, { duration: phase1Delay });
-    tl.addLabel("phase1");
     tl.to(
-      ".hero--video-container",
+      [".hero--video-container", ".hero--video-w"],
       {
         duration: isDesktop ? 1.2 : 1,
-        borderRadius: 0,
-        padding: isDesktop ? "2rem" : isTablet ? "7rem 2rem 0 2rem" : isMobileLarge ? "6.5rem 1.5rem 0 1.5rem" : "5rem 1.5rem 0 1.5rem",
-        scale: 1,
-        opacity: 1,
-        ease: "expo.out"
-      },
-      "phase1"
-    );
-    tl.to(
-      ".hero--video-w",
-      {
-        duration: isDesktop ? 1.2 : 1,
-        borderRadius: "1rem",
+        // Slightly longer for desktop
+        borderRadius: function(index) {
+          return index === 1 ? "1rem" : 0;
+        },
+        padding: function(index) {
+          if (index === 0) {
+            return isDesktop ? "2rem" : isTablet ? "7rem 2rem 0 2rem" : isMobileLarge ? "6.5rem 1.5rem 0 1.5rem" : "5rem 1.5rem 0 1.5rem";
+          }
+          return 0;
+        },
         scale: 1,
         opacity: 1,
         ease: "expo.out"
@@ -627,9 +623,7 @@
     }
     initAnimations();
   }
-  Webflow.push(function() {
-    initHeroVideo();
-  });
+  initHeroVideo();
   document.addEventListener("DOMContentLoaded", function() {
     var consentCookieName = "cookieConsent";
     var declineCookieName = "cookieDecline";

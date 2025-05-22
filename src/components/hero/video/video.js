@@ -12,7 +12,7 @@ function initializeHeroStates() {
   var vh = window.innerHeight;
   var isDesktop = vw >= 992;
   var isTablet = vw >= 768 && vw < 992;
-  var isMobileTall = vw < 480 && vh >= 650; // New breakpoint
+  var isMobileTall = vw < 480 && vh >= 650;
 
   // Make page wrapper visible
   gsap.set(".page--wrapper", {
@@ -25,13 +25,13 @@ function initializeHeroStates() {
     opacity: 0,
     y: "100%",
     scale: 0.92,
-    willChange: "opacity, transform", // Optimize for performance
+    willChange: "opacity, transform",
   });
 
   gsap.set([".hero--header.is--video"], {
     opacity: 0,
     y: isDesktop ? "10vh" : isTablet ? "2rem" : "1rem",
-    willChange: "opacity, transform", // Optimize for performance
+    willChange: "opacity, transform",
   });
 
   gsap.set(".hero--section.is--video", {
@@ -52,7 +52,7 @@ function initializeHeroStates() {
     transformStyle: "preserve-3d",
     backfaceVisibility: "hidden",
     perspective: 1000,
-    willChange: "transform", // Optimize for performance
+    willChange: "transform",
   });
 
   return true;
@@ -70,9 +70,25 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
   const isMobileTall = vw < 480 && vh >= 650;
   const isMobile = vw < 480;
 
+  // Custom easing presets for a smoother, less "snappy" desktop feel
+  const easeOut = isDesktop ? "power4.out" : "expo.out";
+  const easeInOut = isDesktop ? "power2.inOut" : "expo.inOut";
+
+  // Duration helpers (mobile needs to be a touch slower)
+  const durContainer = isMobile ? 1.4 : isDesktop ? 1.1 : 1;
+  const durCollapse = isMobile ? 1.6 : isDesktop ? 1.2 : 1.2;
+  const durContent = isMobile ? 1.2 : isDesktop ? 1.1 : 1.0;
+  const durHeaders = isMobile ? 1.1 : isDesktop ? 0.9 : 0.9;
+
+  // Offset helpers so content kicks in earlier on mobile
+  const offsetContent = isMobile ? "-=1.1" : "-=0.9";
+  const offsetHeaders = isMobile ? "-=0.8" : "-=0.7";
+
   const tl = gsap.timeline({
+    // Provide a slightly longer default duration to make transitions feel more fluid on larger screens
     defaults: {
-      ease: "power3.out",
+      ease: easeOut,
+      duration: durContainer,
     },
   });
 
@@ -83,7 +99,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
   tl.to(
     [".hero--video-container", ".hero--video-w"],
     {
-      duration: 1,
+      duration: durContainer,
       borderRadius: (index) => (index === 1 ? "1rem" : 0),
       padding: (index) => {
         if (index === 0) {
@@ -99,7 +115,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
       },
       scale: 1,
       opacity: 1,
-      ease: "expo.out",
+      ease: easeOut,
     },
     "phase1"
   );
@@ -122,35 +138,36 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
         : isMobileTall
         ? "80svh"
         : "85svh",
-      duration: 1.4,
-      ease: "expo.inOut",
+      duration: durCollapse,
+      ease: easeInOut,
     },
-    "-=0.8"
+    "-=0.7"
   );
 
+  // Content fades in slightly after the section begins collapsing
   tl.to(
     ".hero--content.is--video",
     {
       opacity: 1,
       y: "0%",
       scale: 1,
-      duration: 1.2,
-      ease: "expo.out",
+      duration: durContent,
+      ease: easeOut,
     },
-    "-=2"
+    offsetContent
   );
 
-  // Increased stagger for content animation
+  // Headers follow the content a bit closer to keep everything in sync
   tl.to(
     [".hero--header.is--video"],
     {
       opacity: 1,
       y: 0,
-      duration: 1,
-      stagger: 0.2, // Adjusted stagger for better flow
-      ease: "expo.out",
+      duration: durHeaders,
+      stagger: 0.25,
+      ease: easeOut,
     },
-    "-=2"
+    offsetHeaders
   );
 
   return tl;
@@ -189,7 +206,9 @@ function initHeroVideo() {
     gsap.to(".loader", {
       opacity: 0,
       duration: 0.5,
-      onComplete: () => gsap.set(".loader", { display: "none" }),
+      onComplete: () => {
+        gsap.set(".loader", { display: "none" });
+      },
     });
 
     // Optional: Add ScrollTrigger for interactive animations

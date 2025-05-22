@@ -1,0 +1,6 @@
+/* Hero: General - CMS filter (Component) */
+/* Hide all list items by default */
+
+.hero--list-w.slug .slug {
+  display: flex;
+}
