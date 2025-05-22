@@ -91,7 +91,17 @@
 /*----------------------
   SPACING
 ----------------------*/
+/* Large */
+[data-caption-spacing="Large"] .caption--content {
+  padding-bottom: 1.5rem;
+}
+
 /* Base */
 [data-caption-spacing="Base"] .caption--content {
   padding-bottom: 1.25rem;
+}
+
+/* Small */
+[data-caption-spacing="Small"] .caption--content {
+  padding-bottom: 0.75rem;
 }
