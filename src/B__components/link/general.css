@@ -26,6 +26,27 @@
 }
 
 /*----------------------
+  SIZE
+----------------------*/
+/* Large */
+[data-link-size="Large"] .link--heading {
+  font-size: var(--_typography---size--large);
+}
+
+[data-link-size="Large"] .link--divider {
+  padding-top: 0.75rem;
+}
+
+/* Base */
+[data-link-size="Base"] .link--heading {
+  font-size: var(--_typography---size--base);
+}
+
+[data-link-size="Base"] .link--divider {
+  padding-top: 0.5rem;
+}
+
+/*----------------------
   TYPE
 ----------------------*/
 /* Dark
@@ -71,5 +92,28 @@
 }
 
 [data-link-type="Light"] .link--divider-track {
-  background-color: var(--_color-tokens---bg-neutral--white);
+  background-color: var(--_color-tokens---border-neutral--white);
+}
+
+/* Contact
+----------------------*/
+/* Enabled */
+[data-link-type="Contact"] {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type="Contact"] .link--heading {
+  color: var(--_color-tokens---content-neutral--white);
+}
+
+[data-link-type="Contact"] .link--description {
+  color: var(--_color-tokens---content-neutral--base);
+}
+
+[data-link-type="Contact"] .link--divider-line {
+  background-color: var(--_color-tokens---border-highlight--primary);
+}
+
+[data-link-type="Contact"] .link--divider-track {
+  background-color: var(--_color-tokens---border-neutral--black);
 }

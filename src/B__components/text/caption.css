@@ -3,12 +3,12 @@
   SIZE
 ----------------------*/
 /* Large */
-[data-caption-size="Large"] .caption {
+[data-caption-size="Large"] .caption--content {
   font-size: var(--_typography---size--large);
 }
 
 /* Base */
-[data-caption-size="Base"] .caption {
+[data-caption-size="Base"] .caption--content {
   font-size: var(--_typography---size--base);
 }
 
@@ -16,7 +16,7 @@
   COLOR
 ----------------------*/
 /* Dark */
-[data-caption-type="Dark"] .caption {
+[data-caption-type="Dark"] .caption--content {
   color: var(--_color-tokens---content-brand--base);
 }
 
@@ -25,7 +25,7 @@
 }
 
 /* Light */
-[data-caption-type="Light"] .caption {
+[data-caption-type="Light"] .caption--content {
   color: var(--_color-tokens---content-neutral--white);
 }
 
@@ -35,7 +35,7 @@
 
 /* Dynamic */
 @media screen and (min-width: 992px) {
-  [data-caption-type="Dynamic"] .caption {
+  [data-caption-type="Dynamic"] .caption--content {
     color: var(--_color-tokens---content-brand--base);
   }
 
@@ -45,11 +45,37 @@
 }
 
 @media screen and (max-width: 991px) {
-  [data-caption-type="Dynamic"] .caption {
+  [data-caption-type="Dynamic"] .caption--content {
     color: var(--_color-tokens---content-neutral--white);
   }
 
   [data-caption-type="Dynamic"] .caption--divider {
     background-color: var(--_color-tokens---border-neutral--white);
   }
+}
+
+/*----------------------
+  WEIGHT
+----------------------*/
+/* Regular */
+[data-caption-weight="Regular"] .caption--content {
+  font-weight: 400;
+}
+
+/* Medium */
+[data-caption-weight="Medium"] .caption--content {
+  font-weight: 500;
+}
+
+/* Semi Bold */
+[data-caption-weight="Semi Bold"] .caption--content {
+  font-weight: 600;
+}
+
+/*----------------------
+  SPACING
+----------------------*/
+/* Base */
+[data-caption-spacing="Base"] .caption--content {
+  padding-bottom: 1rem;
 }
