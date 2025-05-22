@@ -134,5 +134,5 @@
 }
 
 [data-link-type="Contact"] .link--divider-track {
-  background-color: var(--_color-tokens---border-neutral--black);
+  background-color: var(--_color-tokens---border-brand--dark);
 }

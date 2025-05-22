@@ -233,7 +233,7 @@
 /* Hover  */
 [data-btn-type="Secondary-Full"]:hover {
   color: var(--_color-tokens---content-neutral--white);
-  background-color: var(--_color-tokens---bg-brand--darker);
+  background-color: var(--_color-tokens---bg-brand--darkest);
   border: 0;
 }
 
