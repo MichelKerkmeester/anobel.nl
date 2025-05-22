@@ -12,6 +12,22 @@
   font-size: var(--_typography---size--base);
 }
 
+/* Small */
+[data-caption-size="Small"] .caption--content {
+  font-size: var(--_typography---size--small);
+}
+
+/* Dynamic Size - Large on desktop, Base on tablet and below */
+[data-caption-size="Dynamic"] .caption--content {
+  font-size: var(--_typography---size--large);
+}
+
+@media screen and (max-width: 991px) {
+  [data-caption-size="Dynamic"] .caption--content {
+    font-size: var(--_typography---size--base);
+  }
+}
+
 /*----------------------
   COLOR
 ----------------------*/
@@ -77,5 +93,5 @@
 ----------------------*/
 /* Base */
 [data-caption-spacing="Base"] .caption--content {
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
 }
