@@ -137,7 +137,7 @@
 }
 
 /* Semi Bold */
-.label--main[data-label-weight="Semi-Bold"] .label--content {
+.label--main[data-label-weight="Semi Bold"] .label--content {
   font-weight: 600;
 }
 
