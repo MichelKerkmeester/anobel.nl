@@ -46,21 +46,21 @@
   padding-top: 0.5rem;
 }
 
-/* Dynamic - Base on desktop, Large on tablet and below */
-[data-link-size="Dynamic"] .link--heading {
+/* Contact */
+[data-link-size="Contact"] .link--heading {
   font-size: var(--_typography---size--base);
 }
 
-[data-link-size="Dynamic"] .link--divider {
+[data-link-size="Contact"] .link--divider {
   padding-top: 0.5rem;
 }
 
 @media screen and (max-width: 991px) {
-  [data-link-size="Dynamic"] .link--heading {
+  [data-link-size="Contact"] .link--heading {
     font-size: var(--_typography---size--large);
   }
 
-  [data-link-size="Dynamic"] .link--divider {
+  [data-link-size="Contact"] .link--divider {
     padding-top: 0.75rem;
   }
 }
