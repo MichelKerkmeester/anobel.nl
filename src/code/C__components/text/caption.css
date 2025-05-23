@@ -10,11 +10,21 @@
 /* Base */
 [data-caption-size="Base"] .caption--content {
   font-size: var(--_typography---size--base);
+  gap: 0.75rem;
+}
+
+[data-caption-size="Base"] .caption--divider {
+  width: 1.5rem;
 }
 
 /* Small */
 [data-caption-size="Small"] .caption--content {
   font-size: var(--_typography---size--small);
+  gap: 0.5rem;
+}
+
+[data-caption-size="Small"] .caption--divider {
+  width: 1.25rem;
 }
 
 /* Contact */
@@ -47,6 +57,15 @@
 
 [data-caption-type="Light"] .caption--divider {
   background-color: var(--_color-tokens---border-neutral--white);
+}
+
+/* Black */
+[data-caption-type="Black"] .caption--content {
+  color: var(--_color-tokens---content-neutral--black);
+}
+
+[data-caption-type="Black"] .caption--divider {
+  background-color: var(--_color-tokens---border-neutral--black);
 }
 
 /* Dynamic */
