@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Filter Demo</title>
+    <style>
+        /* Basic styling for demo */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .filter-controls {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #f0f0f0;
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .sort-select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .blog-item {
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .blog-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-item.hidden {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: #666;
+        }
+
+        .load-more-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .load-more-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Blog Filter System Demo</h1>
+
+    <!-- Filter Controls -->
+    <div class="filter-controls">
+        <input type="text" data-filter="search" placeholder="Search articles..." class="search-input">
+
+        <div class="category-tabs">
+            <div data-filter="category-tab" data-category-value="all" class="tab active">All Articles</div>
+            <div data-filter="category-tab" data-category-value="news" class="tab">News</div>
+            <div data-filter="category-tab" data-category-value="updates" class="tab">Updates</div>
+            <div data-filter="category-tab" data-category-value="filtratie" class="tab">Filtratie & Separatie</div>
+        </div>
+
+        <select data-filter="sort" class="sort-select">
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="title-asc">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+        </select>
+
+        <p>Results: <span data-filter="results-count">0 artikelen</span></p>
+    </div>
+
+    <!-- Blog List -->
+    <div data-filter="list" class="blog-grid">
+        <!-- Example blog items - in Webflow these would be CMS items -->
+        <div data-filter="item" data-category="updates" class="blog-item">
+            <div data-date="2025-04-18" style="display:none;"></div>
+            <small>UPDATE</small>
+            <h3 data-title>Fleetguard versterkt samenwerking</h3>
+            <p>18 April 2025</p>
+        </div>
+
+        <div data-filter="item" data-category="news" class="blog-item">
+            <div data-date="2024-11-22" style="display:none;"></div>
+            <small>SCHEEPSBUNKERING</small>
+            <h3 data-title>Bunkerstation Nobel weer operationeel</h3>
+            <p>22 November 2024</p>
+        </div>
+
+        <div data-filter="item" data-category="updates" class="blog-item">
+            <div data-date="2024-04-30" style="display:none;"></div>
+            <small>UPDATE</small>
+            <h3 data-title>De Digitale Transformatie van A. Nobel & Zn</h3>
+            <p>30 April 2024</p>
+        </div>
+
+        <div data-filter="item" data-category="filtratie" class="blog-item">
+            <div data-date="2024-04-15" style="display:none;"></div>
+            <small>FILTRATIE & SEPARATIE</small>
+            <h3 data-title>Bezoek van het Leadership Board van Atmus Filtration</h3>
+            <p>15 April 2024</p>
+        </div>
+
+        <!-- Add more items as needed -->
+    </div>
+
+    <!-- Empty State -->
+    <div data-filter="empty-state" class="empty-state" style="display:none;">
+        <p>No articles found matching your search criteria.</p>
+    </div>
+
+    <!-- Load More Button -->
+    <button data-filter="load-more" class="load-more-btn">
+        Load More Articles
+    </button>
+
+    <!-- Include the filter system script -->
+    <script src="../src/js/Filter system.js"></script>
+
+    <!-- Optional: Include enhanced version -->
+    <!-- <script src="../src/js/filter-system-enhanced.js"></script> -->
+</body>
+
+</html>
