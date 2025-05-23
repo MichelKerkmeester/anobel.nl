@@ -34,7 +34,7 @@
 }
 
 [data-link-size="Large"] .link--divider {
-  padding-top: 0.75rem;
+  margin-top: 0.75rem;
 }
 
 /* Base */
@@ -43,7 +43,7 @@
 }
 
 [data-link-size="Base"] .link--divider {
-  padding-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* Contact */
@@ -52,7 +52,7 @@
 }
 
 [data-link-size="Contact"] .link--divider {
-  padding-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 @media screen and (max-width: 991px) {
@@ -61,7 +61,7 @@
   }
 
   [data-link-size="Contact"] .link--divider {
-    padding-top: 0.75rem;
+    margin-top: 0.75rem;
   }
 }
 

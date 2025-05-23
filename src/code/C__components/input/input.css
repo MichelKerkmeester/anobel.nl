@@ -4,7 +4,9 @@
 input,
 textarea,
 select {
-  caret-color: var(--_color-tokens---content-highlight--primary); /* Color of the text cursor */
+  caret-color: var(
+    --_color-tokens---content-highlight--primary
+  ); /* Color of the text cursor */
 }
 
 /* Placeholder styles */

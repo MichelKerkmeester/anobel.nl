@@ -21,19 +21,15 @@
 [data-product-size="Small"] .link--product-image-w {
   justify-content: center;
   align-items: center;
-  max-height: none;
+  height: 100%;
 }
 
 [data-product-size="Small"] .link--product-image {
+  aspect-ratio: auto;
   height: auto;
-  max-height: 15rem;
+  max-height: 7.5rem;
 }
 
 [data-product-size="Small"] .link--product-heading {
   font-size: var(--_typography---size--large);
-}
-
-[data-product-size="Small"] .link--product-btn-icon {
-  width: 1rem;
-  height: 1rem;
 }
