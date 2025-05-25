@@ -271,7 +271,7 @@
 [data-btn-type="Secondary-Ghost"]:hover {
   color: var(--_color-tokens---content-brand--base);
   background-color: var(--_color-tokens---bg-neutral--white);
-  border: 2px solid var(--_color-tokens---border-brand--dark);
+  border: 2px solid var(--_color-tokens---border-neutral--darkest);
 }
 
 /* Pressed  */

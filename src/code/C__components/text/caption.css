@@ -27,6 +27,22 @@
   width: 1.25rem;
 }
 
+/* Dynamic */
+[data-caption-size="Dynamic"] .caption--content {
+  font-size: var(--_typography---size--large);
+}
+
+@media screen and (max-width: 479px) {
+  [data-caption-size="Dynamic"] .caption--content {
+    font-size: var(--_typography---size--base);
+    gap: 0.75rem;
+  }
+
+  [data-caption-size="Dynamic"] .caption--divider {
+    width: 1.5rem;
+  }
+}
+
 /* Contact */
 [data-caption-size="Contact"] .caption--content {
   font-size: var(--_typography---size--small);
