@@ -38,10 +38,10 @@ function initializeHeroStates() {
     height: isDesktop
       ? "100svh"
       : isTablet
-      ? "95svh"
+      ? "97.5svh"
       : isMobileTall
-      ? "95svh"
-      : "90svh",
+      ? "97.5svh"
+      : "92.5svh",
   });
 
   gsap.set(".hero--video-container", { padding: 0 });
@@ -74,15 +74,15 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
   const easeOut = isDesktop ? "power4.out" : "expo.out";
   const easeInOut = isDesktop ? "power2.inOut" : "expo.inOut";
 
-  // Duration helpers (mobile needs to be a touch slower)
-  const durContainer = isMobile ? 1.4 : isDesktop ? 1.1 : 1;
-  const durCollapse = isMobile ? 1.6 : isDesktop ? 1.2 : 1.2;
-  const durContent = isMobile ? 1.2 : isDesktop ? 1.1 : 1.0;
-  const durHeaders = isMobile ? 1.1 : isDesktop ? 0.9 : 0.9;
+  // Duration helpers (mobile optimized timing)
+  const durContainer = isMobile ? 1.3 : isDesktop ? 1.1 : 1;
+  const durCollapse = isMobile ? 1.5 : isDesktop ? 1.2 : 1.2;
+  const durContent = isMobile ? 1.1 : isDesktop ? 1.1 : 1.0;
+  const durHeaders = isMobile ? 1.0 : isDesktop ? 0.9 : 0.9;
 
-  // Offset helpers so content kicks in earlier on mobile
-  const offsetContent = isMobile ? "-=1.1" : "-=0.9";
-  const offsetHeaders = isMobile ? "-=0.8" : "-=0.7";
+  // Offset helpers so content kicks in much earlier on mobile
+  const offsetContent = isMobile ? "-=1.4" : "-=0.9";
+  const offsetHeaders = isMobile ? "-=1.1" : "-=0.7";
 
   const tl = gsap.timeline({
     // Provide a slightly longer default duration to make transitions feel more fluid on larger screens
@@ -134,10 +134,10 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
           ? "85svh"
           : "82.5svh"
         : isTablet
-        ? "85svh"
+        ? "87.5svh"
         : isMobileTall
-        ? "80svh"
-        : "85svh",
+        ? "82.5svh"
+        : "87.5svh",
       duration: durCollapse,
       ease: easeInOut,
     },
