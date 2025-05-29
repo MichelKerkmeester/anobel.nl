@@ -1,50 +1,302 @@
 /* Input field */
 
-/* Caret styling */
+/* -------------------------------------------- 
+   WEBFLOW FORM CONTAINER SUPPORT
+   -------------------------------------------- */
+/* Ensures styles work within Webflow's form wrappers */
+.w-form .input,
+.w-form .w-input,
+.w-form textarea.input,
+.w-form textarea.w-input,
+.w-form select.input,
+.w-form select.w-select,
+.form-block .input,
+.form-block .w-input,
+.form-block textarea.input,
+.form-block textarea.w-input,
+.form-block select.input,
+.form-block select.w-select {
+  /* Inherits all styles from state selectors below */
+}
+
+/* ============================================
+   STATES
+   ============================================ */
+
+/* -------------------------------------------- 
+   ENABLED (Default State)
+   -------------------------------------------- */
+.input,
+.w-input,
+textarea.input,
+textarea.w-input,
+select.input,
+select.w-select {
+  /* Colors */
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+
+  /* Transitions for smooth state changes */
+  transition: border-color 0.2s ease-in-out, outline 0.1s ease-in-out;
+
+  /* Reset outline - will be added only for keyboard focus */
+  outline: none;
+  outline-offset: 2px;
+
+  /* Prevent zoom on mobile by ensuring min font size */
+  font-size: max(1em, 16px);
+}
+
+/* Caret (text cursor) styling - applies to all form inputs */
 input,
 textarea,
 select {
-  caret-color: var(
-    --_color-tokens---content-highlight--primary
-  ); /* Color of the text cursor */
+  caret-color: var(--_color-tokens---content-highlight--primary);
 }
 
-/* Placeholder styles */
+/* -------------------------------------------- 
+   PLACEHOLDER TEXT STYLING
+   -------------------------------------------- */
+
+/* Basic placeholder styling */
+.input::placeholder,
+.w-input::placeholder,
+textarea.input::placeholder,
+textarea.w-input::placeholder {
+  color: var(--_color-tokens---content-neutral--base); /* Neutral base color */
+  opacity: 1; /* 100% opacity */
+}
+
+/* Advanced placeholder styles with data-placeholder attribute */
 .w-input[data-placeholder]::placeholder,
-.w-select[data-placeholder]::placeholder {
+.w-select[data-placeholder]::placeholder,
+textarea.w-input[data-placeholder]::placeholder,
+select.w-select[data-placeholder]::placeholder {
   content: attr(data-current-placeholder) !important;
   transition: color 0.3s ease-out !important;
   color: var(--_color-tokens---content-neutral--base) !important;
+  opacity: 1 !important; /* 100% opacity */
 }
 
+/* Placeholder hover state for data-placeholder elements */
 .w-input[data-placeholder].hovered::placeholder,
-.w-select[data-placeholder].hovered::placeholder {
+.w-select[data-placeholder].hovered::placeholder,
+textarea.w-input[data-placeholder].hovered::placeholder,
+select.w-select[data-placeholder].hovered::placeholder {
   color: var(--_color-tokens---content-neutral--dark) !important;
 }
 
-/* Custom focus style for mouse/touch */
-input.w--focus,
-textarea.w--focus,
-select.w--focus {
-  border: 2px solid var(--secondary--base) !important;
-  outline: 0px solid var(--_color-tokens---state--focused) !important;
-  transition: border 0.3s ease-out;
+/* -------------------------------------------- 
+   HOVER STATE
+   -------------------------------------------- */
+.input:hover,
+.w-input:hover,
+textarea.input:hover,
+textarea.w-input:hover,
+select.input:hover,
+select.w-select:hover {
+  background-color: var(
+    --_color-tokens---bg-neutral--white
+  ); /* Maintains white bg */
+  border-color: var(
+    --_color-tokens---border-neutral--darkest
+  ); /* Darker border on hover */
 }
 
-/* Custom focus style for keyboard navigation */
-input.w--focus-visible,
-textarea.w--focus-visible,
-select.w--focus-visible {
-  border: 2px solid var(--_color-tokens---border-brand--base) !important;
+/* -------------------------------------------- 
+   FOCUSED STATE
+   -------------------------------------------- */
+
+/* Default focus (mouse, touch) */
+.input:focus,
+.w-input:focus,
+textarea.input:focus,
+textarea.w-input:focus,
+select.input:focus,
+select.w-select:focus {
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border-color: var(
+    --_color-tokens---border-brand--base
+  ); /* Brand color border */
+  outline: none !important; /* No outline by default */
+  outline-width: 0 !important;
+}
+
+/* Keyboard focus - Only when body has 'using-keyboard' class */
+body.using-keyboard .input:focus,
+body.using-keyboard .w-input:focus,
+body.using-keyboard textarea.input:focus,
+body.using-keyboard textarea.w-input:focus,
+body.using-keyboard select.input:focus,
+body.using-keyboard select.w-select:focus {
+  border-color: var(
+    --_color-tokens---border-neutral--dark
+  ); /* Reverts to default border */
+  outline: 4px solid var(--_color-tokens---state--focused) !important; /* Prominent outline for accessibility */
+  outline-offset: 0;
+}
+
+/* Native :focus-visible fallback */
+.input:focus-visible,
+.w-input:focus-visible,
+textarea.input:focus-visible,
+textarea.w-input:focus-visible,
+select.input:focus-visible,
+select.w-select:focus-visible {
+  border-color: var(--_color-tokens---border-neutral--dark);
   outline: 4px solid var(--_color-tokens---state--focused) !important;
-  transition: border 0.3s ease-out;
+  outline-offset: 0;
 }
 
-/* Text area */
-/* Resize handling */
+/* Ensure no outline for mouse users */
+body:not(.using-keyboard) .input:focus,
+body:not(.using-keyboard) .w-input:focus,
+body:not(.using-keyboard) textarea.input:focus,
+body:not(.using-keyboard) textarea.w-input:focus,
+body:not(.using-keyboard) select.input:focus,
+body:not(.using-keyboard) select.w-select:focus {
+  outline: none !important;
+  outline-width: 0 !important;
+}
+
+/* -------------------------------------------- 
+   DISABLED STATE
+   -------------------------------------------- */
+.input:disabled,
+.w-input:disabled,
+textarea.input:disabled,
+textarea.w-input:disabled,
+select.input:disabled,
+select.w-select:disabled {
+  opacity: 0.5; /* Half transparency */
+  cursor: not-allowed; /* Shows not-allowed cursor */
+  border-color: var(
+    --_color-tokens---border-neutral--dark
+  ); /* Maintains default border */
+}
+
+/* ============================================
+   INPUT: TEXT AREA
+   ============================================ */
+/* Resize and overflow handling for textareas */
 textarea {
-  resize: vertical;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-y: auto;
+  resize: vertical; /* Allow only vertical resizing */
+  max-width: 100%; /* Prevent horizontal overflow */
+  box-sizing: border-box; /* Include padding and border in width */
+  overflow-y: auto; /* Show scrollbar when needed */
+}
+
+/* -------------------------------------------- 
+   CUSTOM RESIZE OPTIONS
+   -------------------------------------------- */
+
+/* Allow both horizontal and vertical resize (opt-in) */
+textarea.input[data-resize="both"],
+textarea.w-input[data-resize="both"] {
+  resize: both;
+}
+
+/* Allow horizontal resize only (opt-in) */
+textarea.input[data-resize="horizontal"],
+textarea.w-input[data-resize="horizontal"] {
+  resize: horizontal;
+}
+
+/* Disable resize completely (opt-in) */
+textarea.input[data-resize="none"],
+textarea.w-input[data-resize="none"] {
+  resize: none;
+}
+
+/* -------------------------------------------- 
+   MINIMUM DIMENSIONS
+   -------------------------------------------- */
+
+/* Set minimum height for better usability */
+textarea.input,
+textarea.w-input {
+  min-height: 3rem; /* Default minimum height */
+}
+
+/* Large minimum height (opt-in) */
+textarea.input[data-min-height="large"],
+textarea.w-input[data-min-height="large"] {
+  min-height: 6rem;
+}
+
+/* Extra large minimum height (opt-in) */
+textarea.input[data-min-height="xl"],
+textarea.w-input[data-min-height="xl"] {
+  min-height: 9rem;
+}
+
+/* ============================================
+   INPUT: SELECT
+   ============================================ */
+
+/* Hide bottom border on last dropdown item */
+.input--select-link:last-child {
+  border-bottom: none;
+}
+
+/* Alternative selector with parent context */
+.input--select-dropdown .input--select-link:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   BROWSER SPECIFIC FIXES
+   ============================================ */
+
+/* Fix for Safari/iOS - Only apply hover on devices that support it */
+@media (hover: hover) {
+  .input:hover:not(:focus),
+  .w-input:hover:not(:focus),
+  textarea.input:hover:not(:focus),
+  textarea.w-input:hover:not(:focus),
+  select.input:hover:not(:focus),
+  select.w-select:hover:not(:focus) {
+    border-color: var(--_color-tokens---border-neutral--darkest);
+  }
+}
+
+/* ============================================
+   MOBILE ZOOM PREVENTION
+   ============================================ */
+
+/* Method 1: Target mobile breakpoint */
+@media (max-width: 768px) {
+  .input,
+  .w-input,
+  textarea.input,
+  textarea.w-input,
+  select.input,
+  select.w-select,
+  .w-form .input,
+  .w-form .w-input,
+  .w-form textarea.input,
+  .w-form textarea.w-input,
+  .w-form select.input,
+  .w-form select.w-select,
+  .form-block .input,
+  .form-block .w-input,
+  .form-block textarea.input,
+  .form-block textarea.w-input,
+  .form-block select.input,
+  .form-block select.w-select {
+    font-size: 16px !important; /* iOS requires 16px to prevent zoom */
+  }
+}
+
+/* Method 2: Target touch devices using modern media queries */
+@media (hover: none) and (pointer: coarse) {
+  .input,
+  .w-input,
+  .w-select,
+  textarea.w-input,
+  textarea.input,
+  select.input,
+  select.w-select {
+    font-size: 16px !important; /* Prevents zoom on all touch devices */
+  }
 }

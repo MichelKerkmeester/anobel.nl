@@ -143,6 +143,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Primary-Full"]:focus-visible {
   color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---primary--base);
   border: 0;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -180,6 +181,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Primary-Ghost-Light"]:focus-visible {
   color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
   border: 2px solid var(--_color-shades---primary--darkest);
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -217,6 +219,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Primary-Ghost-Dark"]:focus-visible {
   color: var(--_color-tokens---content-neutral--white);
+  background-color: rgba(10, 10, 10, 0.25);
   border: 2px solid var(--_color-shades---primary--darkest);
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -254,6 +257,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Secondary-Full"]:focus-visible {
   color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--base);
   border: 0;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -291,6 +295,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Secondary-Ghost"]:focus-visible {
   color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
   border: 2px solid var(--_color-tokens---border-neutral--dark);
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -328,6 +333,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Secondary-Transparent"]:focus-visible {
   color: var(--_color-tokens---content-brand--base);
+  background-color: transparent;
   border: 2px solid transparent;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -365,6 +371,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Tertiary-Transparent"]:focus-visible {
   color: var(--_color-tokens---content-neutral--white);
+  background-color: transparent;
   border: 2px solid transparent;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -402,6 +409,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Warning-Full"]:focus-visible {
   color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-shades---warning--dark);
   border: 0;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -439,6 +447,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Warning-Ghost"]:focus-visible {
   color: var(--_color-shades---warning--dark);
+  background-color: var(--_color-tokens---bg-neutral--white);
   border: 2px solid var(--_color-shades---warning--darkest);
   outline: 4px solid var(--_color-tokens---state--focused);
 }
@@ -476,6 +485,7 @@
 /* Focused (Keyboard) */
 [data-btn-type="Warning-Transparent"]:focus-visible {
   color: var(--_color-shades---warning--dark);
+  background-color: transparent;
   border: 2px solid transparent;
   outline: 4px solid var(--_color-tokens---state--focused);
 }
