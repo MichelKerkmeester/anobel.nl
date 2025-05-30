@@ -34,7 +34,7 @@ select.input,
 select.w-select {
   /* Colors */
   background-color: var(--_color-tokens---bg-neutral--white);
-  border: 2px solid var(--_color-tokens---border-neutral--dark);
+  border: 1px solid var(--_color-tokens---border-neutral--dark);
 
   /* Transitions for smooth state changes */
   transition: border-color 0.2s ease-in-out, outline 0.1s ease-in-out;
@@ -42,9 +42,6 @@ select.w-select {
   /* Reset outline - will be added only for keyboard focus */
   outline: none;
   outline-offset: 2px;
-
-  /* Prevent zoom on mobile by ensuring min font size */
-  font-size: max(1em, 16px);
 }
 
 /* Caret (text cursor) styling - applies to all form inputs */
@@ -264,39 +261,81 @@ textarea.w-input[data-min-height="xl"] {
    MOBILE ZOOM PREVENTION
    ============================================ */
 
-/* Method 1: Target mobile breakpoint */
-@media (max-width: 768px) {
+/* Primary method: Target mobile and tablet devices (up to 991px) */
+@media screen and (max-width: 991px) {
+  /* Target all input types specifically */
+  input[type="text"],
+  input[type="email"], 
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  textarea,
+  select,
+  /* Target class-based inputs */
   .input,
   .w-input,
   textarea.input,
   textarea.w-input,
   select.input,
   select.w-select,
+  /* Target within Webflow form containers */
+  .w-form input,
+  .w-form textarea,
+  .w-form select,
   .w-form .input,
   .w-form .w-input,
   .w-form textarea.input,
   .w-form textarea.w-input,
   .w-form select.input,
   .w-form select.w-select,
+  /* Target within form blocks */
+  .form-block input,
+  .form-block textarea,
+  .form-block select,
   .form-block .input,
   .form-block .w-input,
   .form-block textarea.input,
   .form-block textarea.w-input,
   .form-block select.input,
   .form-block select.w-select {
-    font-size: 16px !important; /* iOS requires 16px to prevent zoom */
+    font-size: 16px !important; /* iOS requires exactly 16px to prevent zoom */
+    -webkit-text-size-adjust: 100% !important; /* Additional iOS fix */
   }
 }
 
-/* Method 2: Target touch devices using modern media queries */
-@media (hover: none) and (pointer: coarse) {
+/* Secondary method: Target touch devices specifically */
+@media (hover: none) and (pointer: coarse) and (max-width: 991px) {
+  input,
+  textarea,
+  select,
   .input,
   .w-input,
-  .w-select,
-  textarea.w-input,
   textarea.input,
+  textarea.w-input,
   select.input,
   select.w-select {
-    font-size: 16px !important; /* Prevents zoom on all touch devices */
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+/* Fallback method: Target specific iOS devices */
+@media screen and (max-device-width: 991px) and (-webkit-min-device-pixel-ratio: 1) {
+  input,
+  textarea,
+  select,
+  .input,
+  .w-input,
+  textarea.input,
+  textarea.w-input,
+  select.input,
+  select.w-select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
   }
 }

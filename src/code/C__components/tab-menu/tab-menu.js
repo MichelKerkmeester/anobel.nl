@@ -8,38 +8,47 @@ const tabMenuInit = () => {
   const tabButtons = tabMenu.querySelectorAll(".tab--menu-btn");
   if (!tabButtons.length) return;
 
-  // Prevent layout shifting
+  // Prevent layout shifting from font weight changes
   tabButtons.forEach((btn) => {
-    const currentWidth = btn.offsetWidth;
-    btn.style.minWidth = `${currentWidth}px`;
-    btn.style.position = "relative";
+    const htmlBtn = /** @type {HTMLElement} */ (btn);
+
+    // Temporarily apply semi-bold to measure widest state
+    const originalFontWeight = htmlBtn.style.fontWeight;
+    htmlBtn.style.fontWeight = "600";
+    const maxWidth = htmlBtn.offsetWidth;
+
+    // Restore original weight and set fixed width
+    htmlBtn.style.fontWeight = originalFontWeight;
+    htmlBtn.style.minWidth = `${maxWidth}px`;
   });
 
   // Find initially active tab
   tabButtons.forEach((btn, index) => {
     if (btn.classList.contains("is--set")) {
       activeTabIndex = index;
+      applyActiveStyles(btn);
     }
   });
-
-  // Apply initial styling
-  if (tabButtons[activeTabIndex]) {
-    applyActiveStyles(tabButtons[activeTabIndex]);
-  }
 
   /**
    * @param {Element} tabButton
    */
   function applyActiveStyles(tabButton) {
+    const htmlBtn = /** @type {HTMLElement} */ (tabButton);
+
     if (window.gsap) {
       gsap.to(tabButton, {
-        color: "var(--_color-tokens---content-brand--base)",
-        borderBottom: "2px solid var(--_color-tokens---border-brand--base)",
+        fontWeight: "600",
+        color: "var(--_color-tokens---content-neutral--white)",
+        backgroundColor: "var(--_color-tokens---bg-brand--base)",
+        border: "2px solid var(--_color-tokens---border-brand--base)",
         duration: 0.3,
       });
     } else {
-      tabButton.style.color = "var(--_color-tokens---content-brand--base)";
-      tabButton.style.borderBottom =
+      htmlBtn.style.fontWeight = "600";
+      htmlBtn.style.color = "var(--_color-tokens---content-neutral--white)";
+      htmlBtn.style.backgroundColor = "var(--_color-tokens---bg-brand--base)";
+      htmlBtn.style.border =
         "2px solid var(--_color-tokens---border-brand--base)";
     }
   }
@@ -48,15 +57,21 @@ const tabMenuInit = () => {
    * @param {Element} tabButton
    */
   function removeActiveStyles(tabButton) {
+    const htmlBtn = /** @type {HTMLElement} */ (tabButton);
+
     if (window.gsap) {
       gsap.to(tabButton, {
+        fontWeight: "",
         color: "",
-        borderBottom: "",
+        backgroundColor: "",
+        border: "",
         duration: 0.3,
       });
     } else {
-      tabButton.style.color = "";
-      tabButton.style.borderBottom = "";
+      htmlBtn.style.fontWeight = "";
+      htmlBtn.style.color = "";
+      htmlBtn.style.backgroundColor = "";
+      htmlBtn.style.border = "";
     }
   }
 

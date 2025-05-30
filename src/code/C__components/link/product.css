@@ -16,6 +16,7 @@
   height: auto;
   padding: 1rem;
   display: grid;
+  border: 1px solid var(--_color-tokens---border-neutral--dark);
 }
 
 [data-product-size="Small"] .link--product-image-w {
