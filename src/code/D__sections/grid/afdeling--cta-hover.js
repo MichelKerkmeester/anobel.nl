@@ -1,6 +1,13 @@
 // Afdeling: CTA
 // Hover Animation
 function initAfdelingCtaHover() {
+  // Check if device is tablet/desktop (not mobile) and not a touch device
+  const isTabletOrDesktop = window.matchMedia(
+    "(min-width: 768px) and (hover: hover)"
+  ).matches;
+
+  if (!isTabletOrDesktop) return; // Exit early if mobile or touch device
+
   // Get all CTA cards
   const ctaCards = document.querySelectorAll(".afdeling--card.is--cta");
 

@@ -1,6 +1,13 @@
 // Link: General
 // Hover Animation
 Webflow.push(() => {
+  // Check if device is tablet/desktop (not mobile) and not a touch device
+  const isTabletOrDesktop = window.matchMedia(
+    "(min-width: 768px) and (hover: hover)"
+  ).matches;
+
+  if (!isTabletOrDesktop) return; // Exit early if mobile or touch device
+
   const cards = document.querySelectorAll(".link--general");
 
   cards.forEach((card) => {

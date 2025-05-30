@@ -1,6 +1,26 @@
-// Button
-// Animation
+// Button: CTA
+// Animate on Hover
+
+// Check if device supports touch
+const isTouchDevice = () => {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+};
+
+// Check if device is desktop or tablet (not mobile)
+const isDesktopOrTablet = () => {
+  const isLargeScreen = window.matchMedia("(min-width: 768px)").matches;
+  const hasTouch = isTouchDevice();
+
+  // Desktop (no touch, large screen) or Tablet (touch, large screen)
+  return isLargeScreen;
+};
+
 const btnContainerAnimation = () => {
+  // Only run on desktop and tablet
+  if (!isDesktopOrTablet()) {
+    return;
+  }
+
   // Select all btn--cta containers
   const btnContainers = document.querySelectorAll(".btn--cta");
 
@@ -54,12 +74,6 @@ const btnContainerAnimation = () => {
 
         // Store the animation for this button
         buttonAnimations.push(timeline);
-
-        // Remove direct event listeners from the button to prevent conflicts
-        const oldEnterFn = btn._mouseenterFn;
-        const oldLeaveFn = btn._mouseleaveFn;
-        if (oldEnterFn) btn.removeEventListener("mouseenter", oldEnterFn);
-        if (oldLeaveFn) btn.removeEventListener("mouseleave", oldLeaveFn);
       }
     });
 
@@ -87,7 +101,5 @@ const btnAnimation = () => {
   );
 };
 
-// Initialize when DOM is ready
-Webflow.push(() => {
-  btnContainerAnimation();
-});
+// Initialize immediately - Slater handles DOM ready timing
+btnContainerAnimation();

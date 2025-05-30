@@ -1,12 +1,12 @@
 // Link: Hero
 // Hover Animation
 Webflow.push(() => {
-  // Check if device is desktop (not touch device)
-  const isDesktop = window.matchMedia(
-    "(min-width: 992px) and (hover: hover)"
+  // Check if device is tablet/desktop (not mobile) and not a touch device
+  const isTabletOrDesktop = window.matchMedia(
+    "(min-width: 768px) and (hover: hover)"
   ).matches;
 
-  if (!isDesktop) return; // Exit early if not desktop
+  if (!isTabletOrDesktop) return; // Exit early if mobile or touch device
 
   const cards = document.querySelectorAll(".link--hero");
 

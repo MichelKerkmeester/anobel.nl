@@ -10,10 +10,10 @@ import "../code/C__components/button/btn--text-link.js";
 import "../code/C__components/button/btn--cta.js";
 import "../code/C__components/link/link--hero.js";
 import "../code/C__components/link/link--general.js";
-import "../code/D__sections/cms/pagination.js";
+import "../code/D__sections/cms/related-articles.js";
 import "../code/D__sections/hero/video/video.js";
 import "../code/E__other/legal/cookie-consent.js";
-import "../code/D__sections/grid/afdeling--call-to-action.js";
+import "../code/D__sections/grid/afdeling--cta-hover.js";
 
 // Initialize any global functionality
 console.log("Nobel website scripts initialized");
