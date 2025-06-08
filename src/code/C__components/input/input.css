@@ -213,6 +213,7 @@ textarea.w-input[data-resize="none"] {
 textarea.input,
 textarea.w-input {
   min-height: 3rem; /* Default minimum height */
+  height: auto; /* Fallback to min-height and content size */
 }
 
 /* Large minimum height (opt-in) */

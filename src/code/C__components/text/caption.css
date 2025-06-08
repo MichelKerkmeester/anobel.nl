@@ -128,12 +128,12 @@
 ----------------------*/
 /* Large */
 [data-caption-spacing="Large"] .caption--content {
-  padding-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
 }
 
 /* Base */
 [data-caption-spacing="Base"] .caption--content {
-  padding-bottom: 1.25rem;
+  padding-bottom: 1rem;
 }
 
 /* Small */

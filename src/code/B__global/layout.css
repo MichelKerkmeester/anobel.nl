@@ -1,0 +1,29 @@
+/* Layout */
+/*----------------------
+  MARGIN TRIM
+----------------------*/
+/* Remove margin from the first and last child */
+.u--margin-trim > :first-child,
+.u--margin-trim
+  > :not(:not(.w-condition-invisible) ~ :not(.w-condition-invisible)) {
+  margin-top: 0;
+}
+.u--margin-trim > :not(:has(~ :not(.w-condition-invisible))) {
+  margin-bottom: 0;
+}
+
+/*----------------------
+  MARGIN TRIM - RICH TEXT 
+----------------------*/
+/* Get rid of top margin on first element in any rich text element */
+.w-richtext > :first-child,
+.w-richtext
+  > :not(:not(.w-condition-invisible) ~ :not(.w-condition-invisible)) {
+  margin-top: 0 !important;
+}
+
+/* Get rid of bottom margin on last element in any rich text element */
+.w-richtext > :last-child,
+.w-richtext > :not(:has(~ :not(.w-condition-invisible))) {
+  margin-bottom: 0 !important;
+}

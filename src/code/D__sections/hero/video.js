@@ -28,7 +28,7 @@ function initializeHeroStates() {
     willChange: "opacity, transform",
   });
 
-  gsap.set([".hero--header.is--video"], {
+  gsap.set([".hero--header"], {
     opacity: 0,
     y: isDesktop ? "10vh" : isTablet ? "2rem" : "1rem",
     willChange: "opacity, transform",
@@ -159,7 +159,7 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
 
   // Headers follow the content a bit closer to keep everything in sync
   tl.to(
-    [".hero--header.is--video"],
+    [".hero--header"],
     {
       opacity: 1,
       y: 0,

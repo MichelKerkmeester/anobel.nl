@@ -58,17 +58,3 @@
     --_structure---container--full-width: 100%;
   }
 }
-
-/*----------------------
-  MARGIN TRIM
-----------------------*/
-/* Remove margin from the first and last child */
-.u--margin-trim > :first-child,
-.u--margin-trim
-  > :not(:not(.w-condition-invisible) ~ :not(.w-condition-invisible)) {
-  margin-top: 0;
-}
-.u--margin-trim > :last-child,
-.u--margin-trim > :not(:has(~ :not(.w-condition-invisible))) {
-  margin-bottom: 0;
-}

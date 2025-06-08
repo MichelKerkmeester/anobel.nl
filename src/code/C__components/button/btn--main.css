@@ -108,6 +108,19 @@
 }
 
 /*----------------------
+  WEIGHT
+----------------------*/
+/* Regular */
+[data-btn-weight="Regular"] {
+  font-weight: 400;
+}
+
+/* Semi Bold */
+[data-btn-weight="Semi Bold"] {
+  font-weight: 600;
+}
+
+/*----------------------
   TYPE
 ----------------------*/
 /* Primary - Full
