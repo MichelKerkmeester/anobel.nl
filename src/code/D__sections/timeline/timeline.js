@@ -24,13 +24,15 @@ function initTimelineSwiper() {
   }
 
   // Check number of slides for loop functionality
-  const slides = contentContainer.querySelectorAll(".swiper-slide");
+  const slides = contentContainer.querySelectorAll(".swiper--slide");
   const slidesCount = slides.length;
 
   const mainSwiper = new Swiper(contentContainer, {
     speed: 1200,
     autoHeight: true,
-    loop: slidesCount > 1, // Only loop if there's more than one slide
+    loop: slidesCount > 1,
+    wrapperClass: 'swiper--wrapper',
+    slideClass: 'swiper--slide',
     navigation: {
       nextEl: '[timeline-pagination="next"]',
       prevEl: '[timeline-pagination="previous"]',
@@ -51,4 +53,5 @@ if (window.Webflow) {
 } else {
   // Fallback if Webflow object is not available
   safeInit();
+}
 
