@@ -2,19 +2,79 @@
 /*----------------------
   YEAR BUTTONS
 ----------------------*/
-[timeline-year] {
+/* Enabled State - Secondary-Ghost Properties */
+[data-btn-type="Year"] {
   color: var(--_color-tokens---content-brand--base);
   background-color: var(--_color-tokens---bg-neutral--white);
   border: 2px solid var(--_color-tokens---border-neutral--dark);
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-/* Active Button State */
-[timeline-year].is-active {
+/* Hover */
+[data-btn-type="Year"]:hover {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--darkest);
+}
+
+/* Pressed */
+[data-btn-type="Year"]:active {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--black);
+}
+
+/* Focused */
+[data-btn-type="Year"]:focus {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-brand--dark);
+}
+
+/* Focused (Keyboard) */
+[data-btn-type="Year"]:focus-visible {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: var(--_color-tokens---bg-neutral--white);
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+/* Active State - Secondary-Full Properties */
+[data-btn-type="Year"].is--active {
   color: var(--_color-tokens---content-neutral--white);
   background-color: var(--_color-tokens---bg-brand--base);
-  border-color: var(--_color-tokens---bg-brand--base);
+  border: 0;
 }
+
+/* Hover */
+[data-btn-type="Year"].is--active:hover {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--darkest);
+  border: 0;
+}
+
+/* Pressed */
+[data-btn-type="Year"].is--active:active {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-neutral--black);
+  border: 0;
+}
+
+/* Focused */
+[data-btn-type="Year"].is--active:focus {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--darker);
+  border: 0;
+}
+
+/* Focused (Keyboard) */
+[data-btn-type="Year"].is--active:focus-visible {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--base);
+  border: 0;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
 /*----------------------
   PAGINATION
 ----------------------*/
@@ -55,6 +115,7 @@
 }
 
 @media screen and (max-width: 991px) {
+
   /* Enabled - Mobile (matches Secondary-Ghost Button) */
   [data-btn-type="Timeline"] {
     color: var(--_color-tokens---content-brand--base);

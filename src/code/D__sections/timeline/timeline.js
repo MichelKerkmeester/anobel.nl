@@ -1,4 +1,4 @@
-// Timeline Swiper - Plain JavaScript with Year Button Navigation
+// Timeline Swiper - Year Button Active State Management
 
 // Function to initialize timeline swiper
 function initTimelineSwiper() {
@@ -10,8 +10,7 @@ function initTimelineSwiper() {
 
   const slides = timelineContainer.querySelectorAll(".timeline--swiper-slide");
   const slidesCount = slides.length;
-  const yearButtons = document.querySelectorAll("[timeline-year]");
-  let currentActiveYear = null; // Variable to track the currently active year
+  const yearButtons = document.querySelectorAll('[data-btn-type="Year"]');
 
   // Swiper configuration
   const swiperConfig = {
@@ -24,7 +23,6 @@ function initTimelineSwiper() {
     loop: slidesCount > 1, // Only loop if there's more than one slide
     speed: 1200,
     autoHeight: true,
-    // parallax: { enabled: true }, // Disabled to prevent background color transitions
     watchSlidesProgress: true,
     lazy: { loadOnTransitionStart: true },
     a11y: { enabled: false },
@@ -37,10 +35,10 @@ function initTimelineSwiper() {
     },
     on: {
       init: function () {
-        updateYearButtons(this);
+        updateYearButtonActiveState(this);
       },
       slideChangeTransitionEnd: function () {
-        updateYearButtons(this);
+        updateYearButtonActiveState(this);
       },
     },
   };
@@ -48,65 +46,52 @@ function initTimelineSwiper() {
   // Initialize Swiper
   const timelineSwiper = new Swiper(timelineContainer, swiperConfig);
 
-  // Create a map of slide names to their original index
-  const slideNameMap = new Map();
+  // Create a map of year values to their slide index
+  const yearToSlideMap = new Map();
   slides.forEach((slide, index) => {
-    // Assumes each slide has a `timeline-year` attribute with the year (e.g., timeline-year="1953")
-    const name = slide.getAttribute("timeline-year");
-    if (name) {
-      slideNameMap.set(name, index);
+    const year = slide.getAttribute("timeline-year");
+    if (year) {
+      yearToSlideMap.set(year, index);
     }
   });
 
   // Add click handlers to year buttons
   yearButtons.forEach((button) => {
-    const name = button.getAttribute("timeline-year");
-    // Ensure it's a year button, not a nav button
-    if (name && name !== "next" && name !== "previous") {
+    // Get the year from the button - assuming it has a timeline-year attribute or text content
+    const year = button.getAttribute("timeline-year") || button.textContent?.trim();
+    
+    if (year && yearToSlideMap.has(year)) {
       button.addEventListener("click", () => {
-        if (slideNameMap.has(name)) {
-          const index = slideNameMap.get(name);
-          // Use slideTo instead of slideToLoop for more reliable navigation
-          if (slidesCount > 1) {
-            timelineSwiper.slideToLoop(index, 1200); // 1200ms duration to match speed
-          } else {
-            timelineSwiper.slideTo(index, 1200);
-          }
+        const slideIndex = yearToSlideMap.get(year);
+        if (slidesCount > 1) {
+          timelineSwiper.slideToLoop(slideIndex, 1200);
+        } else {
+          timelineSwiper.slideTo(slideIndex, 1200);
         }
       });
     }
   });
 
-  // Function to update year button active states
-  function updateYearButtons(swiperInstance) {
-    if (!swiperInstance.slides[swiperInstance.activeIndex]) return;
+  // Function to update active state on year buttons
+  function updateYearButtonActiveState(swiperInstance) {
     const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
-    const newActiveYear = activeSlide.getAttribute("timeline-year");
+    if (!activeSlide) return;
+    
+    const activeYear = activeSlide.getAttribute("timeline-year");
+    if (!activeYear) return;
 
-    if (newActiveYear === currentActiveYear) {
-      return; // No change, do nothing
-    }
+    // Remove is--active class from all year buttons
+    yearButtons.forEach((button) => {
+      button.classList.remove("is--active");
+    });
 
-    // Deactivate the previously active button, if there was one
-    if (currentActiveYear) {
-      const oldActiveButton = document.querySelector(
-        `[timeline-year="${currentActiveYear}"]`
-      );
-      if (oldActiveButton) {
-        oldActiveButton.classList.remove("is-active");
+    // Add is--active class to the matching year button
+    yearButtons.forEach((button) => {
+      const buttonYear = button.getAttribute("timeline-year") || button.textContent?.trim();
+      if (buttonYear === activeYear) {
+        button.classList.add("is--active");
       }
-    }
-
-    // Activate the new button
-    const newActiveButton = document.querySelector(
-      `[timeline-year="${newActiveYear}"]`
-    );
-    if (newActiveButton) {
-      newActiveButton.classList.add("is-active");
-    }
-
-    // Update the tracker for the next change
-    currentActiveYear = newActiveYear;
+    });
   }
 
   // Remove hidden attributes from slides to make them visible
