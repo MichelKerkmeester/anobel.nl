@@ -1,10 +1,25 @@
-// Simplified timeline swiper initialization
+// Swiper
+// Timeline
+
+function safeInit() {
+  try {
+    initTimelineSwiper();
+  } catch (error) {
+    console.error("Timeline initialization failed:", error);
+  }
+}
 
 function initTimelineSwiper() {
   const contentContainer = document.querySelector("#swiper-timeline");
 
   if (!contentContainer) {
     console.error("Timeline Swiper container not found.");
+    return;
+  }
+
+  // Check if Swiper is available
+  if (typeof Swiper === 'undefined') {
+    console.error("Swiper library not loaded.");
     return;
   }
 
@@ -36,4 +51,4 @@ if (window.Webflow) {
 } else {
   // Fallback if Webflow object is not available
   safeInit();
-}
+
