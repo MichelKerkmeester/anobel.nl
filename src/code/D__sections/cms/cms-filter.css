@@ -1,3 +1,10 @@
+/* Hero: Video - CMS filter (Component) */
+/* Hide all list items by default */
+
+.hero--video-list-w.filter .filter {
+  display: flex;
+}
+
 /* Section: Algemeen - CMS filter (Component) */
 /* Hide all list items by default */
 
