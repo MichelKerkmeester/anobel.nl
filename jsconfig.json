@@ -11,6 +11,6 @@
     "strict": true,
     "types": ["vite/client"]
   },
-  "include": ["src/**/*", "vite.config.js"],
+  "include": ["src/**/*", "vite.config.js", "src/types/**/*.ts"],
   "exclude": ["node_modules", "prod"]
 }

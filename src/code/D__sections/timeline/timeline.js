@@ -18,7 +18,7 @@ function initTimelineSwiper() {
   }
 
   // Check if Swiper is available
-  if (typeof Swiper === 'undefined') {
+  if (typeof Swiper === "undefined") {
     console.error("Swiper library not loaded.");
     return;
   }
@@ -27,22 +27,96 @@ function initTimelineSwiper() {
   const slides = contentContainer.querySelectorAll(".swiper--slide");
   const slidesCount = slides.length;
 
+  // Get pagination elements
+  const currentSlideEl = document.querySelector("#timeline-current");
+  const totalSlidesEl = document.querySelector("#timeline-total");
+
+  // Update total slides display
+  if (totalSlidesEl) {
+    totalSlidesEl.textContent = slidesCount.toString();
+  }
+
   const mainSwiper = new Swiper(contentContainer, {
-    speed: 1200,
+    // Basic settings
+    speed: 600,
+    slidesPerView: 1,
+    spaceBetween: 0,
+    centeredSlides: true,
     autoHeight: true,
     loop: slidesCount > 1,
-    wrapperClass: 'swiper--wrapper',
-    slideClass: 'swiper--slide',
+    grabCursor: true,
+
+    // Classes
+    wrapperClass: "swiper--wrapper",
+    slideClass: "swiper--slide",
+
+    // Navigation
     navigation: {
-      nextEl: '[timeline-pagination="next"]',
-      prevEl: '[timeline-pagination="previous"]',
+      nextEl: '[timeline-navigation="next"]',
+      prevEl: '[timeline-navigation="previous"]',
     },
+
+    // Pagination - custom fraction
+    pagination: {
+      el: ".swiper-pagination",
+      type: "custom",
+      renderCustom: function (swiper, current, total) {
+        // Update custom elements
+        if (currentSlideEl) {
+          currentSlideEl.textContent = current.toString();
+        }
+        if (totalSlidesEl) {
+          totalSlidesEl.textContent = total.toString();
+        }
+        return "";
+      },
+    },
+
+    // Autoplay
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+
+    // Keyboard control
     keyboard: {
       enabled: true,
+      onlyInViewport: true,
+    },
+
+    // Touch settings
+    simulateTouch: true,
+    touchEventsTarget: "container",
+
+    // Accessibility
+    a11y: {
+      enabled: true,
+    },
+
+    // Events
+    on: {
+      init: function (swiper) {
+        // Update pagination on init
+        if (currentSlideEl) {
+          currentSlideEl.textContent = (swiper.realIndex + 1).toString();
+        }
+        if (totalSlidesEl) {
+          totalSlidesEl.textContent = slidesCount.toString();
+        }
+      },
+      slideChange: function (swiper) {
+        // Update current slide display
+        if (currentSlideEl) {
+          currentSlideEl.textContent = (swiper.realIndex + 1).toString();
+        }
+      },
     },
   });
 
-  console.log("Timeline swiper initialized successfully.");
+  console.log(
+    "Timeline swiper initialized successfully with custom pagination."
+  );
 }
 
 // Initialize the Swiper component using Webflow's recommended pattern
@@ -54,4 +128,3 @@ if (window.Webflow) {
   // Fallback if Webflow object is not available
   safeInit();
 }
-
