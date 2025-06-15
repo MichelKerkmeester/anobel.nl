@@ -1,0 +1,77 @@
+/* Timeline */
+/*----------------------
+  PAGINATION
+----------------------*/
+/* Enabled - Desktop (matches Secondary-Transparent Button) */
+[data-btn-type="Timeline"] {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: transparent;
+  border: 2px solid transparent;
+}
+
+/* Hover  */
+[data-btn-type="Timeline"]:hover {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: transparent;
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+}
+
+/* Pressed  */
+[data-btn-type="Timeline"]:active {
+  color: var(--_color-tokens---content-neutral--black);
+  background-color: transparent;
+  border: 2px solid var(--_color-tokens---border-neutral--black);
+}
+
+/* Focused */
+[data-btn-type="Timeline"]:focus {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: transparent;
+  border: 2px solid var(--_color-tokens---border-neutral--dark);
+}
+
+/* Focused (Keyboard) */
+[data-btn-type="Timeline"]:focus-visible {
+  color: var(--_color-tokens---content-brand--base);
+  background-color: transparent;
+  border: 2px solid transparent;
+  outline: 4px solid var(--_color-tokens---state--focused);
+}
+
+@media screen and (max-width: 991px) {
+  /* Enabled - Mobile (matches Secondary-Ghost Button) */
+  [data-btn-type="Timeline"] {
+    color: var(--_color-tokens---content-brand--base);
+    background-color: var(--_color-tokens---bg-neutral--white);
+    border: 2px solid var(--_color-tokens---border-neutral--dark);
+  }
+
+  /* Hover  */
+  [data-btn-type="Timeline"]:hover {
+    color: var(--_color-tokens---content-brand--base);
+    background-color: var(--_color-tokens---bg-neutral--white);
+    border: 2px solid var(--_color-tokens---border-neutral--darkest);
+  }
+
+  /* Pressed  */
+  [data-btn-type="Timeline"]:active {
+    color: var(--_color-tokens---content-neutral--black);
+    background-color: var(--_color-tokens---bg-neutral--white);
+    border: 2px solid var(--_color-tokens---border-neutral--black);
+  }
+
+  /* Focused */
+  [data-btn-type="Timeline"]:focus {
+    color: var(--_color-tokens---content-brand--base);
+    background-color: var(--_color-tokens---bg-neutral--white);
+    border: 2px solid var(--_color-tokens---border-brand--dark);
+  }
+
+  /* Focused (Keyboard) */
+  [data-btn-type="Timeline"]:focus-visible {
+    color: var(--_color-tokens---content-brand--base);
+    background-color: var(--_color-tokens---bg-neutral--white);
+    border: 2px solid var(--_color-tokens---border-neutral--dark);
+    outline: 4px solid var(--_color-tokens---state--focused);
+  }
+}

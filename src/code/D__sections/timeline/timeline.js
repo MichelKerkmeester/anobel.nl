@@ -1,5 +1,5 @@
-// Swiper
 // Timeline
+// Swiper
 
 function safeInit() {
   try {
@@ -27,15 +27,6 @@ function initTimelineSwiper() {
   const slides = contentContainer.querySelectorAll(".swiper--slide");
   const slidesCount = slides.length;
 
-  // Get pagination elements
-  const currentSlideEl = document.querySelector("#timeline-current");
-  const totalSlidesEl = document.querySelector("#timeline-total");
-
-  // Update total slides display
-  if (totalSlidesEl) {
-    totalSlidesEl.textContent = slidesCount.toString();
-  }
-
   const mainSwiper = new Swiper(contentContainer, {
     // Basic settings
     speed: 600,
@@ -56,20 +47,10 @@ function initTimelineSwiper() {
       prevEl: '[timeline-navigation="previous"]',
     },
 
-    // Pagination - custom fraction
+    // Pagination - fraction type
     pagination: {
       el: ".swiper-pagination",
-      type: "custom",
-      renderCustom: function (swiper, current, total) {
-        // Update custom elements
-        if (currentSlideEl) {
-          currentSlideEl.textContent = current.toString();
-        }
-        if (totalSlidesEl) {
-          totalSlidesEl.textContent = total.toString();
-        }
-        return "";
-      },
+      type: "fraction",
     },
 
     // Autoplay
@@ -97,25 +78,13 @@ function initTimelineSwiper() {
     // Events
     on: {
       init: function (swiper) {
-        // Update pagination on init
-        if (currentSlideEl) {
-          currentSlideEl.textContent = (swiper.realIndex + 1).toString();
-        }
-        if (totalSlidesEl) {
-          totalSlidesEl.textContent = slidesCount.toString();
-        }
-      },
-      slideChange: function (swiper) {
-        // Update current slide display
-        if (currentSlideEl) {
-          currentSlideEl.textContent = (swiper.realIndex + 1).toString();
-        }
+        console.log("Timeline swiper initialized with", slidesCount, "slides");
       },
     },
   });
 
   console.log(
-    "Timeline swiper initialized successfully with custom pagination."
+    "Timeline swiper initialized successfully with native pagination."
   );
 }
 

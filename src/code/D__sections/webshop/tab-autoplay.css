@@ -1,0 +1,26 @@
+/* Tab w/ Autoplay */
+
+/* Fade the links that are not active */
+.tab-content__bottom:has(.tab-content__item.active)
+  .tab-content__item:not(.active) {
+  opacity: 0.5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab-content__item:not(.active):hover .tab-content__item-bottom {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+
+  .tab-content__item:not(.active):hover .content-item__nr {
+    transform: translate(25%, 0px);
+  }
+}
+border-radius: var(--Radius-Base, 8px);
+border: 1px solid rgba(236, 236, 236, 0);
+background: url(<path-to-image>) lightgray 50% / cover no-repeat;
+
+border-radius: var(--Radius-Large, 12px);
+border: 1px solid var(--Color-BORDER-Neutral-Base, #e8e8e8);
+background: rgba(254, 254, 254, 0.25);
+box-shadow: 0px 8px 12px -4px rgba(0, 0, 0, 0.1),
+  0px 4px 6px -2px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.1);

@@ -3,19 +3,61 @@
   COLOR
 ----------------------*/
 /* Dark */
-[data-usp="Dark"] .hero--usp-text {
+[data-usp-color="Dark"] .usp--text {
   color: var(--_color-tokens---content-neutral--black);
 }
 
-[data-usp="Dark"] .hero--usp-icon-w {
+[data-usp-color="Dark"] .usp--icon-w {
   color: var(--_color-tokens---content-brand--base);
 }
 
 /* Light */
-[data-usp="Light"] .hero--usp-text {
+[data-usp-color="Light"] .usp--text {
   color: var(--_color-tokens---content-neutral--white);
 }
 
-[data-usp="Light"] .hero--usp-icon-w {
+[data-usp-color="Light"] .usp--icon-w {
   color: var(--_color-tokens---content-neutral--white);
+}
+
+/*----------------------
+  WEIGHT
+----------------------*/
+/* Semi Bold */
+[data-usp-weight="Medium"] .usp--text {
+  font-weight: 500;
+}
+
+/* Regular */
+[data-usp-weight="Regular"] .usp--text {
+  font-weight: 400;
+}
+
+/*----------------------
+  SIZE
+----------------------*/
+/* Large */
+[data-usp-size="Large"] .usp--text {
+  font-size: var(--_typography---size--large);
+}
+
+/* Base */
+[data-usp-size="Base"] .usp--text {
+  font-size: var(--_typography---size--base);
+}
+
+/* Small */
+[data-usp-size="Small"] .usp--text {
+  font-size: var(--_typography---size--small);
+}
+
+/* Responsive */
+[data-usp-size="Responsive"] .usp--text {
+  font-size: var(--_typography---size--large);
+}
+
+@media screen and (max-width: 479px) {
+  [data-usp-size="Responsive"] .usp--text {
+    font-size: var(--_typography---size--base);
+  }
 }
