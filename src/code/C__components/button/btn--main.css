@@ -4,7 +4,7 @@
 ----------------------*/
 /* Large */
 [data-btn-size="Large"] {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
   width: 3rem;
   height: 3rem;
   padding-left: 1.25rem;
@@ -61,7 +61,7 @@
 
 @media screen and (max-width: 991px) {
   [data-btn-size="Dynamic"] {
-    font-size: var(--_typography---size--large);
+    font-size: var(--_typography---size--extra-large);
     width: 3rem;
     height: 3rem;
     padding-left: 1.25rem;
@@ -249,7 +249,7 @@
 /* Hover  */
 [data-btn-type="Secondary-Full"]:hover {
   color: var(--_color-tokens---content-neutral--white);
-  background-color: var(--_color-tokens---bg-brand--darkest);
+  background-color: var(--_color-tokens---bg-brand--dark);
   border: 0;
 }
 

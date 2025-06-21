@@ -1,4 +1,4 @@
-// Hero
+// Hero: Video
 // Intro Animation
 
 // Initial setup

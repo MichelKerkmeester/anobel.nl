@@ -1,4 +1,6 @@
-// Tab Menu
+// Tab
+// Menu: Blog
+
 const tabMenuInit = () => {
   let activeTabIndex = 0;
 

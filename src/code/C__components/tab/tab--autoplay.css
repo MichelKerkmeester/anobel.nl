@@ -1,0 +1,8 @@
+/* Tab: Autoplay */
+/* Button */
+[data-tabs="button"].active,
+[data-tabs-index].active {
+  /* Your active button styles */
+  background-color: rgba(236, 236, 236, 0.5);
+  font-weight: 600; /* Semi-bold */
+}

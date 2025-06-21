@@ -1,4 +1,0 @@
-/* Hide loader in Webflow editor */
-.wf-design-mode .page--loader {
-    display: none;
-}

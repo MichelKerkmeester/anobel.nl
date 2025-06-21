@@ -38,7 +38,7 @@
 ----------------------*/
 /* Large */
 [data-usp-size="Large"] .usp--text {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 /* Base */
@@ -53,7 +53,7 @@
 
 /* Responsive */
 [data-usp-size="Responsive"] .usp--text {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 @media screen and (max-width: 479px) {

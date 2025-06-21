@@ -1,0 +1,21 @@
+/* Hero General - Anti-flicker styles */
+/* Critical: These must load before any content renders */
+
+/* Hide all hero elements by default */
+.hero--content,
+.hero--header,
+.hero--list-w {
+  visibility: hidden !important;
+}
+
+/* Webflow collection lists can cause timing issues */
+/* These styles ensure elements stay hidden until GSAP is ready */
+.w-dyn-item .hero--content,
+.w-dyn-item .hero--header {
+  visibility: hidden !important;
+}
+
+/* Collection list wrapper */
+.w-dyn-list .hero--list-w {
+  visibility: hidden !important;
+}

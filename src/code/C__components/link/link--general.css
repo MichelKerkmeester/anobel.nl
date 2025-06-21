@@ -30,7 +30,7 @@
 ----------------------*/
 /* Large */
 [data-link-size="Large"] .link--heading {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 [data-link-size="Large"] .link--divider {
@@ -57,7 +57,7 @@
 
 @media screen and (max-width: 991px) {
   [data-link-size="Contact"] .link--heading {
-    font-size: var(--_typography---size--large);
+    font-size: var(--_typography---size--extra-large);
   }
 
   [data-link-size="Contact"] .link--divider {

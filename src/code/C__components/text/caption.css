@@ -4,7 +4,7 @@
 ----------------------*/
 /* Large */
 [data-caption-size="Large"] .caption--content {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 /* Base */
@@ -29,7 +29,7 @@
 
 /* Dynamic */
 [data-caption-size="Dynamic"] .caption--content {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 @media screen and (max-width: 479px) {

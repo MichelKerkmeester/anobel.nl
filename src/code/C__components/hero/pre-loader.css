@@ -1,0 +1,16 @@
+/* Hide loader in Webflow editor */
+.wf-design-mode .page--loader {
+  display: none;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) during hero animation setup */
+.page--wrapper {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Ensure loader is visible initially */
+.loader {
+  opacity: 1;
+  visibility: visible;
+}

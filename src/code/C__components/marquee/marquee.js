@@ -3,14 +3,11 @@
 function initMarquee() {
   // Check if Swiper is loaded
   if (typeof Swiper === "undefined") {
-    console.warn("Swiper not loaded. Attempting to load from CDN...");
-
     // Create and load Swiper script
     const swiperScript = document.createElement("script");
     swiperScript.src =
       "https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js";
     swiperScript.onload = initSwiperMarquee;
-    swiperScript.onerror = () => console.error("Failed to load Swiper library");
     document.head.appendChild(swiperScript);
   } else {
     // Swiper already loaded, initialize directly

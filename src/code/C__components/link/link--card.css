@@ -10,7 +10,7 @@
 }
 
 [data-card-type="Card"] .link--card-heading {
-  font-size: var(--_typography---size--large);
+  font-size: var(--_typography---size--extra-large);
 }
 
 [data-card-type="Card"] .link--card-icon {

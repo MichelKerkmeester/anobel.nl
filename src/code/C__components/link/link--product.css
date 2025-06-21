@@ -1,36 +1,19 @@
 /* Link: Product */
-/*----------------------
-  BASE
-----------------------*/
-/* Check Webflow default component styling */
+/* Hover Animation */
 
-/*----------------------
-  SMALL
-----------------------*/
-[data-product-size="Small"] .link--product-content {
-  grid-column-gap: 1.5rem;
-  grid-row-gap: 1.5rem;
-  grid-template-rows: auto;
-  grid-template-columns: 35% 1fr;
-  grid-auto-columns: 1fr;
-  height: auto;
-  padding: 1rem;
-  display: grid;
-  border: 1px solid var(--_color-tokens---border-neutral--dark);
+#link--product {
+  transition: color 200ms ease-out, background-color 200ms ease-out,
+    border 200ms ease-out;
 }
 
-[data-product-size="Small"] .link--product-image-w {
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+/* Hover state */
+.link--product-content:hover #link--product {
+  color: var(--_color-tokens---content-neutral--white);
+  background-color: var(--_color-tokens---bg-brand--dark);
+  border: 0;
 }
 
-[data-product-size="Small"] .link--product-image {
-  aspect-ratio: auto;
-  height: auto;
-  max-height: 7.5rem;
-}
-
-[data-product-size="Small"] .link--product-heading {
-  font-size: var(--_typography---size--large);
+/* Active state */
+.link--product-content:active #link--product {
+  background-color: var(--_color-tokens---bg-neutral--black);
 }
