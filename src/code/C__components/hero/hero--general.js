@@ -233,7 +233,7 @@
             elements.pointerLine,
             { height: ["0%", "100%"] },
             {
-              duration: 1.6,
+              duration: 1.4,
               easing: "linear",
               delay: tPhase2 + 0.2,
             }
@@ -247,16 +247,16 @@
             {
               duration: 0.75,
               easing: expoOut,
-              delay: tPhase2 + 1.8,
+              delay: tPhase2 + 1.6,
             }
           );
         }
 
-        /* Shared fade–in bits starting at 2.1 s */
+        /* Shared fade–in bits starting at 1.9 s */
         const commonFadeOpts = {
           duration: 0.3,
           easing: easeIn,
-          delay: tPhase2 + 2.1,
+          delay: tPhase2 + 1.9,
         };
 
         elements.subHeading &&
