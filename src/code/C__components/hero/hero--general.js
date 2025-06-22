@@ -128,8 +128,22 @@
     function buildHeroTL(/** @type {HTMLElement} */ hero) {
       const { isDesktop, isMobile } = vp();
 
+      // Cache DOM elements for performance (single query pass)
+      const elements = {
+        frames: hero.querySelectorAll(".hero--frame.is--general"),
+        listWrapper: hero.querySelector(".hero--list-w.is--general"),
+        imgWrap: hero.querySelector(".hero--image-w"),
+        heroImage: hero.querySelector(".hero--image.is--general"),
+        headers: hero.querySelectorAll(".hero--header"),
+        pointerLine: hero.querySelector(".hero--pointer-line"),
+        pointerBullet: hero.querySelector(".hero--pointer-bullet"),
+        subHeading: hero.querySelector(".hero--sub-heading"),
+        descContainer: hero.querySelector(".hero--description .container"),
+        cta: hero.querySelector(".hero--btn-w"),
+      };
+
       /* ---------- PHASE 1 – Frame --------------------- */
-      hero.querySelectorAll(".hero--frame.is--general").forEach((frame) => {
+      elements.frames.forEach((frame) => {
         const frameEl = /** @type {HTMLElement} */ (frame);
         const padFrom = "0rem";
         const padTo = isDesktop ? "2rem" : "0rem";
@@ -145,12 +159,11 @@
       });
 
       /* Border radius for list wrapper */
-      const listWrapper = hero.querySelector(".hero--list-w.is--general");
-      if (listWrapper) {
+      if (elements.listWrapper) {
         const radiusTo = isDesktop ? "1rem" : "0rem";
 
         animate(
-          listWrapper,
+          elements.listWrapper,
           {
             borderRadius: ["0rem", radiusTo],
           },
@@ -163,12 +176,11 @@
       const tPhase2 = t0 + 0.2; // After frame animation ends
 
       /* ---------- PHASE 2 – Image wrapper & headers ---------------------- */
-      const imgWrap = hero.querySelector(".hero--image-w");
-      if (imgWrap) {
+      if (elements.imgWrap) {
         const imgDelay = isMobile ? tPhase2 + 0.2 : tPhase2;
 
         animate(
-          imgWrap,
+          elements.imgWrap,
           { height: ["0%", "100%"] },
           {
             duration: isMobile ? 1.2 : 1,
@@ -178,12 +190,11 @@
         );
       }
 
-      const heroImage = hero.querySelector(".hero--image.is--general");
-      if (heroImage) {
+      if (elements.heroImage) {
         const imgDelay = isMobile ? tPhase2 + 0.2 : tPhase2;
 
         animate(
-          heroImage,
+          elements.heroImage,
           { scale: [isMobile ? 1.25 : 1.5, 1] },
           {
             duration: isMobile ? 1.2 : 1,
@@ -193,8 +204,7 @@
         );
       }
 
-      const headers = hero.querySelectorAll(".hero--header");
-      if (headers.length) {
+      if (elements.headers.length) {
         // Build animation object based on device
         const headerAnimation = isMobile
           ? {
@@ -205,7 +215,7 @@
               opacity: [0, 1],
             };
 
-        animate(headers, headerAnimation, {
+        animate(elements.headers, headerAnimation, {
           duration: isMobile ? 0.8 : 0.6,
           easing: expoOut,
           delay: tPhase2 + 0.1, // Start before image animation
@@ -214,14 +224,13 @@
 
       /* ---------- PHASE 3 – pointers, sub copy, CTA (Desktop only) ---------------------- */
       if (isDesktop) {
-        const pointerLine = hero.querySelector(".hero--pointer-line");
-        const pointerBullet = hero.querySelector(".hero--pointer-bullet");
-
-        if (pointerLine) {
+        if (elements.pointerLine) {
           /* Ensure line grows downward on desktop */
-          pointerLine.style.transformOrigin = "top";
+          /** @type {HTMLElement} */ (
+            elements.pointerLine
+          ).style.transformOrigin = "top";
           animate(
-            pointerLine,
+            elements.pointerLine,
             { height: ["0%", "100%"] },
             {
               duration: 1.6,
@@ -231,9 +240,9 @@
           );
         }
 
-        if (pointerBullet) {
+        if (elements.pointerBullet) {
           animate(
-            pointerBullet,
+            elements.pointerBullet,
             { scale: [0, 1] },
             {
               duration: 0.75,
@@ -250,19 +259,14 @@
           delay: tPhase2 + 2.1,
         };
 
-        const subHeading = hero.querySelector(".hero--sub-heading");
-        subHeading && animate(subHeading, { opacity: [0, 1] }, commonFadeOpts);
+        elements.subHeading &&
+          animate(elements.subHeading, { opacity: [0, 1] }, commonFadeOpts);
+        elements.descContainer &&
+          animate(elements.descContainer, { opacity: [0, 1] }, commonFadeOpts);
 
-        const descContainer = hero.querySelector(
-          ".hero--description .container"
-        );
-        descContainer &&
-          animate(descContainer, { opacity: [0, 1] }, commonFadeOpts);
-
-        const cta = hero.querySelector(".hero--btn-w");
-        if (cta) {
+        if (elements.cta) {
           animate(
-            cta,
+            elements.cta,
             {
               opacity: [0, 1],
             },
