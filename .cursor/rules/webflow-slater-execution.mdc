@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 🛠️ 4B. WEBFLOW & SLATER EXECUTION
+
+1. **Ban jQuery & TypeScript**; use `vanilla ES6+`.
+2. **Slater autoloads** — never add `DOMContentLoaded` listeners.
+3. Execute code directly or via `Webflow.push()` for Webflow features.
+4. When animating a Webflow Collection List: target `.w-dyn-item` only, add a **custom class/data-attribute** for hooks, and **re-attach animations** after CMS re-render.
