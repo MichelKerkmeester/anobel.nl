@@ -192,8 +192,8 @@
           : { y: ["100%", "0%"] };
 
         animate(elements.backgrounds, backgroundAnimation, {
-          duration: isMobile ? 1.2 : 0.8,
-          easing: isMobile ? expoOut : easeOut,
+          duration: 0.8,
+          easing: easeOut,
           delay: 0.25,
         });
       }
