@@ -1,5 +1,5 @@
 // ───────────────────────────────────────────────────────────────
-// Hero: Cards
+// Hero: General
 // Intro Animation
 // ───────────────────────────────────────────────────────────────
 (() => {
@@ -104,14 +104,14 @@
     /* ─────────────────────────────────────────────────────────────
        3. Helpers
     ────────────────────────────────────────────────────────────────*/
-    const HERO_SEL =
+    const HERO_SECTION_SELECTOR =
       ".hero--section:not(.w-dyn-empty):not(.w-dyn-bind-empty):not(.w-condition-invisible)";
 
-    const vp = () => {
-      const vw = innerWidth;
+    const getViewportType = () => {
+      const viewportWidth = innerWidth;
       return {
-        isDesktop: vw >= 992,
-        isMobile: vw < 992,
+        isDesktop: viewportWidth >= 992,
+        isMobile: viewportWidth < 992,
       };
     };
 
@@ -125,8 +125,8 @@
     /* ─────────────────────────────────────────────────────────────
        5. Build one timeline per hero
     ────────────────────────────────────────────────────────────────*/
-    function buildHeroTL(/** @type {HTMLElement} */ hero) {
-      const { isDesktop, isMobile } = vp();
+    function buildHeroGeneralAnimation(/** @type {HTMLElement} */ hero) {
+      const { isDesktop, isMobile } = getViewportType();
 
       // Cache DOM elements for performance (single query pass)
       const elements = {
@@ -183,21 +183,7 @@
           elements.imgWrap,
           { height: ["0%", "100%"] },
           {
-            duration: isMobile ? 1.2 : 1,
-            easing: expoOut,
-            delay: imgDelay,
-          }
-        );
-      }
-
-      if (elements.heroImage) {
-        const imgDelay = isMobile ? tPhase2 + 0.2 : tPhase2;
-
-        animate(
-          elements.heroImage,
-          { scale: [isMobile ? 1.25 : 1.5, 1] },
-          {
-            duration: isMobile ? 1.2 : 1,
+            duration: isMobile ? 1.2 : 0.8,
             easing: expoOut,
             delay: imgDelay,
           }
@@ -235,7 +221,7 @@
             {
               duration: 1.4,
               easing: "linear",
-              delay: tPhase2 + 0.2,
+              delay: tPhase2 - 0.2,
             }
           );
         }
@@ -247,16 +233,15 @@
             {
               duration: 0.75,
               easing: expoOut,
-              delay: tPhase2 + 1.6,
+              delay: tPhase2 + 1.2,
             }
           );
         }
 
-        /* Shared fade–in bits starting at 1.9 s */
         const commonFadeOpts = {
           duration: 0.3,
           easing: easeIn,
-          delay: tPhase2 + 1.9,
+          delay: tPhase2 + 1.7,
         };
 
         elements.subHeading &&
@@ -278,14 +263,24 @@
       // Fade out loader once animation starts
       const loader = document.querySelector(".loader");
       if (loader) {
+        const loaderEl = /** @type {HTMLElement} */ (loader);
+
         animate(
-          loader,
-          { opacity: [1, 0] },
+          loaderEl,
           {
-            duration: 0.5,
-            delay: 0.1, // Small delay to ensure setup is complete
+            opacity: [1, 0],
+          },
+          {
+            duration: 0.2,
+            easing: [0.76, 0, 0.24, 1], // power3.inOut equivalent
+            delay: 0.1,
+            onStart: () => {
+              // Dispatch event to signal preloader has finished
+              document.dispatchEvent(new Event("preloaderFinished"));
+            },
             onComplete: () => {
-              /** @type {HTMLElement} */ loader.style.display = "none";
+              // Hide the loader completely after animation
+              loaderEl.style.display = "none";
             },
           }
         );
@@ -296,11 +291,11 @@
        6. One-time init per hero block (skips WF stub)
     ────────────────────────────────────────────────────────────────*/
     inView(
-      HERO_SEL,
+      HERO_SECTION_SELECTOR,
       (/** @type {HTMLElement} */ hero) => {
         if (hero.dataset.hAnim === "done") return;
         hero.dataset.hAnim = "done";
-        buildHeroTL(hero);
+        buildHeroGeneralAnimation(hero);
       },
       { amount: 0.1 }
     );
