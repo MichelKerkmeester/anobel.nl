@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# 🛠️ 4B. WEBFLOW & SLATER EXECUTION
+# 🛠️ 7B. WEBFLOW & SLATER EXECUTION
 
 1. **Ban jQuery & TypeScript**; use `vanilla ES6+`.
 2. **Slater autoloads** — never add `DOMContentLoaded` listeners.
