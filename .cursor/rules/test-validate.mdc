@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ✅ 8. TEST & VALIDATE
+1. **Validate**: CSS-first, REMs, clamps, no jQuery/TS, minimal JS, perf OK.
+2. **Measure performance** after each change.
+3. Test on the **published site** at all breakpoints.
+4. **Debounce/throttle** expensive operations; anticipate **edge cases**.
