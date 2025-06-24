@@ -1,155 +1,102 @@
-// CMS Related Articles - Nobel Blog with Debug
-// Previous Articles Display
+// ───────────────────────────────────────────────────────────────
+// CMS: Related Articles
+// Blog article filtering and randomization
+// ───────────────────────────────────────────────────────────────
 
-console.log("🚀 Nobel Related Articles Script Started");
-
-// Multiple targeting strategies
-const selectors = [
-  "[related-articles='component']",
-  ".blog-related-articles",
-  ".w-dyn-list",
-  "[data-w-dyn-bind]",
-  ".collection-list",
-  ".related-articles",
-];
-
-let foundElements = 0;
-
-selectors.forEach((selector) => {
-  const elements = document.querySelectorAll(selector);
-  if (elements.length > 0) {
-    console.log(
-      `✅ Found ${elements.length} elements with selector: ${selector}`
-    );
-    foundElements += elements.length;
+(() => {
+  /* ─────────────────────────────────────────────────────────────
+     1. Page Context Validation
+  ────────────────────────────────────────────────────────────────*/
+  // Only run on article pages
+  if (
+    !window.location.pathname.includes("/blog/") ||
+    window.location.pathname === "/blog" ||
+    window.location.pathname === "/blog/"
+  ) {
+    return;
   }
-});
 
-if (foundElements === 0) {
-  console.log("❌ No target elements found. Looking for any CMS structure...");
+  /* ─────────────────────────────────────────────────────────────
+     2. Element Selection and Processing
+  ────────────────────────────────────────────────────────────────*/
+  document.querySelectorAll(".blog--list-w").forEach((wrapper) => {
+    const list = wrapper.querySelector(".blog--list");
+    if (!list) return;
 
-  // Fallback: Look for any w-dyn-items
-  const dynItems = document.querySelectorAll(".w-dyn-items");
-  console.log(`📍 Found ${dynItems.length} .w-dyn-items elements`);
+    const items = Array.from(list.querySelectorAll(".blog--list-item"));
+    if (items.length < 2) return;
 
-  dynItems.forEach((item, index) => {
-    console.log(`   ${index}: ${item.children.length} children`, item);
-  });
-}
+    /* ─────────────────────────────────────────────────────────────
+       3. Configuration and Current Item Detection
+    ────────────────────────────────────────────────────────────────*/
+    // Responsive article count: 3 on desktop, 4 on tablet/mobile
+    const targetCount = window.matchMedia("(min-width: 992px)").matches ? 3 : 4;
 
-// Main targeting function
-document
-  .querySelectorAll(selectors.join(", "))
-  .forEach((componentEl, index) => {
-    console.log(`🎯 Processing element ${index + 1}:`, componentEl.className);
+    // Find current item
+    const currentUrl = window.location.pathname;
+    const currentSlug = currentUrl.split("/").pop() || "";
 
-    // Look for the actual CMS items container
-    const cmsListEl =
-      componentEl.querySelector(".w-dyn-items") ||
-      componentEl.closest(".w-dyn-items") ||
-      (componentEl.classList.contains("w-dyn-items") ? componentEl : null);
-
-    if (!cmsListEl) {
-      console.log(`❌ No .w-dyn-items found in element ${index + 1}`);
-      return;
-    }
-
-    console.log(
-      `✅ Found .w-dyn-items with ${cmsListEl.children.length} children`
-    );
-
-    const cmsItemEl = Array.from(cmsListEl.children);
-
-    // Skip if less than 2 items (need current + others)
-    if (cmsItemEl.length < 2) {
-      console.log(`⚠️ Only ${cmsItemEl.length} items found, need at least 2`);
-      return;
-    }
-
-    // Enhanced current item detection
-    let currentItemEl = cmsItemEl.find((item) => {
-      const hasWCurrent =
-        item.querySelector(".w--current") ||
-        item.classList.contains("w--current");
-      const hasAriaCurrent = item.querySelector("[aria-current]");
-      const hasCurrentClass = item.querySelector(".current-article");
-
-      return hasWCurrent || hasAriaCurrent || hasCurrentClass;
-    });
-
-    if (!currentItemEl) {
-      console.log("❌ No current article found. Trying URL-based detection...");
-
-      // URL-based detection for blog posts
-      const currentUrl = window.location.pathname;
-      currentItemEl = cmsItemEl.find((item) => {
-        const link = item.querySelector("a[href]");
-        if (link) {
-          const linkHref = link.getAttribute("href");
-          if (linkHref) {
-            const currentSlug = currentUrl.split("/").pop();
-            return (
-              currentUrl.includes(linkHref) ||
-              (currentSlug && linkHref.includes(currentSlug))
-            );
-          }
-        }
-        return false;
-      });
-
-      if (currentItemEl) {
-        console.log("✅ Found current article via URL matching");
-      } else {
-        console.log("❌ Could not identify current article");
-        return;
-      }
-    } else {
-      console.log("✅ Found current article via class/attribute");
-    }
-
-    // Get current item index
-    const currentIndex = cmsItemEl.indexOf(currentItemEl);
-    console.log(`📍 Current article is at index: ${currentIndex}`);
-
-    // Get 3 previous items with circular loop fallback
-    /** @type {Element[]} */
-    const previousItems = [];
-
-    for (let i = 1; i <= 3; i++) {
-      let prevIndex = currentIndex - i;
-
-      // If we go below 0, wrap around to get newest articles
-      if (prevIndex < 0) {
-        prevIndex = cmsItemEl.length + prevIndex;
-      }
-
-      // Add the item (this ensures we always get 3 items in a loop)
+    const currentIndex = items.findIndex((item) => {
+      // Check for Webflow's current indicator
       if (
-        prevIndex >= 0 &&
-        prevIndex < cmsItemEl.length &&
-        prevIndex !== currentIndex
+        item.querySelector(".w--current") ||
+        item.classList.contains("w--current")
       ) {
-        previousItems.push(cmsItemEl[prevIndex]);
-        console.log(`✅ Added article at index ${prevIndex} to previous items`);
+        return true;
       }
+
+      // Check link URLs
+      const link =
+        item.querySelector("a[href]") || item.querySelector("[href]");
+      if (link) {
+        const href = link.getAttribute("href");
+        if (href && href !== "#" && href !== "") {
+          return (
+            href === currentUrl ||
+            (currentSlug && href.includes(currentSlug)) ||
+            currentUrl.includes(href)
+          );
+        }
+      }
+      return false;
+    });
+
+    if (currentIndex === -1) return;
+
+    /* ─────────────────────────────────────────────────────────────
+       4. Article Selection and Randomization
+    ────────────────────────────────────────────────────────────────*/
+    // Get other articles and shuffle
+    const otherArticles = items.filter((_, idx) => idx !== currentIndex);
+
+    // Fisher-Yates shuffle
+    for (let i = otherArticles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [otherArticles[i], otherArticles[j]] = [
+        otherArticles[j],
+        otherArticles[i],
+      ];
     }
 
-    console.log(
-      `🎯 Keeping ${previousItems.length} previous articles, removing ${
-        cmsItemEl.length - previousItems.length
-      } others`
+    // Select articles to keep
+    const relatedItems = otherArticles.slice(
+      0,
+      Math.min(targetCount, otherArticles.length)
     );
 
-    // Remove all items except the previous items we want to display
-    let removedCount = 0;
-    cmsItemEl.forEach((item) => {
-      if (!previousItems.includes(item)) {
+    /* ─────────────────────────────────────────────────────────────
+       5. DOM Manipulation and Cleanup
+    ────────────────────────────────────────────────────────────────*/
+    // Remove unselected items
+    items.forEach((item) => {
+      if (!relatedItems.includes(item)) {
         item.remove();
-        removedCount++;
       }
     });
 
-    console.log(
-      `✅ Successfully removed ${removedCount} items, kept ${previousItems.length} previous articles`
-    );
+    // Add position indicators
+    relatedItems.forEach((item, idx) => {
+      item.setAttribute("data-related-position", (idx + 1).toString());
+    });
   });
+})();

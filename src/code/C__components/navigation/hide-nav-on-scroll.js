@@ -1,7 +1,24 @@
-// Navigation
-// Hide Nav on Scroll
+// ───────────────────────────────────────────────────────────────
+// Navigation: Hide Nav on Scroll
+// Desktop-only scroll-based navigation hiding
+// ───────────────────────────────────────────────────────────────
+(() => {
+  /* ─────────────────────────────────────────────────────────────
+     1. Import Motion.dev
+  ────────────────────────────────────────────────────────────────*/
+  function initHideNavOnScroll() {
+    // @ts-ignore - Motion.dev library loaded externally
+    const { animate } = window.Motion || {};
+    if (!animate) {
+      console.warn("Motion.dev not ready, retrying…");
+      setTimeout(initHideNavOnScroll, 100);
+      return;
+    }
 
-const initHideNavOnScroll = () => {
+    /* ─────────────────────────────────────────────────────────────
+       2. Main navigation scroll logic
+    ────────────────────────────────────────────────────────────────*/
+    const initHideNavOnScrollLogic = () => {
   let lastScrollTop = 0;
   const navbar = document.querySelector(".nav--bar");
   const scrollThreshold = 50; // Minimum scroll amount before hiding/showing
@@ -21,14 +38,32 @@ const initHideNavOnScroll = () => {
     // Check if user has scrolled more than threshold
     if (Math.abs(lastScrollTop - currentScroll) <= scrollThreshold) return;
 
-    // Scrolling down & not at the top
-    if (currentScroll > lastScrollTop && currentScroll > 50) {
-      navbar.style.transform = "translateY(-200%)";
-    }
-    // Scrolling up
-    else {
-      navbar.style.transform = "translateY(0)";
-    }
+      // Scrolling down & not at the top
+      if (currentScroll > lastScrollTop && currentScroll > 50) {
+        animate(
+          navbar,
+          {
+            y: [navbar.style.transform.includes("translateY") ? "0%" : "0%", "-200%"],
+          },
+          {
+            duration: 0.3,
+            easing: [0.25, 0.46, 0.45, 0.94], // ease-in-out
+          }
+        );
+      }
+      // Scrolling up
+      else {
+        animate(
+          navbar,
+          {
+            y: [navbar.style.transform.includes("translateY") ? "-200%" : "-200%", "0%"],
+          },
+          {
+            duration: 0.3,
+            easing: [0.25, 0.46, 0.45, 0.94], // ease-in-out
+          }
+        );
+      }
 
     lastScrollTop = currentScroll;
   }
@@ -42,15 +77,25 @@ const initHideNavOnScroll = () => {
     return touchDevice || smallScreen;
   }
 
-  // Add smooth transition to the navbar
-  navbar.style.transition = "transform 0.3s ease-in-out";
+      // Add scroll event listener
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    };
 
-  // Add scroll event listener
-  window.addEventListener("scroll", handleScroll, { passive: true });
-};
+    // Initialize navigation scroll logic
+    initHideNavOnScrollLogic();
+  }
 
-// Initialize with Webflow (Slater already handles DOM ready)
-window.Webflow = window.Webflow || [];
-window.Webflow.push(function () {
-  initHideNavOnScroll();
-});
+  /* ─────────────────────────────────────────────────────────────
+     3. Initialize everything
+  ────────────────────────────────────────────────────────────────*/
+  // Initialize with Webflow
+  // @ts-ignore - Webflow global loaded externally
+  if (typeof window.Webflow !== "undefined") {
+    window.Webflow.push(() => {
+      initHideNavOnScroll();
+    });
+  } else {
+    // Fallback if Webflow is not available
+    initHideNavOnScroll();
+  }
+})();

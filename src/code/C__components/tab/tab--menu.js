@@ -1,7 +1,24 @@
-// Tab
-// Menu: Blog
+// ───────────────────────────────────────────────────────────────
+// Tab: Menu
+// Blog Tab Menu System
+// ───────────────────────────────────────────────────────────────
+(() => {
+  /* ─────────────────────────────────────────────────────────────
+     1. Import Motion.dev
+  ────────────────────────────────────────────────────────────────*/
+  function initTabMenu() {
+    // @ts-ignore - Motion.dev library loaded externally
+    const { animate } = window.Motion || {};
+    if (!animate) {
+      console.warn("Motion.dev not ready, retrying…");
+      setTimeout(initTabMenu, 100);
+      return;
+    }
 
-const tabMenuInit = () => {
+    /* ─────────────────────────────────────────────────────────────
+       2. Main tab menu logic
+    ────────────────────────────────────────────────────────────────*/
+    const tabMenuInit = () => {
   let activeTabIndex = 0;
 
   const tabMenu = document.querySelector(".tab--menu");
@@ -32,50 +49,68 @@ const tabMenuInit = () => {
     }
   });
 
-  /**
-   * @param {Element} tabButton
-   */
-  function applyActiveStyles(tabButton) {
-    const htmlBtn = /** @type {HTMLElement} */ (tabButton);
+      /* ─────────────────────────────────────────────────────────────
+         3. Style animation functions
+      ────────────────────────────────────────────────────────────────*/
+      /**
+       * @param {Element} tabButton
+       */
+      function applyActiveStyles(tabButton) {
+        const htmlBtn = /** @type {HTMLElement} */ (tabButton);
 
-    if (window.gsap) {
-      gsap.to(tabButton, {
-        fontWeight: "600",
-        color: "var(--_color-tokens---content-neutral--white)",
-        backgroundColor: "var(--_color-tokens---bg-brand--base)",
-        border: "2px solid var(--_color-tokens---border-brand--base)",
-        duration: 0.3,
-      });
-    } else {
-      htmlBtn.style.fontWeight = "600";
-      htmlBtn.style.color = "var(--_color-tokens---content-neutral--white)";
-      htmlBtn.style.backgroundColor = "var(--_color-tokens---bg-brand--base)";
-      htmlBtn.style.border =
-        "2px solid var(--_color-tokens---border-brand--base)";
-    }
-  }
+        animate(
+          tabButton,
+          {
+            fontWeight: ["400", "600"],
+            color: [
+              "var(--_color-tokens---content-brand--base)",
+              "var(--_color-tokens---content-neutral--white)",
+            ],
+            backgroundColor: [
+              "transparent",
+              "var(--_color-tokens---bg-brand--base)",
+            ],
+            borderColor: [
+              "var(--_color-tokens---border-neutral--dark)",
+              "var(--_color-tokens---border-brand--base)",
+            ],
+          },
+          {
+            duration: 0.3,
+            easing: [0.25, 0.46, 0.45, 0.94], // power1.out
+          }
+        );
+      }
 
-  /**
-   * @param {Element} tabButton
-   */
-  function removeActiveStyles(tabButton) {
-    const htmlBtn = /** @type {HTMLElement} */ (tabButton);
+      /**
+       * @param {Element} tabButton
+       */
+      function removeActiveStyles(tabButton) {
+        const htmlBtn = /** @type {HTMLElement} */ (tabButton);
 
-    if (window.gsap) {
-      gsap.to(tabButton, {
-        fontWeight: "",
-        color: "",
-        backgroundColor: "",
-        border: "",
-        duration: 0.3,
-      });
-    } else {
-      htmlBtn.style.fontWeight = "";
-      htmlBtn.style.color = "";
-      htmlBtn.style.backgroundColor = "";
-      htmlBtn.style.border = "";
-    }
-  }
+        animate(
+          tabButton,
+          {
+            fontWeight: ["600", "400"],
+            color: [
+              "var(--_color-tokens---content-neutral--white)",
+              "var(--_color-tokens---content-brand--base)",
+            ],
+            backgroundColor: [
+              "var(--_color-tokens---bg-brand--base)",
+              "transparent",
+            ],
+            borderColor: [
+              "var(--_color-tokens---border-brand--base)",
+              "var(--_color-tokens---border-neutral--dark)",
+            ],
+          },
+          {
+            duration: 0.3,
+            easing: [0.25, 0.46, 0.45, 0.94], // power1.out
+          }
+        );
+      }
 
   // Handle tab clicks
   tabMenu.addEventListener("click", (e) => {
@@ -98,7 +133,14 @@ const tabMenuInit = () => {
 
     activeTabIndex = newIndex;
   });
-};
+  }
 
-// Initialize
-tabMenuInit();
+    // Initialize tab menu
+    tabMenuInit();
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     4. Initialize everything
+  ────────────────────────────────────────────────────────────────*/
+  initTabMenu();
+})();

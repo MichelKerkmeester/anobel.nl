@@ -300,3 +300,59 @@
 [data-btn-variant="CTA-Secondary"] .btn--icon.is--secondary {
   display: none;
 }
+
+/*----------------------
+  ICON HOVER ANIMATIONS (CSS-only)
+  Desktop & Tablet only (768px+)
+  Matches Motion.dev JavaScript behavior exactly
+----------------------*/
+@media (min-width: 768px) {
+  /* Initial states - match JavaScript setup */
+  .btn--cta .btn--icon.is--animated-base {
+    opacity: 1;
+    transform: translateX(0%);
+    transition: opacity 0.3s linear, 
+                transform 0.3s linear;
+    will-change: opacity, transform;
+  }
+
+  .btn--cta .btn--icon.is--animated-absolute {
+    opacity: 0;
+    /* No initial x transform - matches JS behavior where x starts at default */
+    transition: opacity 0.3s linear, 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
+  }
+
+  /* Hover IN states - match hoverInAnimation() */
+  .btn--cta:hover .btn--icon.is--animated-base {
+    opacity: 0;
+    transform: translateX(200%);
+    /* Uses linear easing (power0) for base icon */
+    transition: opacity 0.3s linear, 
+                transform 0.3s linear;
+  }
+
+  .btn--cta:hover .btn--icon.is--animated-absolute {
+    opacity: 1;
+    transform: translateX(0%);
+    /* Uses power1Out easing for absolute icon */
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Focus states for accessibility */
+  .btn--cta:focus-within .btn--icon.is--animated-base {
+    opacity: 0;
+    transform: translateX(200%);
+    transition: opacity 0.3s linear, 
+                transform 0.3s linear;
+  }
+
+  .btn--cta:focus-within .btn--icon.is--animated-absolute {
+    opacity: 1;
+    transform: translateX(0%);
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}

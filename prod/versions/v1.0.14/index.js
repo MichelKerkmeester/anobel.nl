@@ -20,10 +20,7 @@ var __async = (__this, __arguments, generator) => {
 };
 (function() {
   "use strict";
-  (() => {
-    if (!window.location.pathname.includes("/blog/") || window.location.pathname === "/blog" || window.location.pathname === "/blog/") {
-      return;
-    }
+  if (window.location.pathname.includes("/blog/") && window.location.pathname !== "/blog" && window.location.pathname !== "/blog/") {
     document.querySelectorAll(".blog--list-w").forEach((wrapper) => {
       const list = wrapper.querySelector(".blog--list");
       if (!list) return;
@@ -67,7 +64,7 @@ var __async = (__this, __arguments, generator) => {
         item.setAttribute("data-related-position", (idx + 1).toString());
       });
     });
-  })();
+  }
   const EASING = {
     // Power curves
     power1Out: [0.25, 0.46, 0.45, 0.94],

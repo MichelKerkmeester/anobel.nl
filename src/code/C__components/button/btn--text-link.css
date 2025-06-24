@@ -232,3 +232,36 @@
 [data-text-link-type="Red"]:active .btn--text-link-hover {
   background-color: var(--_color-tokens---border-neutral--black);
 }
+
+/*----------------------
+  UNDERLINE HOVER ANIMATIONS (CSS-only)
+  Desktop & Tablet only (768px+)
+  Matches Motion.dev JavaScript behavior exactly
+----------------------*/
+@media (min-width: 768px) {
+  /* Initial state for underline hover elements */
+  .btn--text-link[data-text-link-hover="Underline"] .btn--text-link-hover {
+    width: 0%;
+    visibility: hidden;
+    transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: width;
+  }
+
+  /* Hover state - show underline */
+  .btn--text-link[data-text-link-hover="Underline"]:hover .btn--text-link-hover {
+    width: 100%;
+    visibility: visible;
+  }
+
+  /* Focus state for accessibility */
+  .btn--text-link[data-text-link-hover="Underline"]:focus .btn--text-link-hover {
+    width: 100%;
+    visibility: visible;
+  }
+
+  /* Active state - maintain underline */
+  .btn--text-link[data-text-link-hover="Underline"]:active .btn--text-link-hover {
+    width: 100%;
+    visibility: visible;
+  }
+}

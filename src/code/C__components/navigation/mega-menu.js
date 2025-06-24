@@ -1,54 +1,97 @@
-// Navigation
-// Mobile — Mega Menu
+// ───────────────────────────────────────────────────────────────
+// Navigation: Mega Menu
+// Mobile menu with smooth animations
+// ───────────────────────────────────────────────────────────────
 
-Webflow.push(() => {
-  // Select all elements
-  const megaMenu = document.querySelector(".nav--mega-menu"); // The mega menu container
-  const menuButton = document.querySelector(".btn--hamburger"); // The hamburger button
+// Import centralized utilities
+import { EASING, initMotionWithRetry, initWithWebflow, optimizeForAnimation, resetOptimization } from '../utils/motion-config.js';
 
-  // Safety check if elements exist
-  if (!megaMenu || !menuButton) {
-    console.error("Mega menu or menu button not found!");
-    return;
-  }
+(() => {
+  /* ─────────────────────────────────────────────────────────────
+     1. Initialization and Setup
+  ────────────────────────────────────────────────────────────────*/
+  initWithWebflow(() => {
+    initMotionWithRetry(({ animate }) => {
+      /* ─────────────────────────────────────────────────────────────
+         2. Element Selection and Validation
+      ────────────────────────────────────────────────────────────────*/
+      const megaMenu = /** @type {HTMLElement|null} */ (
+        document.querySelector(".nav--mega-menu")
+      );
+      const menuButton = /** @type {HTMLElement|null} */ (
+        document.querySelector(".btn--hamburger")
+      );
 
-  // Function to open the menu
-  function openMenu() {
-    megaMenu.style.display = "flex"; // Set display to flex before animation
-    gsap.to(megaMenu, {
-      duration: 0.8,
-      height: "100svh",
-      width: "100%",
-      ease: "power2.out",
-      delay: 0.2,
-      onComplete: () => {
-        megaMenu.style.borderRadius = "0rem"; // Remove border radius when fully open
-      },
+      if (!megaMenu || !menuButton) return;
+
+      /* ─────────────────────────────────────────────────────────────
+         3. Animation Configuration
+      ────────────────────────────────────────────────────────────────*/
+      // Optimize elements for animation
+      optimizeForAnimation(megaMenu);
+
+      // Track menu state
+      let isOpen = false;
+
+      // Animation configurations
+      const OPEN_CONFIG = {
+        duration: 0.8,
+        easing: EASING.power2Out,
+        delay: 200
+      };
+
+      const CLOSE_CONFIG = {
+        duration: 0.4,
+        easing: EASING.power2In
+      };
+
+      /* ─────────────────────────────────────────────────────────────
+         4. Animation Functions
+      ────────────────────────────────────────────────────────────────*/
+      // Open menu function
+      function openMenu() {
+        megaMenu.style.display = "flex";
+        
+        animate(megaMenu, {
+          height: ["0svh", "100svh"],
+          width: ["100%", "100%"]
+        }, OPEN_CONFIG).finished.then(() => {
+          megaMenu.style.borderRadius = "0rem";
+        });
+      }
+
+      // Close menu function  
+      function closeMenu() {
+        megaMenu.style.borderRadius = "0.75rem";
+        
+        animate(megaMenu, {
+          height: ["100svh", "0svh"],
+          width: ["100%", "100%"]
+        }, CLOSE_CONFIG).finished.then(() => {
+          megaMenu.style.display = "none";
+        });
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         5. Event Handlers
+      ────────────────────────────────────────────────────────────────*/
+      // Toggle menu on button click
+      menuButton.addEventListener("click", () => {
+        if (!isOpen) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+        isOpen = !isOpen;
+      });
+
+      /* ─────────────────────────────────────────────────────────────
+         6. Cleanup
+      ────────────────────────────────────────────────────────────────*/
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        resetOptimization(megaMenu);
+      });
     });
-  }
-
-  // Function to close the menu
-  function closeMenu() {
-    megaMenu.style.borderRadius = "0.75rem"; // Restore border radius before closing
-    gsap.to(megaMenu, {
-      duration: 0.4,
-      height: "0svh",
-      width: "100%",
-      ease: "power2.in",
-      onComplete: () => {
-        megaMenu.style.display = "none"; // Hide menu when animation completes
-      },
-    });
-  }
-
-  // Toggle menu on button click
-  let isOpen = false; // Track menu state
-  menuButton.addEventListener("click", () => {
-    if (!isOpen) {
-      openMenu(); // Open the menu if it's closed
-    } else {
-      closeMenu(); // Close the menu if it's open
-    }
-    isOpen = !isOpen; // Toggle the state
   });
-});
+})();

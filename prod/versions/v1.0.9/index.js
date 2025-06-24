@@ -20,54 +20,103 @@ var __async = (__this, __arguments, generator) => {
 };
 (function() {
   "use strict";
-  (() => {
-    if (!window.location.pathname.includes("/blog/") || window.location.pathname === "/blog" || window.location.pathname === "/blog/") {
-      return;
-    }
-    document.querySelectorAll(".blog--list-w").forEach((wrapper) => {
-      const list = wrapper.querySelector(".blog--list");
-      if (!list) return;
-      const items = Array.from(list.querySelectorAll(".blog--list-item"));
-      if (items.length < 2) return;
-      const targetCount = window.matchMedia("(min-width: 992px)").matches ? 3 : 4;
-      const currentUrl = window.location.pathname;
-      const currentSlug = currentUrl.split("/").pop() || "";
-      const currentIndex = items.findIndex((item) => {
-        if (item.querySelector(".w--current") || item.classList.contains("w--current")) {
-          return true;
+  console.log("🚀 Related Articles: Starting");
+  if (!window.location.pathname.includes("/blog/") || window.location.pathname === "/blog" || window.location.pathname === "/blog/") {
+    console.log("ℹ️ Not an article page, skipping");
+  } else {
+    const listWrappers = document.querySelectorAll(".blog--list-w");
+    if (!listWrappers.length) {
+      console.log("❌ No .blog--list-w found");
+    } else {
+      console.log(`📍 Found ${listWrappers.length} blog list wrappers`);
+      listWrappers.forEach((wrapper, index) => {
+        console.log(`🎯 Processing wrapper ${index + 1}`);
+        const list = wrapper.querySelector(".blog--list");
+        if (!list) {
+          console.log(`❌ No .blog--list found in wrapper ${index + 1}`);
+          return;
         }
-        const link = item.querySelector("a[href]") || item.querySelector("[href]");
-        if (link) {
-          const href = link.getAttribute("href");
-          if (href && href !== "#" && href !== "") {
-            return href === currentUrl || currentSlug && href.includes(currentSlug) || currentUrl.includes(href);
+        const items = Array.from(list.querySelectorAll(".blog--list-item"));
+        if (items.length < 2) {
+          console.log(`⚠️ Wrapper ${index + 1}: Need at least 2 items, found ${items.length}`);
+          return;
+        }
+        console.log(`📋 Wrapper ${index + 1}: Found ${items.length} items`);
+        const isDesktop = window.matchMedia("(min-width: 992px)").matches;
+        const targetCount = isDesktop ? 3 : 4;
+        const availableCount = items.length - 1;
+        console.log(`📱 Device: ${isDesktop ? "Desktop" : "Tablet/Mobile"}, targeting ${targetCount} articles`);
+        if (availableCount < targetCount) {
+          console.log(`⚠️ Want ${targetCount} articles but only ${availableCount} available`);
+        }
+        const currentUrl = window.location.pathname;
+        const currentSlug = currentUrl.split("/").pop() || "";
+        const currentIndex = items.findIndex((item) => {
+          if (item.querySelector(".w--current") || item.classList.contains("w--current")) {
+            return true;
+          }
+          const linkSelectors = ["a.link", "a[href]", ".w-inline-block", "[href]"];
+          for (const selector of linkSelectors) {
+            const link = item.querySelector(selector);
+            if (link) {
+              const href = link.getAttribute("href");
+              if (href && href !== "#" && href !== "") {
+                console.log(`   Checking: ${href} vs ${currentUrl}`);
+                if (href === currentUrl || currentSlug && href.includes(currentSlug) || currentUrl.includes(href)) {
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+        });
+        if (currentIndex === -1) {
+          console.log(`❌ Current item not found in wrapper ${index + 1}`);
+          items.forEach((item, idx) => {
+            const allLinks = item.querySelectorAll("a[href], [href]");
+            const hrefs = Array.from(allLinks).map((link) => link.getAttribute("href"));
+            console.log(`   Item ${idx}: ${hrefs.join(", ")}`);
+          });
+          return;
+        }
+        console.log(`📍 Current item at index: ${currentIndex}`);
+        console.log("📄 All items in collection:");
+        items.forEach((item, idx) => {
+          const link = item.querySelector("a[href]");
+          const href = link ? link.getAttribute("href") : "no link";
+          const isCurrent = idx === currentIndex;
+          console.log(`   ${idx}: ${href} ${isCurrent ? "(CURRENT)" : ""}`);
+        });
+        const relatedItems = [];
+        console.log(`🎯 Target: ${targetCount}, Available: ${availableCount}`);
+        const otherItems = items.filter((item, idx) => idx !== currentIndex);
+        console.log(`📝 Available items after removing current: ${otherItems.length}`);
+        const itemsToShow = Math.min(targetCount, otherItems.length);
+        for (let i = 0; i < itemsToShow; i++) {
+          let targetIndex = (currentIndex + 1 + i) % items.length;
+          if (targetIndex === currentIndex) {
+            targetIndex = (targetIndex + 1) % items.length;
+          }
+          if (targetIndex !== currentIndex && !relatedItems.some((item) => items.indexOf(item) === targetIndex)) {
+            relatedItems.push(items[targetIndex]);
+            console.log(`   ✅ Added item ${targetIndex} (${relatedItems.length}/${itemsToShow})`);
           }
         }
-        return false;
+        console.log(`📊 Final selection: ${relatedItems.length} articles selected`);
+        let removedCount = 0;
+        items.forEach((item) => {
+          if (!relatedItems.includes(item)) {
+            item.remove();
+            removedCount++;
+          }
+        });
+        console.log(`✅ Wrapper ${index + 1}: Removed ${removedCount}, kept ${relatedItems.length} articles`);
+        relatedItems.forEach((item, idx) => {
+          item.setAttribute("data-related-position", (idx + 1).toString());
+        });
       });
-      if (currentIndex === -1) return;
-      const otherArticles = items.filter((_, idx) => idx !== currentIndex);
-      for (let i = otherArticles.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [otherArticles[i], otherArticles[j]] = [
-          otherArticles[j],
-          otherArticles[i]
-        ];
-      }
-      const relatedItems = otherArticles.slice(
-        0,
-        Math.min(targetCount, otherArticles.length)
-      );
-      items.forEach((item) => {
-        if (!relatedItems.includes(item)) {
-          item.remove();
-        }
-      });
-      relatedItems.forEach((item, idx) => {
-        item.setAttribute("data-related-position", (idx + 1).toString());
-      });
-    });
-  })();
+    }
+  }
   const EASING = {
     // Power curves
     power1Out: [0.25, 0.46, 0.45, 0.94],
@@ -166,20 +215,6 @@ var __async = (__this, __arguments, generator) => {
       });
       this.activeAnimations.clear();
       this.timers.clear();
-    }
-  }
-  function optimizeForAnimation(element) {
-    if (element instanceof HTMLElement) {
-      element.style.willChange = "transform, opacity";
-      element.style.backfaceVisibility = "hidden";
-      element.style.perspective = "1000px";
-    }
-  }
-  function resetOptimization(element) {
-    if (element instanceof HTMLElement) {
-      element.style.willChange = "auto";
-      element.style.backfaceVisibility = "";
-      element.style.perspective = "";
     }
   }
   (() => {
@@ -1531,61 +1566,48 @@ var __async = (__this, __arguments, generator) => {
       initHideNavOnScroll();
     }
   })();
-  (() => {
-    initWithWebflow(() => {
-      initMotionWithRetry(({ animate }) => {
-        const megaMenu = (
-          /** @type {HTMLElement|null} */
-          document.querySelector(".nav--mega-menu")
-        );
-        const menuButton = (
-          /** @type {HTMLElement|null} */
-          document.querySelector(".btn--hamburger")
-        );
-        if (!megaMenu || !menuButton) return;
-        optimizeForAnimation(megaMenu);
-        let isOpen = false;
-        const OPEN_CONFIG = {
-          duration: 0.8,
-          easing: EASING.power2Out,
-          delay: 200
-        };
-        const CLOSE_CONFIG = {
-          duration: 0.4,
-          easing: EASING.power2In
-        };
-        function openMenu() {
-          megaMenu.style.display = "flex";
-          animate(megaMenu, {
-            height: ["0svh", "100svh"],
-            width: ["100%", "100%"]
-          }, OPEN_CONFIG).finished.then(() => {
-            megaMenu.style.borderRadius = "0rem";
-          });
+  Webflow.push(() => {
+    const megaMenu = document.querySelector(".nav--mega-menu");
+    const menuButton = document.querySelector(".btn--hamburger");
+    if (!megaMenu || !menuButton) {
+      console.error("Mega menu or menu button not found!");
+      return;
+    }
+    function openMenu() {
+      megaMenu.style.display = "flex";
+      gsap.to(megaMenu, {
+        duration: 0.8,
+        height: "100svh",
+        width: "100%",
+        ease: "power2.out",
+        delay: 0.2,
+        onComplete: () => {
+          megaMenu.style.borderRadius = "0rem";
         }
-        function closeMenu() {
-          megaMenu.style.borderRadius = "0.75rem";
-          animate(megaMenu, {
-            height: ["100svh", "0svh"],
-            width: ["100%", "100%"]
-          }, CLOSE_CONFIG).finished.then(() => {
-            megaMenu.style.display = "none";
-          });
-        }
-        menuButton.addEventListener("click", () => {
-          if (!isOpen) {
-            openMenu();
-          } else {
-            closeMenu();
-          }
-          isOpen = !isOpen;
-        });
-        window.addEventListener("beforeunload", () => {
-          resetOptimization(megaMenu);
-        });
       });
+    }
+    function closeMenu() {
+      megaMenu.style.borderRadius = "0.75rem";
+      gsap.to(megaMenu, {
+        duration: 0.4,
+        height: "0svh",
+        width: "100%",
+        ease: "power2.in",
+        onComplete: () => {
+          megaMenu.style.display = "none";
+        }
+      });
+    }
+    let isOpen = false;
+    menuButton.addEventListener("click", () => {
+      if (!isOpen) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+      isOpen = !isOpen;
     });
-  })();
+  });
   (() => {
     const isDesktopOrTablet = DEVICE.isTabletOrDesktop;
     function setupInitialStates() {

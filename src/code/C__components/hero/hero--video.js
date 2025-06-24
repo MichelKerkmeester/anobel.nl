@@ -1,133 +1,218 @@
-// Hero: Video
+// ───────────────────────────────────────────────────────────────
+// Hero: Video (Optimized)
 // Intro Animation
+// ───────────────────────────────────────────────────────────────
 
-// Initial setup
-function initializeHeroStates() {
-  if (typeof gsap === "undefined") {
-    console.warn("GSAP not loaded, cannot initialize hero animations");
-    return false;
-  }
+// Import centralized utilities
+import { EASING } from '../utils/motion-config.js';
 
-  var vw = window.innerWidth;
-  var vh = window.innerHeight;
-  var isDesktop = vw >= 992;
-  var isTablet = vw >= 768 && vw < 992;
-  var isMobileTall = vw < 480 && vh >= 650;
+(() => {
+  /* ─────────────────────────────────────────────────────────────
+     1. Initial State Setup (Prevent Flickering)
+  ────────────────────────────────────────────────────────────────*/
+  function setupInitialStates() {
+    // Make page wrapper visible but keep animated elements hidden
+    const pageWrapper = /** @type {HTMLElement|null} */ (
+      document.querySelector(".page--wrapper")
+    );
+    if (pageWrapper) {
+      pageWrapper.style.opacity = "1";
+      pageWrapper.style.visibility = "visible";
+    }
 
-  // Make page wrapper visible
-  gsap.set(".page--wrapper", {
-    opacity: 1,
-    visibility: "visible",
-    clearProps: "visibility", // Clean up the visibility property after setting
-  });
+    // Check if hero video elements exist
+    const heroSection = /** @type {HTMLElement|null} */ (
+      document.querySelector(".hero--section.is--video")
+    );
+    if (!heroSection) return;
 
-  gsap.set(".hero--content.is--video", {
-    opacity: 0,
-    y: "100%",
-    scale: 0.92,
-    willChange: "opacity, transform",
-  });
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const isDesktop = vw >= 992;
+    const isTablet = vw >= 768 && vw < 992;
+    const isMobileTall = vw < 480 && vh >= 650;
 
-  gsap.set([".hero--header"], {
-    opacity: 0,
-    y: isDesktop ? "10vh" : isTablet ? "2rem" : "1rem",
-    willChange: "opacity, transform",
-  });
-
-  gsap.set(".hero--section.is--video", {
-    height: isDesktop
+    // Set initial hero section height
+    heroSection.style.height = isDesktop
       ? "100svh"
       : isTablet
       ? "97.5svh"
       : isMobileTall
       ? "97.5svh"
-      : "92.5svh",
-  });
+      : "92.5svh";
 
-  gsap.set(".hero--video-container", { padding: 0 });
+    // Hide content initially
+    const heroContent = heroSection.querySelector(".hero--content.is--video");
+    if (heroContent) {
+      const contentEl = /** @type {HTMLElement} */ (heroContent);
+      contentEl.style.opacity = "0";
+      contentEl.style.transform = "translateY(100%) scale(0.92)";
+      contentEl.style.willChange = "opacity, transform";
+    }
 
-  gsap.set(".hero--video", {
-    borderRadius: 0,
-    scale: 1.05,
-    transformStyle: "preserve-3d",
-    backfaceVisibility: "hidden",
-    perspective: 1000,
-    willChange: "transform",
-  });
+    // Hide headers
+    const headers = heroSection.querySelectorAll(".hero--header");
+    headers.forEach((header) => {
+      const headerEl = /** @type {HTMLElement} */ (header);
+      headerEl.style.opacity = "0";
+      headerEl.style.transform = isDesktop 
+        ? "translateY(10vh)" 
+        : isTablet 
+        ? "translateY(2rem)" 
+        : "translateY(1rem)";
+      headerEl.style.willChange = "opacity, transform";
+    });
 
-  return true;
-}
+    // Set initial video container state
+    const videoContainer = heroSection.querySelector(".hero--video-container");
+    if (videoContainer) {
+      /** @type {HTMLElement} */ (videoContainer).style.padding = "0";
+    }
 
-// GSAP Timeline
-function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
-  if (typeof gsap === "undefined") return null;
+    // Set initial video state
+    const heroVideo = heroSection.querySelector(".hero--video");
+    if (heroVideo) {
+      const videoEl = /** @type {HTMLElement} */ (heroVideo);
+      videoEl.style.borderRadius = "0";
+      videoEl.style.transform = "scale(1.05)";
+      videoEl.style.transformStyle = "preserve-3d";
+      videoEl.style.backfaceVisibility = "hidden";
+      videoEl.style.perspective = "1000px";
+      videoEl.style.willChange = "transform";
+    }
+  }
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const isDesktop = vw >= 992;
-  const isTablet = vw >= 768 && vw < 992;
-  const isMobileLarge = vw >= 480 && vw < 768;
-  const isMobileTall = vw < 480 && vh >= 650;
-  const isMobile = vw < 480;
+  /* ─────────────────────────────────────────────────────────────
+     2. Import Motion.dev
+  ────────────────────────────────────────────────────────────────*/
+  function initHeroVideoAnimation() {
+    // @ts-ignore - Motion.dev library loaded externally
+    const { animate, inView } = window.Motion || {};
+    if (!animate || !inView) {
+      console.warn("Motion.dev not ready, retrying…");
+      setTimeout(initHeroVideoAnimation, 100);
+      return;
+    }
 
-  // Custom easing presets for a smoother, less "snappy" desktop feel
-  const easeOut = isDesktop ? "power4.out" : "expo.out";
-  const easeInOut = isDesktop ? "power2.inOut" : "expo.inOut";
+    /* ─────────────────────────────────────────────────────────────
+       3. Helpers
+    ────────────────────────────────────────────────────────────────*/
+    const HERO_VIDEO_SELECTOR = ".hero--section.is--video";
 
-  // Duration helpers (mobile optimized timing)
-  const durContainer = isMobile ? 1.3 : isDesktop ? 1.1 : 1;
-  const durCollapse = isMobile ? 1.5 : isDesktop ? 1.2 : 1.2;
-  const durContent = isMobile ? 1.1 : isDesktop ? 1.1 : 1.0;
-  const durHeaders = isMobile ? 1.0 : isDesktop ? 0.9 : 0.9;
+    const getViewportType = () => {
+      const vw = innerWidth;
+      const vh = innerHeight;
+      return {
+        isDesktop: vw >= 992,
+        isTablet: vw >= 768 && vw < 992,
+        isMobileLarge: vw >= 480 && vw < 768,
+        isMobileTall: vw < 480 && vh >= 650,
+        isMobile: vw < 480,
+        vh,
+      };
+    };
 
-  // Offset helpers so content kicks in much earlier on mobile
-  const offsetContent = isMobile ? "-=1.4" : "-=0.9";
-  const offsetHeaders = isMobile ? "-=1.1" : "-=0.7";
+    /* ─────────────────────────────────────────────────────────────
+       4. Easing configuration (using centralized values)
+    ────────────────────────────────────────────────────────────────*/
+    // Use centralized easing curves (maintains exact same values)
+    const easeOut = [0.22, 1, 0.36, 1]; // Custom "Ease Out" - not in standard set
+    const easeInOut = EASING.easeInOut; // [0.25, 0.46, 0.45, 0.94]
+    const expoOut = EASING.expoOut; // [0.19, 1, 0.22, 1]
+    const expoInOut = EASING.expoInOut; // [0.87, 0, 0.13, 1]
+    const power3Out = EASING.power3Out; // [0.215, 0.61, 0.355, 1]
+    const power4Out = EASING.power4Out; // [0.165, 0.84, 0.44, 1]
+    const power2InOut = [0.45, 0, 0.55, 1]; // Custom "Power2 In Out" - not in standard set
 
-  const tl = gsap.timeline({
-    // Provide a slightly longer default duration to make transitions feel more fluid on larger screens
-    defaults: {
-      ease: easeOut,
-      duration: durContainer,
-    },
-  });
+    /* ─────────────────────────────────────────────────────────────
+       5. Build hero video animation
+    ────────────────────────────────────────────────────────────────*/
+    function buildHeroVideoAnimation(/** @type {HTMLElement} */ hero) {
+      const { isDesktop, isTablet, isMobileLarge, isMobileTall, isMobile, vh } = getViewportType();
 
-  // Start Phase 1 after "phase1Delay"
-  tl.to({}, { duration: phase1Delay });
+      // Cache DOM elements for performance
+      const elements = {
+        videoContainer: hero.querySelector(".hero--video-container"),
+        videoWrapper: hero.querySelector(".hero--video-w"),
+        heroVideo: hero.querySelector(".hero--video"),
+        heroContent: hero.querySelector(".hero--content.is--video"),
+        headers: hero.querySelectorAll(".hero--header"),
+        heroSection: hero,
+      };
 
-  // PHASE 1: Initial container shape animation
-  tl.to(
-    [".hero--video-container", ".hero--video-w"],
-    {
-      duration: durContainer,
-      borderRadius: (index) => (index === 1 ? "1rem" : 0),
-      padding: (index) => {
-        if (index === 0) {
-          return isDesktop
-            ? "2rem"
-            : isTablet
-            ? "7rem 2rem 0 2rem"
-            : isMobileLarge
-            ? "6.5rem 1.5rem 0 1.5rem"
-            : "5rem 1.5rem 0 1.5rem";
-        }
-        return 0;
-      },
-      scale: 1,
-      opacity: 1,
-      ease: easeOut,
-    },
-    "phase1"
-  );
+      // Custom easing based on device (match GSAP original)
+      const primaryEase = isDesktop ? power3Out : expoOut; // power4.out → power3.out
+      const secondaryEase = isDesktop ? power2InOut : expoInOut; // Match GSAP expo.inOut
 
-  // Delay Between Phase 1 & Phase 2
-  tl.to({}, { duration: delayBetweenPhase1And2 });
+      // Duration helpers (mobile optimized timing)
+      const durContainer = isMobile ? 1.3 : isDesktop ? 1.1 : 1;
+      const durCollapse = isMobile ? 1.5 : isDesktop ? 1.2 : 1.2;
+      const durContent = isMobile ? 1.1 : isDesktop ? 1.1 : 1.0;
+      const durHeaders = isMobile ? 1.0 : isDesktop ? 0.9 : 0.9;
 
-  // PHASE 2: Dramatic height reduction & content entry
-  tl.to(
-    ".hero--section.is--video",
-    {
-      height: isDesktop
+      // Phase timing (match GSAP timeline coordination)
+      const phase1Delay = 0;
+      const delayBetweenPhases = 0.1;
+      
+      // Corrected timing to match GSAP's relative positioning
+      const heightStartDelay = phase1Delay + durContainer + delayBetweenPhases - 0.7; // Match "-=0.7"
+      const contentStartDelay = phase1Delay + durContainer - (isMobile ? 1.4 : 0.9); // Match offsetContent timing
+      const headerStartDelay = phase1Delay + durContainer - (isMobile ? 1.1 : 0.7); // Match offsetHeaders timing
+
+      /* ---------- PHASE 1 – Container shape animation --------------------- */
+      if (elements.videoContainer) {
+        const paddingTo = isDesktop
+          ? "2rem"
+          : isTablet
+          ? "7rem 2rem 0 2rem"
+          : isMobileLarge
+          ? "6.5rem 1.5rem 0 1.5rem"
+          : "5rem 1.5rem 0 1.5rem";
+
+        animate(
+          elements.videoContainer,
+          {
+            padding: ["0", paddingTo],
+            opacity: [0, 1],
+          },
+          {
+            duration: durContainer,
+            easing: primaryEase,
+            delay: phase1Delay,
+          }
+        );
+      }
+
+      if (elements.videoWrapper) {
+        animate(
+          elements.videoWrapper,
+          {
+            borderRadius: ["0rem", "1rem"],
+          },
+          {
+            duration: durContainer,
+            easing: primaryEase,
+            delay: phase1Delay,
+          }
+        );
+      }
+
+      if (elements.heroVideo) {
+        animate(
+          elements.heroVideo,
+          {
+            scale: [1.05, 1],
+          },
+          {
+            duration: durContainer,
+            easing: primaryEase,
+            delay: phase1Delay,
+          }
+        );
+      }
+
+      /* ---------- PHASE 2 – Height reduction & content entry --------------------- */
+      const finalHeight = isDesktop
         ? vh <= 800
           ? "87.5svh"
           : vh <= 1049
@@ -137,100 +222,129 @@ function createHeroIntroTimeline({ phase1Delay, delayBetweenPhase1And2 }) {
         ? "87.5svh"
         : isMobileTall
         ? "82.5svh"
-        : "87.5svh",
-      duration: durCollapse,
-      ease: easeInOut,
-    },
-    "-=0.7"
-  );
+        : "87.5svh";
 
-  // Content fades in slightly after the section begins collapsing
-  tl.to(
-    ".hero--content.is--video",
-    {
-      opacity: 1,
-      y: "0%",
-      scale: 1,
-      duration: durContent,
-      ease: easeOut,
-    },
-    offsetContent
-  );
-
-  // Headers follow the content a bit closer to keep everything in sync
-  tl.to(
-    [".hero--header"],
-    {
-      opacity: 1,
-      y: 0,
-      duration: durHeaders,
-      stagger: 0.25,
-      ease: easeOut,
-    },
-    offsetHeaders
-  );
-
-  return tl;
-}
-
-// Main initialization function
-function initHeroVideo() {
-  // Exit early if GSAP is not available
-  if (typeof gsap === "undefined") {
-    console.warn("GSAP not loaded, cannot initialize hero animations");
-    // Remove the flicker style to at least show the page even if animations won't work
-    return;
-  }
-
-  // Function to initialize animations when ready
-  function initAnimations() {
-    // Check if hero elements exist before initializing
-    if (!document.querySelector(".hero--section.is--video")) {
-      // Exit if no hero video section exists, but still make page visible
-      return;
-    }
-
-    // Initialize hero states
-    if (!initializeHeroStates()) return;
-
-    // Create and play the animation immediately
-    const timeline = createHeroIntroTimeline({
-      phase1Delay: 0, // No delay to start immediately
-      delayBetweenPhase1And2: 0.1, // Reduced delay between phases
-    });
-
-    // Skip if timeline couldn't be created
-    if (!timeline) return;
-
-    // Fade out loader now that setup is complete
-    gsap.to(".loader", {
-      opacity: 0,
-      duration: 0.5,
-      onComplete: () => {
-        gsap.set(".loader", { display: "none" });
-      },
-    });
-
-    // Optional: Add ScrollTrigger for interactive animations
-    if (typeof ScrollTrigger !== "undefined") {
-      gsap.to(".hero--video", {
-        scrollTrigger: {
-          trigger: ".hero--section.is--video",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
+      animate(
+        elements.heroSection,
+        {
+          height: [
+            isDesktop
+              ? "100svh"
+              : isTablet
+              ? "97.5svh"
+              : isMobileTall
+              ? "97.5svh"
+              : "92.5svh",
+            finalHeight,
+          ],
         },
-        scale: 1.1,
-        borderRadius: "2rem",
-      });
+        {
+          duration: durCollapse,
+          easing: secondaryEase,
+          delay: heightStartDelay,
+        }
+      );
+
+      // Content animation
+      if (elements.heroContent) {
+        animate(
+          elements.heroContent,
+          {
+            opacity: [0, 1],
+            y: ["100%", "0%"],
+            scale: [0.92, 1],
+          },
+          {
+            duration: durContent,
+            easing: primaryEase,
+            delay: contentStartDelay,
+          }
+        );
+      }
+
+      // Headers animation
+      if (elements.headers.length) {
+        const headerY = isDesktop ? "10vh" : isTablet ? "2rem" : "1rem";
+        
+        elements.headers.forEach((header, index) => {
+          animate(
+            header,
+            {
+              opacity: [0, 1],
+              y: [headerY, "0px"],
+            },
+            {
+              duration: durHeaders,
+              easing: primaryEase,
+              delay: headerStartDelay + (index * 0.2), // Match GSAP's 0.2s stagger
+            }
+          );
+        });
+      }
+
+      // Fade out loader
+      const loader = document.querySelector(".loader");
+      if (loader) {
+        const loaderEl = /** @type {HTMLElement} */ (loader);
+
+        animate(
+          loaderEl,
+          {
+            opacity: [1, 0],
+          },
+          {
+            duration: 0.5,
+            easing: [0.76, 0, 0.24, 1],
+            delay: 0.1,
+            onStart: () => {
+              document.dispatchEvent(new Event("preloaderFinished"));
+            },
+            onComplete: () => {
+              loaderEl.style.display = "none";
+            },
+          }
+        );
+      }
+
+      // Optional: Add scroll-triggered animation
+      if (elements.heroVideo && window.Motion && window.Motion.scroll) {
+        const { scroll } = window.Motion;
+        
+        scroll(
+          animate(
+            elements.heroVideo,
+            {
+              scale: [1, 1.1],
+              borderRadius: ["1rem", "2rem"],
+            }
+          ),
+          {
+            target: elements.heroSection,
+            offset: ["start start", "bottom start"], // Match GSAP's "bottom top"
+          }
+        );
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       6. One-time init per hero video section
+    ────────────────────────────────────────────────────────────────*/
+    const heroVideoSection = document.querySelector(HERO_VIDEO_SELECTOR);
+    if (heroVideoSection) {
+      const heroEl = /** @type {HTMLElement} */ (heroVideoSection);
+      if (heroEl.dataset.hVideoAnim !== "done") {
+        heroEl.dataset.hVideoAnim = "done";
+        buildHeroVideoAnimation(heroEl);
+      }
     }
   }
 
-  // High priority initialization
-  initAnimations();
-}
+  /* ─────────────────────────────────────────────────────────────
+     7. Initialize everything
+  ────────────────────────────────────────────────────────────────*/
+  // Set up initial states immediately to prevent flickering
+  setupInitialStates();
 
-// Ensure initialization runs after Webflow is ready
-Webflow.push(() => {
-  initHeroVideo();
-});
+  // Then initialize animations
+  initHeroVideoAnimation();
+})();

@@ -167,3 +167,28 @@
 [data-link-type="Card"]:active {
   background-color: rgba(3, 29, 60, 0.8);
 }
+
+/*----------------------
+  DIVIDER LINE HOVER ANIMATIONS (CSS-only)
+  Desktop & Tablet only with hover support
+  Perfect for simple width animation
+----------------------*/
+@media (min-width: 768px) and (hover: hover) {
+  /* Initial state for divider line */
+  .link--general .link--divider-line {
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.33, 1, 0.68, 1); /* power2.out */
+    will-change: width;
+  }
+
+  /* Hover state - expand line */
+  .link--general:hover .link--divider-line {
+    width: 100%;
+  }
+
+  /* Focus state for accessibility */
+  .link--general:focus .link--divider-line,
+  .link--general:focus-within .link--divider-line {
+    width: 100%;
+  }
+}

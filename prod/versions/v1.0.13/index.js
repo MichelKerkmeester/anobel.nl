@@ -20,10 +20,7 @@ var __async = (__this, __arguments, generator) => {
 };
 (function() {
   "use strict";
-  (() => {
-    if (!window.location.pathname.includes("/blog/") || window.location.pathname === "/blog" || window.location.pathname === "/blog/") {
-      return;
-    }
+  if (window.location.pathname.includes("/blog/") && window.location.pathname !== "/blog" && window.location.pathname !== "/blog/") {
     document.querySelectorAll(".blog--list-w").forEach((wrapper) => {
       const list = wrapper.querySelector(".blog--list");
       if (!list) return;
@@ -67,7 +64,7 @@ var __async = (__this, __arguments, generator) => {
         item.setAttribute("data-related-position", (idx + 1).toString());
       });
     });
-  })();
+  }
   const EASING = {
     // Power curves
     power1Out: [0.25, 0.46, 0.45, 0.94],
@@ -1531,61 +1528,53 @@ var __async = (__this, __arguments, generator) => {
       initHideNavOnScroll();
     }
   })();
-  (() => {
-    initWithWebflow(() => {
-      initMotionWithRetry(({ animate }) => {
-        const megaMenu = (
-          /** @type {HTMLElement|null} */
-          document.querySelector(".nav--mega-menu")
-        );
-        const menuButton = (
-          /** @type {HTMLElement|null} */
-          document.querySelector(".btn--hamburger")
-        );
-        if (!megaMenu || !menuButton) return;
-        optimizeForAnimation(megaMenu);
-        let isOpen = false;
-        const OPEN_CONFIG = {
-          duration: 0.8,
-          easing: EASING.power2Out,
-          delay: 200
-        };
-        const CLOSE_CONFIG = {
-          duration: 0.4,
-          easing: EASING.power2In
-        };
-        function openMenu() {
-          megaMenu.style.display = "flex";
-          animate(megaMenu, {
-            height: ["0svh", "100svh"],
-            width: ["100%", "100%"]
-          }, OPEN_CONFIG).finished.then(() => {
-            megaMenu.style.borderRadius = "0rem";
-          });
-        }
-        function closeMenu() {
-          megaMenu.style.borderRadius = "0.75rem";
-          animate(megaMenu, {
-            height: ["100svh", "0svh"],
-            width: ["100%", "100%"]
-          }, CLOSE_CONFIG).finished.then(() => {
-            megaMenu.style.display = "none";
-          });
-        }
-        menuButton.addEventListener("click", () => {
-          if (!isOpen) {
-            openMenu();
-          } else {
-            closeMenu();
-          }
-          isOpen = !isOpen;
+  initWithWebflow(() => {
+    initMotionWithRetry(({ animate }) => {
+      const megaMenu = document.querySelector(".nav--mega-menu");
+      const menuButton = document.querySelector(".btn--hamburger");
+      if (!megaMenu || !menuButton) return;
+      optimizeForAnimation(megaMenu);
+      let isOpen = false;
+      const OPEN_CONFIG = {
+        duration: 0.8,
+        easing: EASING.power2Out,
+        delay: 200
+      };
+      const CLOSE_CONFIG = {
+        duration: 0.4,
+        easing: EASING.power2In
+      };
+      function openMenu() {
+        megaMenu.style.display = "flex";
+        animate(megaMenu, {
+          height: ["0svh", "100svh"],
+          width: ["100%", "100%"]
+        }, OPEN_CONFIG).finished.then(() => {
+          megaMenu.style.borderRadius = "0rem";
         });
-        window.addEventListener("beforeunload", () => {
-          resetOptimization(megaMenu);
+      }
+      function closeMenu() {
+        megaMenu.style.borderRadius = "0.75rem";
+        animate(megaMenu, {
+          height: ["100svh", "0svh"],
+          width: ["100%", "100%"]
+        }, CLOSE_CONFIG).finished.then(() => {
+          megaMenu.style.display = "none";
         });
+      }
+      menuButton.addEventListener("click", () => {
+        if (!isOpen) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+        isOpen = !isOpen;
+      });
+      window.addEventListener("beforeunload", () => {
+        resetOptimization(megaMenu);
       });
     });
-  })();
+  });
   (() => {
     const isDesktopOrTablet = DEVICE.isTabletOrDesktop;
     function setupInitialStates() {

@@ -1,28 +1,11 @@
+// ───────────────────────────────────────────────────────────────
 // Link: General
-// Hover Animation
-Webflow.push(() => {
-  // Check if device is tablet/desktop (not mobile) and not a touch device
-  const isTabletOrDesktop = window.matchMedia(
-    "(min-width: 768px) and (hover: hover)"
-  ).matches;
+// Hover Animation - Desktop & Tablet Only (Optimized)
+// ───────────────────────────────────────────────────────────────
 
-  if (!isTabletOrDesktop) return; // Exit early if mobile or touch device
+// Import the consolidated base animation utility
+import { BaseLinkAnimation, LINK_CONFIGS } from '../utils/base-link-animation.js';
 
-  const cards = document.querySelectorAll(".link--general");
-
-  cards.forEach((card) => {
-    // Create timeline for hover animation
-    const tl = gsap.timeline({ paused: true });
-
-    // Animation
-    tl.to(card.querySelector(".link--divider-line"), {
-      width: "100%",
-      duration: 0.6,
-      ease: "power2.out",
-    }).reverse(); // Initialize in reversed state
-
-    // Add hover listeners
-    card.addEventListener("mouseenter", () => tl.play());
-    card.addEventListener("mouseleave", () => tl.reverse());
-  });
-});
+// Initialize general link animations using the consolidated system
+// This preserves all existing class selectors and behavior
+new BaseLinkAnimation(LINK_CONFIGS.general);
