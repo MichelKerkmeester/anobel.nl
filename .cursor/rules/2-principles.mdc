@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# 🧠 2. PRINCIPLES
+## 🧠 2. PRINCIPLES
 
 1. Build **only to current scope**; apply **DRY & KISS** principles relentlessly.
 2. **Prefer CSS**; use JS only when necessary.

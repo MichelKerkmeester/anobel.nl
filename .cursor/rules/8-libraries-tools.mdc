@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# 📚 6. LIBRARIES
+## 📚 8. LIBRARIES
 
 1. **Animation hierarchy**: CSS → Motion.dev (Default) → GSAP (Complex)
 2. **Sliders**: Swiper.js

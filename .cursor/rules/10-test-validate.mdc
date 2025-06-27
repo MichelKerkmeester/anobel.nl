@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ✅ 10. TEST & VALIDATE
+
+1. **Test in Webflow Staging** before publishing changes.
+2. **Measure metrics** before and after each change.
+3. **Validate**: CSS-first, REMs, clamps, no jQuery/TS, minimal JS.
+4. **Debounce/throttle** expensive operations.
