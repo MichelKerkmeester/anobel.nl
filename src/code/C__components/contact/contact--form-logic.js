@@ -541,8 +541,8 @@
 
       // Look for custom submit button or fall back to regular Webflow submit
       let customSubmitBtn = form.querySelector("[data-form-submit]");
-      let realSubmitInput = /** @type {HTMLInputElement|null} */ (
-        form.querySelector('input[type="submit"]')
+      let realSubmitInput = /** @type {HTMLInputElement|HTMLElement|null} */ (
+        form.querySelector('input[type="submit"], [type="submit"], [data-form-submit]')
       );
 
       if (!realSubmitInput) return; // No submit button found
@@ -614,8 +614,8 @@
         }
       });
 
-      // Custom submit button support
-      if (customSubmitBtn) {
+      // Custom submit button support (only if not handled by Formspark setup)
+      if (customSubmitBtn && !customSubmitBtn.hasAttribute('data-formspark-handled')) {
         customSubmitBtn.addEventListener("click", function (event) {
           event.preventDefault();
           if (validateAndStartLiveValidationForAll(validateFields) && !isSpam(startTime)) {

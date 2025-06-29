@@ -21,14 +21,43 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3. Field Filled States
+   3. Field Filled States & Valid State Override
 ────────────────────────────────────────────────────────────────*/
-/* Styling when field has content */
+/* Styling when field has content - explicitly no background change */
 [data-field-validate].live-filled input,
 [data-field-validate].live-filled textarea,
 [data-field-validate].live-filled select {
-  /* Add any filled state styling here if needed */
-  /* Example: background-color: #f8f9fa; */
+  /* Explicitly maintain white background for filled state */
+  background-color: var(--_color-tokens---bg-neutral--white) !important;
+}
+
+/* Override browser/Webflow default :valid state styling */
+[data-field-validate] input:valid,
+[data-field-validate] textarea:valid,
+[data-field-validate] select:valid,
+[data-field-validate] .input:valid,
+[data-field-validate] .w-input:valid,
+[data-field-validate] textarea.input:valid,
+[data-field-validate] textarea.w-input:valid,
+[data-field-validate] select.input:valid,
+[data-field-validate] select.w-select:valid {
+  /* Force white background to override any success state styling */
+  background-color: var(--_color-tokens---bg-neutral--white) !important;
+  border-color: var(--_color-tokens---border-neutral--dark) !important;
+}
+
+/* Override :valid state on focus to maintain proper focus styling */
+[data-field-validate] input:valid:focus,
+[data-field-validate] textarea:valid:focus,
+[data-field-validate] select:valid:focus,
+[data-field-validate] .input:valid:focus,
+[data-field-validate] .w-input:valid:focus,
+[data-field-validate] textarea.input:valid:focus,
+[data-field-validate] textarea.w-input:valid:focus,
+[data-field-validate] select.input:valid:focus,
+[data-field-validate] select.w-select:valid:focus {
+  background-color: var(--_color-tokens---bg-neutral--white) !important;
+  border-color: var(--_color-tokens---border-brand--base) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────

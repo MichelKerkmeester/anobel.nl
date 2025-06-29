@@ -16,7 +16,7 @@
   // Form selectors (compatible with live validation)
   const FORM_CONTAINER_SELECTOR = "[data-live-validate]";
   const WEBFLOW_FORM_SELECTOR = "form";
-  const SUBMIT_BUTTON_SELECTOR = 'input[type="submit"]';
+  const SUBMIT_BUTTON_SELECTOR = 'input[type="submit"], [type="submit"], [data-form-submit]';
 
   /* ─────────────────────────────────────────────────────────────
        2. Botpoison Integration
@@ -155,7 +155,15 @@
   // Show loading state
   function showLoadingState(form, submitButton) {
     submitButton.disabled = true;
-    submitButton.value = "Sending...";
+    
+    // Handle different types of submit elements
+    if (submitButton.tagName.toLowerCase() === 'input') {
+      submitButton.value = "Sending...";
+    } else {
+      // For custom elements (div, button, etc.)
+      submitButton.textContent = "Sending...";
+    }
+    
     form.style.opacity = "0.7";
     form.style.pointerEvents = "none";
   }
@@ -163,7 +171,15 @@
   // Hide loading state
   function hideLoadingState(form, submitButton, originalButtonText) {
     submitButton.disabled = false;
-    submitButton.value = originalButtonText;
+    
+    // Handle different types of submit elements
+    if (submitButton.tagName.toLowerCase() === 'input') {
+      submitButton.value = originalButtonText;
+    } else {
+      // For custom elements (div, button, etc.)
+      submitButton.textContent = originalButtonText;
+    }
+    
     form.style.opacity = "1";
     form.style.pointerEvents = "auto";
   }
@@ -286,7 +302,10 @@
   ) {
     event.preventDefault(); // Prevent default Webflow submission
 
-    const originalButtonText = submitButton.value;
+    // Get original button text from the right property
+    const originalButtonText = submitButton.tagName.toLowerCase() === 'input' 
+      ? submitButton.value 
+      : submitButton.textContent;
 
     try {
       // 1. Show loading state
@@ -304,6 +323,10 @@
       // 5. Handle response
       if (result.success) {
         console.log("Form submitted successfully:", result.data);
+        
+        // Hide loading state before showing success message
+        hideLoadingState(form, submitButton, originalButtonText);
+        
         showSuccessMessage(form);
 
         // Optional: Track success with analytics
@@ -384,6 +407,26 @@
           }
         );
       });
+      
+      // Handle custom submit elements that might not trigger form submit event
+      if (submitButton && submitButton.tagName.toLowerCase() !== 'input') {
+        // Mark as handled by Formspark to prevent conflicts with validation script
+        submitButton.setAttribute('data-formspark-handled', 'true');
+        
+        submitButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          if (isSubmitting) return;
+          
+          // Trigger form submission
+          const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+          form.dispatchEvent(submitEvent);
+        });
+      }
+      
+      // Store reset preference for use by logic script  
+      if (submitButton && submitButton.hasAttribute("data-form-reset")) {
+        form.dataset.shouldReset = "true";
+      }
 
       console.log("Formspark integration initialized for form:", form);
     });
