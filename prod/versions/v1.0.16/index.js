@@ -342,17 +342,14 @@ var __async = (__this, __arguments, generator) => {
           );
           frameEl.style.opacity = "0";
           frameEl.style.padding = "0rem";
-          frameEl.style.willChange = "padding, opacity";
         });
         const listWrapper = heroEl.querySelector(".hero--list-w.is--general");
         if (listWrapper) {
           listWrapper.style.borderRadius = "0rem";
-          listWrapper.style.willChange = "border-radius";
         }
         const imgWrap = heroEl.querySelector(".hero--image-w");
         if (imgWrap) {
           imgWrap.style.height = "0%";
-          imgWrap.style.willChange = "height";
         }
         const headers = heroEl.querySelectorAll(".hero--header");
         headers.forEach((header) => {
@@ -361,8 +358,7 @@ var __async = (__this, __arguments, generator) => {
             header
           );
           headerEl.style.opacity = "0";
-          headerEl.style.transform = "translateX(-7.5rem) translateZ(0)";
-          headerEl.style.willChange = "transform, opacity";
+          headerEl.style.transform = "translateX(-7.5rem)";
         });
         if (window.innerWidth >= 992) {
           const pointerLine = heroEl.querySelector(".hero--pointer-line");
@@ -372,8 +368,7 @@ var __async = (__this, __arguments, generator) => {
           }
           const pointerBullet = heroEl.querySelector(".hero--pointer-bullet");
           if (pointerBullet) {
-            pointerBullet.style.transform = "scale(0) translateZ(0)";
-            pointerBullet.style.willChange = "transform";
+            pointerBullet.style.transform = "scale(0)";
           }
           const subHeading = heroEl.querySelector(".hero--sub-heading");
           if (subHeading) {
@@ -393,8 +388,7 @@ var __async = (__this, __arguments, generator) => {
       });
     }
     function initHeroAnimation() {
-      var _a;
-      const { animate, inView } = window.Motion || {};
+      const { animate, inView, stagger } = window.Motion || {};
       if (!animate || !inView) {
         console.warn("Motion.dev not ready, retrying…");
         setTimeout(initHeroAnimation, 100);
@@ -402,20 +396,14 @@ var __async = (__this, __arguments, generator) => {
       }
       const HERO_SECTION_SELECTOR = ".hero--section:not(.w-dyn-empty):not(.w-dyn-bind-empty):not(.w-condition-invisible)";
       const getViewportType = () => {
-        if (window.HeroUtils && window.HeroUtils.ViewportCache) {
-          return window.HeroUtils.ViewportCache.get();
-        }
         const viewportWidth = innerWidth;
         return {
           isDesktop: viewportWidth >= 992,
           isMobile: viewportWidth < 992
         };
       };
-      const easing = ((_a = window.HeroUtils) == null ? void 0 : _a.Easing) || {
-        easeOut: [0.22, 1, 0.36, 1],
-        expoOut: [0.16, 1, 0.3, 1]
-      };
-      const { easeOut, expoOut } = easing;
+      const easeOut = [0.22, 1, 0.36, 1];
+      const expoOut = [0.16, 1, 0.3, 1];
       function buildHeroGeneralAnimation(hero) {
         const { isDesktop, isMobile } = getViewportType();
         const elements = {
@@ -444,14 +432,7 @@ var __async = (__this, __arguments, generator) => {
               padding: [padFrom, padTo],
               opacity: [0, 1]
             },
-            {
-              duration: 1,
-              easing: easeOut,
-              onComplete: () => {
-                var _a2, _b;
-                ((_b = (_a2 = window.HeroUtils) == null ? void 0 : _a2.WillChange) == null ? void 0 : _b.remove(frameEl)) || (frameEl.style.willChange = "auto");
-              }
-            }
+            { duration: 1, easing: easeOut }
           );
         });
         if (elements.listWrapper) {
@@ -460,14 +441,7 @@ var __async = (__this, __arguments, generator) => {
             {
               borderRadius: ["0rem", radiusTo]
             },
-            {
-              duration: 1,
-              easing: easeOut,
-              onComplete: () => {
-                var _a2, _b;
-                ((_b = (_a2 = window.HeroUtils) == null ? void 0 : _a2.WillChange) == null ? void 0 : _b.remove(elements.listWrapper)) || (elements.listWrapper.style.willChange = "auto");
-              }
-            }
+            { duration: 1, easing: easeOut }
           );
         }
         const t0 = 0;
@@ -611,8 +585,7 @@ var __async = (__this, __arguments, generator) => {
             header
           );
           headerEl.style.opacity = "0";
-          headerEl.style.transform = "translateX(-7.5rem) translateZ(0)";
-          headerEl.style.willChange = "transform, opacity";
+          headerEl.style.transform = "translateX(-7.5rem)";
         });
         const productItems = heroEl.querySelectorAll(".hero--products > *");
         productItems.forEach((item) => {
@@ -621,8 +594,7 @@ var __async = (__this, __arguments, generator) => {
             item
           );
           itemEl.style.opacity = "0";
-          itemEl.style.transform = "translateY(7.5rem) translateZ(0)";
-          itemEl.style.willChange = "transform, opacity";
+          itemEl.style.transform = "translateY(7.5rem)";
         });
         const productContainers = heroEl.querySelectorAll(".hero--products");
         productContainers.forEach((container) => {
@@ -652,8 +624,7 @@ var __async = (__this, __arguments, generator) => {
           }
           const pointerBullet = heroEl.querySelector(".hero--pointer-bullet");
           if (pointerBullet) {
-            pointerBullet.style.transform = "scale(0) translateZ(0)";
-            pointerBullet.style.willChange = "transform";
+            pointerBullet.style.transform = "scale(0)";
           }
           const subHeading = heroEl.querySelector(".hero--sub-heading");
           if (subHeading) {
@@ -673,7 +644,7 @@ var __async = (__this, __arguments, generator) => {
       });
     }
     function initHeroAnimation() {
-      const { animate, inView } = window.Motion || {};
+      const { animate, inView, stagger } = window.Motion || {};
       if (!animate || !inView) {
         console.warn("Motion.dev not ready, retrying…");
         setTimeout(initHeroAnimation, 100);
@@ -864,7 +835,6 @@ var __async = (__this, __arguments, generator) => {
             cardW
           );
           cardWEl.style.height = "0%";
-          cardWEl.style.willChange = "height";
         });
         const cardContents = heroEl.querySelectorAll(".hero--card-content");
         cardContents.forEach((content) => {
@@ -877,11 +847,10 @@ var __async = (__this, __arguments, generator) => {
           );
           headerEl.style.opacity = "0";
           if (window.innerWidth < 992) {
-            headerEl.style.transform = "translateX(-7.5rem) translateZ(0)";
+            headerEl.style.transform = "translateX(-7.5rem)";
           } else {
-            headerEl.style.transform = "scale(0.9) translateZ(0)";
+            headerEl.style.transform = "scale(0.9)";
           }
-          headerEl.style.willChange = "transform, opacity";
         });
         const imageOverlays = heroEl.querySelectorAll(
           ".hero--card-image-overlay"
@@ -899,13 +868,12 @@ var __async = (__this, __arguments, generator) => {
             /** @type {HTMLElement} */
             container
           );
-          containerEl.style.transform = "translateY(100%) translateZ(0)";
-          containerEl.style.willChange = "transform";
+          containerEl.style.transform = "translateY(100%)";
         });
       });
     }
     function initHeroAnimation() {
-      const { animate, inView } = window.Motion || {};
+      const { animate, inView, stagger } = window.Motion || {};
       if (!animate || !inView) {
         console.warn("Motion.dev not ready, retrying…");
         setTimeout(initHeroAnimation, 100);
@@ -915,6 +883,7 @@ var __async = (__this, __arguments, generator) => {
       const getViewportType = () => {
         const viewportWidth = innerWidth;
         return {
+          isDesktop: viewportWidth >= 992,
           isMobile: viewportWidth < 992
         };
       };
@@ -2609,19 +2578,9 @@ var __async = (__this, __arguments, generator) => {
         vid.loop = true;
         vid.muted = true;
         vid.playsInline = true;
-        const promise = vid.play();
-        if (promise !== void 0) {
-          promise.catch((error) => {
-            console.warn("Autoplay was prevented. Waiting for user interaction.", error);
-            const playOnFirstInteraction = () => {
-              vid.play().catch((e) => console.warn("Play on interaction also failed.", e));
-              document.removeEventListener("click", playOnFirstInteraction);
-              document.removeEventListener("touchstart", playOnFirstInteraction);
-            };
-            document.addEventListener("click", playOnFirstInteraction);
-            document.addEventListener("touchstart", playOnFirstInteraction);
-          });
-        }
+        vid.play().catch((err) => {
+          console.warn("Autoplay blocked:", err);
+        });
       });
     }, 3e3);
   });

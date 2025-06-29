@@ -29,66 +29,74 @@
       headers.forEach((header) => {
         const headerEl = /** @type {HTMLElement} */ (header);
         headerEl.style.opacity = "0";
-        headerEl.style.transform = "translateX(-7.5rem)";
+        headerEl.style.transform = "translateX(-7.5rem) translateZ(0)";
+        headerEl.style.willChange = "transform, opacity";
       });
 
-      // Hide products with initial state (try multiple selectors)
-      const productSelectors = [
-        ".hero--products",
-        ".hero--product-list",
-        ".hero--list-w",
-        ".hero--content",
-      ];
-      productSelectors.forEach((selector) => {
-        const products = heroEl.querySelectorAll(selector);
-        products.forEach((product) => {
-          const productEl = /** @type {HTMLElement} */ (product);
-          productEl.style.opacity = "0";
-        });
+      // Hide product children for staggered animation
+      const productItems = heroEl.querySelectorAll(".hero--products > *");
+      productItems.forEach((item) => {
+        const itemEl = /** @type {HTMLElement} */ (item);
+        itemEl.style.opacity = "0";
+        itemEl.style.transform = "translateY(7.5rem) translateZ(0)";
+        itemEl.style.willChange = "transform, opacity";
       });
 
-      // Hide background with initial state
+      // Ensure parent container is visible and not transformed
+      const productContainers = heroEl.querySelectorAll(".hero--products");
+      productContainers.forEach((container) => {
+        const containerEl = /** @type {HTMLElement} */ (container);
+        containerEl.style.opacity = "1";
+        containerEl.style.transform = "none";
+      });
+
+      // Hide background with initial state (mobile only)
       const backgrounds = heroEl.querySelectorAll(".hero--background");
       backgrounds.forEach((background) => {
         const backgroundEl = /** @type {HTMLElement} */ (background);
         const isMobile = window.innerWidth < 992;
         if (isMobile) {
-          backgroundEl.style.height = "0%";
-        } else {
-          backgroundEl.style.transform = "translateY(100%)";
+          backgroundEl.style.opacity = "0";
         }
+        // Desktop: background stays visible from start
       });
 
       // Hide desktop-only elements
       if (window.innerWidth >= 992) {
         const pointerLine = heroEl.querySelector(".hero--pointer-line");
         if (pointerLine) {
-          /** @type {HTMLElement} */ (pointerLine).style.height = "0%";
-          /** @type {HTMLElement} */ (pointerLine).style.transformOrigin =
-            "top";
+          /** @type {HTMLElement} */
+          (pointerLine).style.height = "0%";
+          /** @type {HTMLElement} */
+          (pointerLine).style.transformOrigin = "top";
         }
 
         const pointerBullet = heroEl.querySelector(".hero--pointer-bullet");
         if (pointerBullet) {
-          /** @type {HTMLElement} */ (pointerBullet).style.transform =
-            "scale(0)";
+          /** @type {HTMLElement} */
+          (pointerBullet).style.transform = "scale(0) translateZ(0)";
+          /** @type {HTMLElement} */
+          (pointerBullet).style.willChange = "transform";
         }
 
         const subHeading = heroEl.querySelector(".hero--sub-heading");
         if (subHeading) {
-          /** @type {HTMLElement} */ (subHeading).style.opacity = "0";
+          /** @type {HTMLElement} */
+          (subHeading).style.opacity = "0";
         }
 
         const descContainer = heroEl.querySelector(
           ".hero--description .container"
         );
         if (descContainer) {
-          /** @type {HTMLElement} */ (descContainer).style.opacity = "0";
+          /** @type {HTMLElement} */
+          (descContainer).style.opacity = "0";
         }
 
         const cta = heroEl.querySelector(".hero--btn-w");
         if (cta) {
-          /** @type {HTMLElement} */ (cta).style.opacity = "0";
+          /** @type {HTMLElement} */
+          (cta).style.opacity = "0";
         }
       }
     });
@@ -99,7 +107,7 @@
   ────────────────────────────────────────────────────────────────*/
   function initHeroAnimation() {
     // @ts-ignore - Motion.dev library loaded externally
-    const { animate, inView, stagger } = window.Motion || {};
+    const { animate, inView } = window.Motion || {};
     if (!animate || !inView) {
       console.warn("Motion.dev not ready, retrying…");
       setTimeout(initHeroAnimation, 100);
@@ -112,12 +120,22 @@
     const HERO_SECTION_SELECTOR =
       ".hero--section:not(.w-dyn-empty):not(.w-dyn-bind-empty):not(.w-condition-invisible)";
 
+    // Viewport caching for performance
+    let cachedViewport = null;
+    let viewportCacheTime = 0;
+    const VIEWPORT_CACHE_DURATION = 100; // ms
+
     const getViewportType = () => {
-      const viewportWidth = innerWidth;
-      return {
-        isDesktop: viewportWidth >= 992,
-        isMobile: viewportWidth < 992,
-      };
+      const now = performance.now();
+      if (!cachedViewport || (now - viewportCacheTime) > VIEWPORT_CACHE_DURATION) {
+        const viewportWidth = innerWidth;
+        cachedViewport = {
+          isDesktop: viewportWidth >= 992,
+          isMobile: viewportWidth < 992,
+        };
+        viewportCacheTime = now;
+      }
+      return cachedViewport;
     };
 
     /* ─────────────────────────────────────────────────────────────
@@ -128,7 +146,50 @@
     const expoOut = [0.16, 1, 0.3, 1]; // "Out Expo"
 
     /* ─────────────────────────────────────────────────────────────
-       5. Build one timeline per hero
+       5. Performance utilities
+    ────────────────────────────────────────────────────────────────*/
+    // willChange management
+    const removeWillChange = (element) => {
+      if (element && element.style) {
+        element.style.willChange = "auto";
+      }
+    };
+
+    const removeWillChangeBatch = (elements) => {
+      if (!elements) return;
+      const nodeList = elements.length !== undefined ? elements : [elements];
+      Array.from(nodeList).forEach(el => {
+        if (el && el.style) {
+          el.style.willChange = "auto";
+        }
+      });
+    };
+
+    // Loader animation utility
+    const animateLoader = (delay = 0.1) => {
+      const loader = document.querySelector(".loader");
+      if (!loader) return;
+
+      animate(
+        loader,
+        { opacity: [1, 0] },
+        {
+          duration: 0.3,
+          easing: expoOut,
+          delay: delay,
+          onStart: () => {
+            document.dispatchEvent(new Event("preloaderFinished"));
+          },
+          onComplete: () => {
+            loader.style.display = "none";
+            removeWillChange(loader);
+          },
+        }
+      );
+    };
+
+    /* ─────────────────────────────────────────────────────────────
+       6. Build one timeline per hero
     ────────────────────────────────────────────────────────────────*/
     function buildHeroWebshopAnimation(/** @type {HTMLElement} */ hero) {
       const { isDesktop, isMobile } = getViewportType();
@@ -136,12 +197,7 @@
       // Cache DOM elements for performance (single query pass)
       const elements = {
         headers: hero.querySelectorAll(".hero--header"),
-        products: [
-          ...hero.querySelectorAll(".hero--products"),
-          ...hero.querySelectorAll(".hero--product-list"),
-          ...hero.querySelectorAll(".hero--list-w"),
-          ...hero.querySelectorAll(".hero--content"),
-        ],
+        products: hero.querySelectorAll(".hero--products"),
         backgrounds: hero.querySelectorAll(".hero--background"),
         pointerLine: hero.querySelector(".hero--pointer-line"),
         pointerBullet: hero.querySelector(".hero--pointer-bullet"),
@@ -151,8 +207,17 @@
       };
 
       /* ---------- PHASE 1 – Headers and Products --------------------- */
+      // Phase 1 properties
+      const headerDuration = isMobile ? 0.8 : 1.1;
+      const headerEasing = isMobile ? expoOut : easeOut;
+      const headerDelay = 0;
+      const productDuration = isMobile ? 0.6 : 0.6;
+      const productEasing = isMobile ? expoOut : easeOut;
+      const productDelay = isMobile
+        ? 0.15
+        : (/** @type {number} */ index) => 0.175 + index * 0.015;
 
-      // Headers (improved timing similar to cards)
+      // Headers
       if (elements.headers.length) {
         animate(
           elements.headers,
@@ -161,60 +226,80 @@
             opacity: [0, 1],
           },
           {
-            duration: isMobile ? 0.8 : 1.1,
-            easing: isMobile ? expoOut : easeOut,
-            delay: 0,
+            duration: headerDuration,
+            easing: headerEasing,
+            delay: headerDelay,
+            onComplete: () => {
+              removeWillChangeBatch(elements.headers);
+            }
           }
         );
       }
 
-      // Products (animate first, before background)
+      // Products
       if (elements.products.length) {
-        animate(
-          elements.products,
-          {
-            opacity: [0, 1],
-          },
-          {
-            duration: isMobile ? 1.0 : 1.2,
-            easing: expoOut,
-            delay: 0,
-          }
-        );
+        const productChildren = hero.querySelectorAll(".hero--products > *");
+        if (productChildren.length > 0) {
+          animate(
+            productChildren,
+            {
+              opacity: [0, 1],
+              y: ["7.5rem", "0rem"],
+            },
+            {
+              duration: productDuration,
+              easing: productEasing,
+              delay: productDelay,
+            }
+          );
+        }
       }
 
       /* ---------- PHASE 2 – Background --------------------- */
+      // Phase 2 properties
+      const backgroundDuration = 0.9;
+      const backgroundDelay = 0.2;
 
-      // Background (animate after products with delay)
-      if (elements.backgrounds.length) {
-        const backgroundAnimation = isMobile
-          ? { height: ["0%", "100%"] }
-          : { y: ["100%", "0%"] };
-
-        animate(elements.backgrounds, backgroundAnimation, {
-          duration: 0.8,
-          easing: easeOut,
-          delay: 0.25,
-        });
+      // Background (animate after products with delay - mobile only)
+      if (elements.backgrounds.length && isMobile) {
+        animate(
+          elements.backgrounds,
+          { opacity: [0, 1] },
+          {
+            duration: backgroundDuration,
+            easing: easeOut,
+            delay: backgroundDelay,
+          }
+        );
       }
 
-      /* ---------- PHASE 3 – Desktop-only elements (exact match with Hero General) --------------------- */
+      /* ---------- PHASE 3 – Pointers, Sub copy, CTA (Desktop only) ---------------------- */
       if (isDesktop) {
-        // Timeline base for phase 3 (adjusted for background delay)
+        // Phase 3 properties
         const tPhase2 = 0.2;
+        const pointerLineDelay = tPhase2 - 0.2;
+        const pointerLineDuration = 1.4;
+        const pointerBulletDelay = tPhase2 + 0.95;
+        const pointerBulletDuration = 0.75;
+        const fadeDelay = tPhase2 + 1.7;
+        const fadeDuration = 0.3;
+        const commonFadeOpts = {
+          duration: fadeDuration,
+          easing: easeIn,
+          delay: fadeDelay,
+        };
 
         if (elements.pointerLine) {
           /* Ensure line grows downward on desktop */
-          /** @type {HTMLElement} */ (
-            elements.pointerLine
-          ).style.transformOrigin = "top";
+          /** @type {HTMLElement} */
+          (elements.pointerLine).style.transformOrigin = "top";
           animate(
             elements.pointerLine,
             { height: ["0%", "100%"] },
             {
-              duration: 1.4,
+              duration: pointerLineDuration,
               easing: "linear",
-              delay: tPhase2 - 0.2,
+              delay: pointerLineDelay,
             }
           );
         }
@@ -224,18 +309,12 @@
             elements.pointerBullet,
             { scale: [0, 1] },
             {
-              duration: 0.75,
+              duration: pointerBulletDuration,
               easing: expoOut,
-              delay: tPhase2 + 1.2,
+              delay: pointerBulletDelay,
             }
           );
         }
-
-        const commonFadeOpts = {
-          duration: 0.3,
-          easing: easeIn,
-          delay: tPhase2 + 1.7,
-        };
 
         elements.subHeading &&
           animate(elements.subHeading, { opacity: [0, 1] }, commonFadeOpts);
@@ -253,35 +332,12 @@
         }
       }
 
-      // Fade out loader once animation starts
-      const loader = document.querySelector(".loader");
-      if (loader) {
-        const loaderEl = /** @type {HTMLElement} */ (loader);
-
-        animate(
-          loaderEl,
-          {
-            opacity: [1, 0],
-          },
-          {
-            duration: 0.2,
-            easing: [0.76, 0, 0.24, 1], // power3.inOut equivalent
-            delay: 0.1,
-            onStart: () => {
-              // Dispatch event to signal preloader has finished
-              document.dispatchEvent(new Event("preloaderFinished"));
-            },
-            onComplete: () => {
-              // Hide the loader completely after animation
-              loaderEl.style.display = "none";
-            },
-          }
-        );
-      }
+      // Fade out loader
+      animateLoader(0.1);
     }
 
     /* ─────────────────────────────────────────────────────────────
-       6. One-time init per hero block (skips WF stub)
+       7. One-time init per hero block (skips WF stub)
     ────────────────────────────────────────────────────────────────*/
     inView(
       HERO_SECTION_SELECTOR,
@@ -295,7 +351,7 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-     7. Initialize everything
+     8. Initialize everything
   ────────────────────────────────────────────────────────────────*/
   // Set up initial states immediately to prevent flickering
   setupInitialStates();

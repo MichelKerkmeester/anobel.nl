@@ -1,0 +1,143 @@
+/* ───────────────────────────────────────────────────────────────
+   Navigation
+   ─────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────
+   1. Navigation Dark Background Overlay
+────────────────────────────────────────────────────────────────*/
+.navigation__dark-bg {
+  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+}
+/* Active state - show overlay with opacity */
+[data-navigation-status="active"] .navigation__dark-bg {
+  opacity: 0.15;
+  visibility: visible;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. Content Container Animation
+────────────────────────────────────────────────────────────────*/
+.centered-nav__content {
+  transition: grid-template-rows 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+}
+/* Active state - expand grid rows to show content */
+[data-navigation-status="active"] .centered-nav__content {
+  grid-template-rows: 1fr;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. Menu Items Animation (Staggered Entry)
+────────────────────────────────────────────────────────────────*/
+/* Initial state - hidden and translated down */
+[data-navigation-item] {
+  transition: all 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  opacity: 0;
+  transform: translate(0px, 2em);
+}
+/* Active state - visible and in position */
+[data-navigation-status="active"] [data-navigation-item] {
+  opacity: 1;
+  transform: translate(0px, 0em);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. Navigation Link Animations
+────────────────────────────────────────────────────────────────*/
+/* Link underline animation */
+.hamburger-nav__a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  transition-delay: inherit;
+  transform: scaleX(0);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0, 1);
+}
+/* Active state - scale underline to full width */
+[data-navigation-status="active"] .hamburger-nav__a::after {
+  transform: scaleX(1);
+}
+/* Hover state - increase underline opacity */
+.hamburger-nav__a:hover::after {
+  opacity: 0.4;
+}
+
+/* Link text slide animation */
+.hamburger-nav__p {
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0, 1);
+  transform: translate(0px, 150%);
+  transition-delay: inherit;
+}
+/* Active state - slide text into view */
+[data-navigation-status="active"] .hamburger-nav__p {
+  transform: translate(0px, 0%);
+}
+
+/* Active/Current page link styling */
+.hamburger-nav__a[aria-current]::after {
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. Hamburger Button Animation
+────────────────────────────────────────────────────────────────*/
+/* Hamburger bars - initial state and transitions */
+.centered-nav__toggle .centered-nav__toggle-bar {
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0, 1);
+  transform: translateY(-0.25em) rotate(0.001deg);
+}
+/* Hover state - bars move apart */
+.centered-nav__toggle:hover .centered-nav__toggle-bar {
+  transform: translateY(0.25em) rotate(0.001deg);
+}
+/* Second bar positioning */
+.centered-nav__toggle .centered-nav__toggle-bar:nth-child(2) {
+  transform: translateY(0.15em) rotate(0.001deg);
+}
+/* Second bar hover state */
+.centered-nav__toggle:hover .centered-nav__toggle-bar:nth-child(2) {
+  transform: translateY(-0.15em) rotate(0.001deg);
+}
+/* Active state - first bar rotates to form X */
+[data-navigation-status="active"]
+  .centered-nav__toggle
+  .centered-nav__toggle-bar {
+  transform: translateY(0em) rotate(45deg);
+}
+/* Active state - second bar rotates to complete X */
+[data-navigation-status="active"]
+  .centered-nav__toggle
+  .centered-nav__toggle-bar:nth-child(2) {
+  transform: translateY(0em) rotate(-45deg);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. CTA Banner Marquee Animation
+────────────────────────────────────────────────────────────────*/
+/* Marquee keyframe animation */
+@keyframes translateX {
+  to {
+    transform: translateX(-100%);
+  }
+}
+/* Marquee list - paused by default */
+[data-css-marquee-list] {
+  animation: translateX 20s linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+/* Active state - start marquee animation */
+[data-navigation-status="active"] [data-css-marquee-list] {
+  animation-play-state: running;
+}
+/* Hover state - pause marquee on banner hover */
+[data-navigation-status="active"]
+  .centered-nav__banner:hover
+  [data-css-marquee-list] {
+  animation-play-state: paused;
+}

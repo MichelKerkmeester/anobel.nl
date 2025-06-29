@@ -29,61 +29,6 @@
 
 ---
 
-## 🚦 4. PRE-CODE CHECK
-
-1. **Define scope**: What exactly changes and why?
-2. **Map dependencies**: List all affected components.
-3. **Identify risks**: What could break?
-4. **Document assumptions**: State all preconditions.
-5. **Verify readiness**: "Do I understand the main risks?"
-
----
-
-## 🛡️ 5. RISK MANAGEMENT
-
-1. **Document potential failures**: "This could break if..."
-2. **Monitor impacts**; watch for cascading effects.
-2. **Consider performance impacts**; loading, memory, CPU.
-3. **Identify edge cases**; empty states, max limits.
-
----
-
-## 🌀 6A. DEV PLANNING
-
-1. **Confirm scope & resolve ambiguities** pre-code.
-2. **Break complex tasks into phases**; simple tasks stay simple.
-3. **Identify blockers early**; dependencies, unknowns, risks.
-4. **Plan for hand-off**; document context & decisions.
-
----
-
-## 🌀 6B. DEV EXECUTION
-
-1. Build in phases; share **progress & confidence levels**.
-2. Suggest **creative, out-of-the-box** (but stable) solutions & refactors.
-3. **Optimize relentlessly**; question every KB, every ms.
-4. Log **significant perf notes & edge cases** — skip obvious details.
-
----
-
-## 💬 7A. STRATEGIC COMMS
-
-1. **Explain rationale for complex choices**.
-2. Surface **trade-offs explicitly** (e.g., "+5 KB JS, –30 ms CLS").
-3. **Skip obvious documentation**; focus on surprises.
-4. **Anticipate questions**; address concerns preemptively.
-
----
-
-## 💬 7B. TACTICAL COMMS
-
-1. Give **concise explanations** with clear next steps.
-2. Use **plain-English comments** for designers.
-3. **Format for scannability**; use headers, bullets, bold key points.
-4. **Include implementation notes**: setup, usage, gotchas.
-
----
-
 ## 📚 8. LIBRARIES
 
 1. **Animation hierarchy**: CSS → Motion.dev (Default) → GSAP (Complex)
@@ -114,12 +59,3 @@
 
 1. **Slater autoloads** — never add `DOMContentLoaded` listeners.
 2. Execute code directly or via `Webflow.push()` for Webflow features.
-
----
-
-# ✅ 10. TEST & VALIDATE
-
-1. **Test in Webflow Staging** before publishing changes.
-2. **Measure metrics** before and after each change.
-3. **Validate**: CSS-first, REMs, clamps, no jQuery/TS, minimal JS.
-4. **Debounce/throttle** expensive operations.

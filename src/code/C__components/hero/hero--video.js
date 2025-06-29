@@ -1,11 +1,7 @@
 // ───────────────────────────────────────────────────────────────
-// Hero: Video (Optimized)
+// Hero: Video
 // Intro Animation
 // ───────────────────────────────────────────────────────────────
-
-// Import centralized utilities
-import { EASING } from '../utils/motion-config.js';
-
 (() => {
   /* ─────────────────────────────────────────────────────────────
      1. Initial State Setup (Prevent Flickering)
@@ -55,30 +51,41 @@ import { EASING } from '../utils/motion-config.js';
     headers.forEach((header) => {
       const headerEl = /** @type {HTMLElement} */ (header);
       headerEl.style.opacity = "0";
-      headerEl.style.transform = isDesktop 
-        ? "translateY(10vh)" 
-        : isTablet 
-        ? "translateY(2rem)" 
+      headerEl.style.transform = isDesktop
+        ? "translateY(10vh)"
+        : isTablet
+        ? "translateY(2rem)"
         : "translateY(1rem)";
       headerEl.style.willChange = "opacity, transform";
     });
 
-    // Set initial video container state
+    // Set initial video container state with performance optimizations
     const videoContainer = heroSection.querySelector(".hero--video-container");
     if (videoContainer) {
-      /** @type {HTMLElement} */ (videoContainer).style.padding = "0";
+      const containerEl = /** @type {HTMLElement} */ (videoContainer);
+      containerEl.style.padding = "0";
+      containerEl.style.opacity = "0";
+      containerEl.style.willChange = "padding, opacity";
     }
 
-    // Set initial video state
+    // Set initial video wrapper state
+    const videoWrapper = heroSection.querySelector(".hero--video-w");
+    if (videoWrapper) {
+      const wrapperEl = /** @type {HTMLElement} */ (videoWrapper);
+      wrapperEl.style.borderRadius = "0rem";
+      wrapperEl.style.willChange = "border-radius";
+    }
+
+    // Set initial video state with hardware acceleration
     const heroVideo = heroSection.querySelector(".hero--video");
     if (heroVideo) {
       const videoEl = /** @type {HTMLElement} */ (heroVideo);
-      videoEl.style.borderRadius = "0";
-      videoEl.style.transform = "scale(1.05)";
+      videoEl.style.transform = "scale(1.05) translateZ(0)";
       videoEl.style.transformStyle = "preserve-3d";
       videoEl.style.backfaceVisibility = "hidden";
-      videoEl.style.perspective = "1000px";
       videoEl.style.willChange = "transform";
+      // Force hardware acceleration
+      videoEl.style.transform3d = "translateZ(0)";
     }
   }
 
@@ -99,36 +106,76 @@ import { EASING } from '../utils/motion-config.js';
     ────────────────────────────────────────────────────────────────*/
     const HERO_VIDEO_SELECTOR = ".hero--section.is--video";
 
+    // Viewport caching for performance
+    let cachedViewport = null;
+    let viewportCacheTime = 0;
+    const VIEWPORT_CACHE_DURATION = 100; // ms
+
     const getViewportType = () => {
-      const vw = innerWidth;
-      const vh = innerHeight;
-      return {
-        isDesktop: vw >= 992,
-        isTablet: vw >= 768 && vw < 992,
-        isMobileLarge: vw >= 480 && vw < 768,
-        isMobileTall: vw < 480 && vh >= 650,
-        isMobile: vw < 480,
-        vh,
-      };
+      const now = performance.now();
+      if (!cachedViewport || (now - viewportCacheTime) > VIEWPORT_CACHE_DURATION) {
+        const vw = innerWidth;
+        const vh = innerHeight;
+        cachedViewport = {
+          isDesktop: vw >= 992,
+          isTablet: vw >= 768 && vw < 992,
+          isMobileLarge: vw >= 480 && vw < 768,
+          isMobileTall: vw < 480 && vh >= 650,
+          isMobile: vw < 480,
+          vh,
+        };
+        viewportCacheTime = now;
+      }
+      return cachedViewport;
     };
 
     /* ─────────────────────────────────────────────────────────────
-       4. Easing configuration (using centralized values)
+       4. Easing maps – Webflow ≈ Motion.dev
     ────────────────────────────────────────────────────────────────*/
-    // Use centralized easing curves (maintains exact same values)
-    const easeOut = [0.22, 1, 0.36, 1]; // Custom "Ease Out" - not in standard set
-    const easeInOut = EASING.easeInOut; // [0.25, 0.46, 0.45, 0.94]
-    const expoOut = EASING.expoOut; // [0.19, 1, 0.22, 1]
-    const expoInOut = EASING.expoInOut; // [0.87, 0, 0.13, 1]
-    const power3Out = EASING.power3Out; // [0.215, 0.61, 0.355, 1]
-    const power4Out = EASING.power4Out; // [0.165, 0.84, 0.44, 1]
-    const power2InOut = [0.45, 0, 0.55, 1]; // Custom "Power2 In Out" - not in standard set
+    const expoOut = [0.16, 1, 0.3, 1]; // "Out Expo"
+    const power3Out = [0.215, 0.61, 0.355, 1]; // "Power3 Out"
+    const power2InOut = [0.45, 0, 0.55, 1]; // "Power2 In Out"
+    const circOut = [0, 0.55, 0.45, 1]; // "Circ Out" - smoother for video scaling
 
     /* ─────────────────────────────────────────────────────────────
-       5. Build hero video animation
+       5. Performance utilities
+    ────────────────────────────────────────────────────────────────*/
+    // willChange management
+    const removeWillChange = (element) => {
+      if (element && element.style) {
+        element.style.willChange = "auto";
+      }
+    };
+
+    // Loader animation utility
+    const animateLoader = (delay = 0.1) => {
+      const loader = document.querySelector(".loader");
+      if (!loader) return;
+
+      animate(
+        loader,
+        { opacity: [1, 0] },
+        {
+          duration: 0.3,
+          easing: expoOut,
+          delay: delay,
+          onStart: () => {
+            document.dispatchEvent(new Event("preloaderFinished"));
+          },
+          onComplete: () => {
+            loader.style.display = "none";
+            removeWillChange(loader);
+          },
+        }
+      );
+    };
+
+    /* ─────────────────────────────────────────────────────────────
+       6. Build hero video animation
     ────────────────────────────────────────────────────────────────*/
     function buildHeroVideoAnimation(/** @type {HTMLElement} */ hero) {
-      const { isDesktop, isTablet, isMobileLarge, isMobileTall, isMobile, vh } = getViewportType();
+      const { isDesktop, isTablet, isMobileLarge, isMobileTall, isMobile, vh } =
+        getViewportType();
 
       // Cache DOM elements for performance
       const elements = {
@@ -140,26 +187,26 @@ import { EASING } from '../utils/motion-config.js';
         heroSection: hero,
       };
 
-      // Custom easing based on device (match GSAP original)
-      const primaryEase = isDesktop ? power3Out : expoOut; // power4.out → power3.out
-      const secondaryEase = isDesktop ? power2InOut : expoInOut; // Match GSAP expo.inOut
+      // Smoother easing curves for better performance
+      const containerEase = circOut; // Smooth container animation
+      const heightEase = power2InOut; // Smooth height transitions
+      const contentEase = expoOut; // Content entry
+      const headerEase = power3Out; // Header animations
 
-      // Duration helpers (mobile optimized timing)
-      const durContainer = isMobile ? 1.3 : isDesktop ? 1.1 : 1;
-      const durCollapse = isMobile ? 1.5 : isDesktop ? 1.2 : 1.2;
-      const durContent = isMobile ? 1.1 : isDesktop ? 1.1 : 1.0;
-      const durHeaders = isMobile ? 1.0 : isDesktop ? 0.9 : 0.9;
+      // Optimized durations for smoother playback
+      const durContainer = isMobile ? 1.0 : 0.8;
+      const durCollapse = isMobile ? 1.2 : 1.0;
+      const durContent = isMobile ? 0.9 : 0.8;
+      const durHeaders = isMobile ? 0.8 : 0.7;
 
-      // Phase timing (match GSAP timeline coordination)
+      // Better coordinated timing for smoother transitions
       const phase1Delay = 0;
-      const delayBetweenPhases = 0.1;
-      
-      // Corrected timing to match GSAP's relative positioning
-      const heightStartDelay = phase1Delay + durContainer + delayBetweenPhases - 0.7; // Match "-=0.7"
-      const contentStartDelay = phase1Delay + durContainer - (isMobile ? 1.4 : 0.9); // Match offsetContent timing
-      const headerStartDelay = phase1Delay + durContainer - (isMobile ? 1.1 : 0.7); // Match offsetHeaders timing
+      const heightStartDelay = 0.3; // Start height reduction earlier
+      const contentStartDelay = 0.2; // Content enters during height animation
+      const headerStartDelay = 0.6; // Headers follow content smoothly
 
       /* ---------- PHASE 1 – Container shape animation --------------------- */
+      // Video container padding and opacity - smooth entry
       if (elements.videoContainer) {
         const paddingTo = isDesktop
           ? "2rem"
@@ -177,12 +224,13 @@ import { EASING } from '../utils/motion-config.js';
           },
           {
             duration: durContainer,
-            easing: primaryEase,
+            easing: containerEase,
             delay: phase1Delay,
           }
         );
       }
 
+      // Video wrapper border radius - synchronized with container
       if (elements.videoWrapper) {
         animate(
           elements.videoWrapper,
@@ -191,12 +239,13 @@ import { EASING } from '../utils/motion-config.js';
           },
           {
             duration: durContainer,
-            easing: primaryEase,
+            easing: containerEase,
             delay: phase1Delay,
           }
         );
       }
 
+      // Video scaling - smoother with circOut easing
       if (elements.heroVideo) {
         animate(
           elements.heroVideo,
@@ -205,13 +254,14 @@ import { EASING } from '../utils/motion-config.js';
           },
           {
             duration: durContainer,
-            easing: primaryEase,
+            easing: containerEase,
             delay: phase1Delay,
           }
         );
       }
 
       /* ---------- PHASE 2 – Height reduction & content entry --------------------- */
+      // Hero section height reduction - smooth transition
       const finalHeight = isDesktop
         ? vh <= 800
           ? "87.5svh"
@@ -240,12 +290,12 @@ import { EASING } from '../utils/motion-config.js';
         },
         {
           duration: durCollapse,
-          easing: secondaryEase,
+          easing: heightEase,
           delay: heightStartDelay,
         }
       );
 
-      // Content animation
+      // Content animation - enters during height transition for smoothness
       if (elements.heroContent) {
         animate(
           elements.heroContent,
@@ -256,16 +306,16 @@ import { EASING } from '../utils/motion-config.js';
           },
           {
             duration: durContent,
-            easing: primaryEase,
+            easing: contentEase,
             delay: contentStartDelay,
           }
         );
       }
 
-      // Headers animation
+      // Headers animation - reduced stagger for smoother flow
       if (elements.headers.length) {
         const headerY = isDesktop ? "10vh" : isTablet ? "2rem" : "1rem";
-        
+
         elements.headers.forEach((header, index) => {
           animate(
             header,
@@ -275,59 +325,19 @@ import { EASING } from '../utils/motion-config.js';
             },
             {
               duration: durHeaders,
-              easing: primaryEase,
-              delay: headerStartDelay + (index * 0.2), // Match GSAP's 0.2s stagger
+              easing: headerEase,
+              delay: headerStartDelay + index * 0.1, // Reduced stagger for smoother flow
             }
           );
         });
       }
 
       // Fade out loader
-      const loader = document.querySelector(".loader");
-      if (loader) {
-        const loaderEl = /** @type {HTMLElement} */ (loader);
-
-        animate(
-          loaderEl,
-          {
-            opacity: [1, 0],
-          },
-          {
-            duration: 0.5,
-            easing: [0.76, 0, 0.24, 1],
-            delay: 0.1,
-            onStart: () => {
-              document.dispatchEvent(new Event("preloaderFinished"));
-            },
-            onComplete: () => {
-              loaderEl.style.display = "none";
-            },
-          }
-        );
-      }
-
-      // Optional: Add scroll-triggered animation
-      if (elements.heroVideo && window.Motion && window.Motion.scroll) {
-        const { scroll } = window.Motion;
-        
-        scroll(
-          animate(
-            elements.heroVideo,
-            {
-              scale: [1, 1.1],
-              borderRadius: ["1rem", "2rem"],
-            }
-          ),
-          {
-            target: elements.heroSection,
-            offset: ["start start", "bottom start"], // Match GSAP's "bottom top"
-          }
-        );
-      }
+      animateLoader(0.1);
     }
 
     /* ─────────────────────────────────────────────────────────────
-       6. One-time init per hero video section
+       7. One-time init per hero video section
     ────────────────────────────────────────────────────────────────*/
     const heroVideoSection = document.querySelector(HERO_VIDEO_SELECTOR);
     if (heroVideoSection) {
@@ -340,7 +350,7 @@ import { EASING } from '../utils/motion-config.js';
   }
 
   /* ─────────────────────────────────────────────────────────────
-     7. Initialize everything
+     8. Initialize everything
   ────────────────────────────────────────────────────────────────*/
   // Set up initial states immediately to prevent flickering
   setupInitialStates();

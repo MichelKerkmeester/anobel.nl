@@ -1,5 +1,5 @@
 // ───────────────────────────────────────────────────────────────
-// Hero: Cards
+// Hero: Blog Article
 // Intro Animation
 // ───────────────────────────────────────────────────────────────
 (() => {
@@ -24,49 +24,28 @@
     heroSections.forEach((hero) => {
       const heroEl = /** @type {HTMLElement} */ (hero);
 
-      // Hide card wrapper initially
-      const cardWrappers = heroEl.querySelectorAll(".hero--card-w");
-      cardWrappers.forEach((cardW) => {
-        const cardWEl = /** @type {HTMLElement} */ (cardW);
-        cardWEl.style.height = "0%";
-        cardWEl.style.willChange = "height";
+      // Hide image wrapper initially
+      const imageWrappers = heroEl.querySelectorAll(".hero--image");
+      imageWrappers.forEach((imageW) => {
+        const imageWEl = /** @type {HTMLElement} */ (imageW);
+        imageWEl.style.transform = "translateY(100%) translateZ(0)";
+        imageWEl.style.willChange = "transform";
       });
 
-      // Hide card content with initial scale
-      const cardContents = heroEl.querySelectorAll(".hero--card-content");
-      cardContents.forEach((content) => {
-        const contentEl = /** @type {HTMLElement} */ (content);
-        // Removed scale transform
-      });
-
-      // Hide headers with initial state
-      const headers = heroEl.querySelectorAll(".hero--header");
-      headers.forEach((header) => {
-        const headerEl = /** @type {HTMLElement} */ (header);
-        headerEl.style.opacity = "0";
-        if (window.innerWidth < 992) {
-          headerEl.style.transform = "translateX(-7.5rem) translateZ(0)";
-        } else {
-          headerEl.style.transform = "scale(0.9) translateZ(0)";
-        }
-        headerEl.style.willChange = "transform, opacity";
-      });
-
-      // Hide card image overlays
-      const imageOverlays = heroEl.querySelectorAll(
-        ".hero--card-image-overlay"
-      );
+      // Hide image overlays
+      const imageOverlays = heroEl.querySelectorAll(".hero--image-overlay");
       imageOverlays.forEach((overlay) => {
         const overlayEl = /** @type {HTMLElement} */ (overlay);
         overlayEl.style.opacity = "0";
       });
 
-      // Hide card containers with initial transform
-      const cardContainers = heroEl.querySelectorAll(".hero--card-container");
-      cardContainers.forEach((container) => {
-        const containerEl = /** @type {HTMLElement} */ (container);
-        containerEl.style.transform = "translateY(100%) translateZ(0)";
-        containerEl.style.willChange = "transform";
+      // Hide content with initial transform
+      const heroContent = heroEl.querySelectorAll(".hero--content");
+      heroContent.forEach((content) => {
+        const contentEl = /** @type {HTMLElement} */ (content);
+        contentEl.style.opacity = "0";
+        contentEl.style.transform = "translateY(7.5rem) translateZ(0)";
+        contentEl.style.willChange = "transform, opacity";
       });
     });
   }
@@ -78,7 +57,7 @@
     // @ts-ignore - Motion.dev library loaded externally
     const { animate, inView } = window.Motion || {};
     if (!animate || !inView) {
-      console.warn("Motion.dev not ready, retrying…");
+      console.warn("Motion.dev not ready, retrying&");
       setTimeout(initHeroAnimation, 100);
       return;
     }
@@ -96,7 +75,10 @@
 
     const getViewportType = () => {
       const now = performance.now();
-      if (!cachedViewport || (now - viewportCacheTime) > VIEWPORT_CACHE_DURATION) {
+      if (
+        !cachedViewport ||
+        now - viewportCacheTime > VIEWPORT_CACHE_DURATION
+      ) {
         const viewportWidth = innerWidth;
         cachedViewport = {
           isMobile: viewportWidth < 992,
@@ -126,7 +108,7 @@
     const removeWillChangeBatch = (elements) => {
       if (!elements) return;
       const nodeList = elements.length !== undefined ? elements : [elements];
-      Array.from(nodeList).forEach(el => {
+      Array.from(nodeList).forEach((el) => {
         if (el && el.style) {
           el.style.willChange = "auto";
         }
@@ -159,91 +141,48 @@
     /* ─────────────────────────────────────────────────────────────
        6. Build one timeline per hero
     ────────────────────────────────────────────────────────────────*/
-    function buildHeroCardsAnimation(/** @type {HTMLElement} */ hero) {
+    function buildHeroBlogArticleAnimation(/** @type {HTMLElement} */ hero) {
       const { isMobile } = getViewportType();
 
       // Cache DOM elements for performance (single query pass)
       const elements = {
-        cardWrappers: hero.querySelectorAll(".hero--card-w"),
-        cardContents: hero.querySelectorAll(".hero--card-content"),
-        headers: hero.querySelectorAll(".hero--header"),
-        imageOverlays: hero.querySelectorAll(".hero--card-image-overlay"),
-        cardContainers: hero.querySelectorAll(".hero--card-container"),
+        imageWrappers: hero.querySelectorAll(".hero--image"),
+        imageOverlays: hero.querySelectorAll(".hero--image-overlay"),
+        heroContent: hero.querySelectorAll(".hero--content"),
       };
 
-      /* ---------- PHASE 1 – Card wrapper, content, and headers --------------------- */
-      // Phase 1 properties
-      const cardWrapperDuration = isMobile ? 0.8 : 0.8;
-      const cardWrapperEasing = isMobile ? expoOut : easeOut;
-      const cardWrapperDelay = isMobile ? 0.15 : 0;
-      const cardContentDuration = isMobile ? 1.0 : 1;
-      const cardContentDelay = isMobile ? 1.4 : 0;
-      const headerDuration = isMobile ? 0.8 : 1.1;
-      const headerEasing = isMobile ? expoOut : easeOut;
-      const headerDelay = isMobile ? 0.1 : 0;
-      const headerAnimation = isMobile
-        ? {
-            opacity: [0, 1],
-            x: ["-7.5rem", "0rem"],
-          }
-        : {
-            scale: [0.9, 1],
-            opacity: [0, 1],
-          };
+      /* ---------- PHASE 1 - Image wrapper --------------------- */
+      // Phase 1 properties - similar to hero--cards
+      const imageWrapperDuration = isMobile ? 0.8 : 0.8;
+      const imageWrapperEasing = isMobile ? expoOut : easeOut;
+      const imageWrapperDelay = isMobile ? 0.15 : 0;
 
-      // Card wrappers (match imgWrap from general for mobile)
-      if (elements.cardWrappers.length) {
+      // Image wrappers - Y transform animation
+      if (elements.imageWrappers.length) {
         animate(
-          elements.cardWrappers,
+          elements.imageWrappers,
           {
-            height: ["0%", "100%"],
+            y: ["100%", "0%"],
           },
           {
-            duration: cardWrapperDuration,
-            easing: cardWrapperEasing,
-            delay: cardWrapperDelay,
+            duration: imageWrapperDuration,
+            easing: imageWrapperEasing,
+            delay: imageWrapperDelay,
             onComplete: () => {
-              removeWillChangeBatch(elements.cardWrappers);
-            }
+              removeWillChangeBatch(elements.imageWrappers);
+            },
           }
         );
       }
 
-      // Card content
-      if (elements.cardContents.length) {
-        animate(
-          elements.cardContents,
-          {
-            opacity: [1, 1],
-          },
-          {
-            duration: cardContentDuration,
-            easing: expoOut,
-            delay: cardContentDelay,
-          }
-        );
-      }
-
-      // Header (match header from general for mobile)
-      if (elements.headers.length) {
-        animate(elements.headers, headerAnimation, {
-          duration: headerDuration,
-          easing: headerEasing,
-          delay: headerDelay,
-          onComplete: () => {
-            removeWillChangeBatch(elements.headers);
-          }
-        });
-      }
-
-      /* ---------- PHASE 2 – Image overlays and Card containers --------------------- */
-      // Phase 2 properties
-      const overlayDuration = isMobile ? 0.7 : 0.9;
+      /* ---------- PHASE 2 - Image overlays and content --------------------- */
+      // Phase 2 properties - similar timing to hero--cards overlays/containers
+      const overlayDuration = 0.6;
       const overlayDelay = 0.25;
-      const containerDuration = isMobile ? 0.7 : 0.9;
-      const containerDelay = 0.25;
+      const contentDuration = 0.6;
+      const contentDelay = 0.15;
 
-      // Image overlays
+      // Image overlays - opacity animation
       if (elements.imageOverlays.length) {
         animate(
           elements.imageOverlays,
@@ -258,17 +197,21 @@
         );
       }
 
-      // Card containers
-      if (elements.cardContainers.length) {
+      // Hero content - transform and opacity animation
+      if (elements.heroContent.length) {
         animate(
-          elements.cardContainers,
+          elements.heroContent,
           {
-            y: ["100%", "0%"],
+            y: ["7.5rem", "0rem"],
+            opacity: [0, 1],
           },
           {
-            duration: containerDuration,
+            duration: contentDuration,
             easing: easeIn,
-            delay: containerDelay,
+            delay: contentDelay,
+            onComplete: () => {
+              removeWillChangeBatch(elements.heroContent);
+            },
           }
         );
       }
@@ -285,7 +228,7 @@
       (/** @type {HTMLElement} */ hero) => {
         if (hero.dataset.hAnim === "done") return;
         hero.dataset.hAnim = "done";
-        buildHeroCardsAnimation(hero);
+        buildHeroBlogArticleAnimation(hero);
       },
       { amount: 0.1 }
     );
