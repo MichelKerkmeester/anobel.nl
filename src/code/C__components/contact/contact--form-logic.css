@@ -1,0 +1,82 @@
+/* ───────────────────────────────────────────────────────────────
+  Contact
+  Form Logic
+─────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────
+   1. Field Error States 
+────────────────────────────────────────────────────────────────*/
+/* Input/Textarea/Select Error Styling - uses live-error prefix */
+[data-field-validate].live-error input,
+[data-field-validate].live-error textarea,
+[data-field-validate].live-error select,
+[data-field-validate].live-error .input,
+[data-field-validate].live-error .w-input,
+[data-field-validate].live-error textarea.input,
+[data-field-validate].live-error textarea.w-input,
+[data-field-validate].live-error select.input,
+[data-field-validate].live-error select.w-select {
+  background-color: var(--_color-tokens---bg-input--error);
+  border-color: var(--_color-tokens---state--warning);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. Field Filled States
+────────────────────────────────────────────────────────────────*/
+/* Styling when field has content */
+[data-field-validate].live-filled input,
+[data-field-validate].live-filled textarea,
+[data-field-validate].live-filled select {
+  /* Add any filled state styling here if needed */
+  /* Example: background-color: #f8f9fa; */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. Transition Animations
+────────────────────────────────────────────────────────────────*/
+/* Smooth Transitions for All Form Elements */
+[data-field-validate] input,
+[data-field-validate] textarea,
+[data-field-validate] select {
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. Accessibility Enhancements 
+────────────────────────────────────────────────────────────────*/
+/* Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-field-validate] input,
+  [data-field-validate] textarea,
+  [data-field-validate] select {
+    transition: none;
+  }
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  [data-field-validate].live-error input,
+  [data-field-validate].live-error textarea,
+  [data-field-validate].live-error select {
+    border-color: var(--_color-tokens---state--warning);
+    border-width: 2px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. Webflow Form Compatibility
+────────────────────────────────────────────────────────────────*/
+/* Ensure our styles don't conflict with Webflow's error states */
+.w-form-fail [data-field-validate].live-error input,
+.w-form-fail [data-field-validate].live-error textarea,
+.w-form-fail [data-field-validate].live-error select,
+.w-form-fail [data-field-validate].live-error .input,
+.w-form-fail [data-field-validate].live-error .w-input,
+.w-form-fail [data-field-validate].live-error textarea.input,
+.w-form-fail [data-field-validate].live-error textarea.w-input,
+.w-form-fail [data-field-validate].live-error select.input,
+.w-form-fail [data-field-validate].live-error select.w-select {
+  background-color: var(--_color-tokens---bg-input--error);
+  border-color: var(--_color-tokens---state--warning);
+}

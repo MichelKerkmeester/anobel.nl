@@ -24,13 +24,7 @@
     heroSections.forEach((hero) => {
       const heroEl = /** @type {HTMLElement} */ (hero);
 
-      // Hide image wrapper initially
-      const imageWrappers = heroEl.querySelectorAll(".hero--image");
-      imageWrappers.forEach((imageW) => {
-        const imageWEl = /** @type {HTMLElement} */ (imageW);
-        imageWEl.style.transform = "translateY(100%) translateZ(0)";
-        imageWEl.style.willChange = "transform";
-      });
+      // Image wrappers remain visible (no initial hiding)
 
       // Hide image overlays
       const imageOverlays = heroEl.querySelectorAll(".hero--image-overlay");
@@ -146,58 +140,18 @@
 
       // Cache DOM elements for performance (single query pass)
       const elements = {
-        imageWrappers: hero.querySelectorAll(".hero--image"),
         imageOverlays: hero.querySelectorAll(".hero--image-overlay"),
         heroContent: hero.querySelectorAll(".hero--content"),
       };
 
-      /* ---------- PHASE 1 - Image wrapper --------------------- */
-      // Phase 1 properties - similar to hero--cards
-      const imageWrapperDuration = isMobile ? 0.8 : 0.8;
-      const imageWrapperEasing = isMobile ? expoOut : easeOut;
-      const imageWrapperDelay = isMobile ? 0.15 : 0;
-
-      // Image wrappers - Y transform animation
-      if (elements.imageWrappers.length) {
-        animate(
-          elements.imageWrappers,
-          {
-            y: ["100%", "0%"],
-          },
-          {
-            duration: imageWrapperDuration,
-            easing: imageWrapperEasing,
-            delay: imageWrapperDelay,
-            onComplete: () => {
-              removeWillChangeBatch(elements.imageWrappers);
-            },
-          }
-        );
-      }
-
-      /* ---------- PHASE 2 - Image overlays and content --------------------- */
-      // Phase 2 properties - similar timing to hero--cards overlays/containers
-      const overlayDuration = 0.6;
-      const overlayDelay = 0.25;
+      /* ---------- PHASE 1 - Image overlays and content --------------------- */
+      // Animation properties - content first, then overlay
       const contentDuration = 0.6;
-      const contentDelay = 0.15;
+      const contentDelay = 0;
+      const overlayDuration = 0.6;
+      const overlayDelay = 0.15;
 
-      // Image overlays - opacity animation
-      if (elements.imageOverlays.length) {
-        animate(
-          elements.imageOverlays,
-          {
-            opacity: [0, 1],
-          },
-          {
-            duration: overlayDuration,
-            easing: easeIn,
-            delay: overlayDelay,
-          }
-        );
-      }
-
-      // Hero content - transform and opacity animation
+      // Hero content - transform and opacity animation (starts first)
       if (elements.heroContent.length) {
         animate(
           elements.heroContent,
@@ -212,6 +166,21 @@
             onComplete: () => {
               removeWillChangeBatch(elements.heroContent);
             },
+          }
+        );
+      }
+
+      // Image overlays - opacity animation (starts after content)
+      if (elements.imageOverlays.length) {
+        animate(
+          elements.imageOverlays,
+          {
+            opacity: [0, 1],
+          },
+          {
+            duration: overlayDuration,
+            easing: easeIn,
+            delay: overlayDelay,
           }
         );
       }
