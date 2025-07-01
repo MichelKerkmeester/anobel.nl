@@ -1,0 +1,11 @@
+---
+trigger: always_on
+description: 
+globs: 
+---
+## 🛡️ 5. RISK MANAGEMENT
+
+1. **Document potential failures**: "This could break if..."
+2. **Monitor impacts**; watch for cascading effects.
+2. **Consider performance impacts**; loading, memory, CPU.
+3. **Identify edge cases**; empty states, max limits.

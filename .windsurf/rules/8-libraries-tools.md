@@ -1,0 +1,12 @@
+---
+trigger: always_on
+description: 
+globs: 
+---
+## 📚 8. LIBRARIES
+
+1. **Animation hierarchy**: CSS → Motion.dev (Default) → GSAP (Complex)
+2. **Sliders**: Swiper.js
+3. **Forms**: Formly
+4. **Video**: Flowplay
+5. **Add-ons**: Finsweet
