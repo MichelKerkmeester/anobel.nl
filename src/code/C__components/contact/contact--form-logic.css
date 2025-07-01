@@ -1,12 +1,13 @@
 /* ───────────────────────────────────────────────────────────────
   Contact
-  Form Logic
+  Form Logic & Validation States
 ─────────────────────────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────────────────────
    1. Field Error States 
 ────────────────────────────────────────────────────────────────*/
-/* Input/Textarea/Select Error Styling - uses live-error prefix */
+
+/* Legacy error styling - uses live-error prefix */
 [data-field-validate].live-error input,
 [data-field-validate].live-error textarea,
 [data-field-validate].live-error select,
@@ -16,6 +17,17 @@
 [data-field-validate].live-error textarea.w-input,
 [data-field-validate].live-error select.input,
 [data-field-validate].live-error select.w-select {
+  background-color: var(--_color-tokens---bg-input--error);
+  border-color: var(--_color-tokens---state--warning);
+}
+
+/* New unified validation error styling */
+[data-contact-field-group].validation-invalid input,
+[data-contact-field-group].validation-invalid textarea,
+[data-contact-field-group].validation-invalid select,
+[data-validation-group].validation-invalid input,
+[data-validation-group].validation-invalid textarea,
+[data-validation-group].validation-invalid select {
   background-color: var(--_color-tokens---bg-input--error);
   border-color: var(--_color-tokens---state--warning);
 }
