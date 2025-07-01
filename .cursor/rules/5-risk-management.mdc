@@ -7,5 +7,5 @@ alwaysApply: true
 
 1. **Document potential failures**: "This could break if..."
 2. **Monitor impacts**; watch for cascading effects.
-2. **Consider performance impacts**; loading, memory, CPU.
-3. **Identify edge cases**; empty states, max limits.
+3. **Consider performance impacts**; loading, memory, CPU.
+4. **Identify edge cases**; empty states, max limits, CMS constraints.
