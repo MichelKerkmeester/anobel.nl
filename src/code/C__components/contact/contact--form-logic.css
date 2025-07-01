@@ -6,27 +6,27 @@
 /* ─────────────────────────────────────────────────────────────
    1. Field Error States 
 ────────────────────────────────────────────────────────────────*/
-/* Input/Textarea/Select Error Styling - uses live-error prefix */
-[data-field-validate].live-error input,
-[data-field-validate].live-error textarea,
-[data-field-validate].live-error select,
-[data-field-validate].live-error .input,
-[data-field-validate].live-error .w-input,
-[data-field-validate].live-error textarea.input,
-[data-field-validate].live-error textarea.w-input,
-[data-field-validate].live-error select.input,
-[data-field-validate].live-error select.w-select {
-  background-color: var(--_color-tokens---bg-input--error);
-  border-color: var(--_color-tokens---state--warning);
+/* Input/Textarea/Select Error Styling - targets parent containers with live-error class */
+.live-error input[data-field-validate],
+.live-error textarea[data-field-validate],
+.live-error input.w-input,
+.live-error textarea.w-input,
+.live-error input.input,
+.live-error textarea.input {
+  background-color: var(--_color-tokens---bg-input--error) !important;
+  border-color: var(--_color-tokens---state--warning) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
    3. Field Filled States & Valid State Override
 ────────────────────────────────────────────────────────────────*/
 /* Styling when field has content - explicitly no background change */
-[data-field-validate].live-filled input,
-[data-field-validate].live-filled textarea,
-[data-field-validate].live-filled select {
+.live-filled input[data-field-validate],
+.live-filled textarea[data-field-validate],
+.live-filled input.w-input,
+.live-filled textarea.w-input,
+.live-filled input.input,
+.live-filled textarea.input {
   /* Explicitly maintain white background for filled state */
   background-color: var(--_color-tokens---bg-neutral--white) !important;
 }
@@ -42,8 +42,8 @@
 [data-field-validate] select.input:valid,
 [data-field-validate] select.w-select:valid {
   /* Force white background to override any success state styling */
-  background-color: var(--_color-tokens---bg-neutral--white) !important;
-  border-color: var(--_color-tokens---border-neutral--dark) !important;
+  background-color: #ffffff !important;
+  border-color: #374151 !important; /* Dark gray border */
 }
 
 /* Override :valid state on focus to maintain proper focus styling */
@@ -56,8 +56,8 @@
 [data-field-validate] textarea.w-input:valid:focus,
 [data-field-validate] select.input:valid:focus,
 [data-field-validate] select.w-select:valid:focus {
-  background-color: var(--_color-tokens---bg-neutral--white) !important;
-  border-color: var(--_color-tokens---border-brand--base) !important;
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important; /* Blue focus border */
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -85,10 +85,13 @@
 
 /* High Contrast Support */
 @media (prefers-contrast: high) {
+  .live-error input,
+  .live-error textarea,
+  .live-error select,
   [data-field-validate].live-error input,
   [data-field-validate].live-error textarea,
   [data-field-validate].live-error select {
-    border-color: var(--_color-tokens---state--warning);
+    border-color: #ef4444 !important; /* High contrast red border */
     border-width: 2px;
   }
 }
@@ -97,6 +100,15 @@
    6. Webflow Form Compatibility
 ────────────────────────────────────────────────────────────────*/
 /* Ensure our styles don't conflict with Webflow's error states */
+.w-form-fail .live-error input,
+.w-form-fail .live-error textarea,
+.w-form-fail .live-error select,
+.w-form-fail .live-error .input,
+.w-form-fail .live-error .w-input,
+.w-form-fail .live-error textarea.input,
+.w-form-fail .live-error textarea.w-input,
+.w-form-fail .live-error select.input,
+.w-form-fail .live-error select.w-select,
 .w-form-fail [data-field-validate].live-error input,
 .w-form-fail [data-field-validate].live-error textarea,
 .w-form-fail [data-field-validate].live-error select,
@@ -106,6 +118,6 @@
 .w-form-fail [data-field-validate].live-error textarea.w-input,
 .w-form-fail [data-field-validate].live-error select.input,
 .w-form-fail [data-field-validate].live-error select.w-select {
-  background-color: var(--_color-tokens---bg-input--error);
-  border-color: var(--_color-tokens---state--warning);
+  background-color: #fef2f2 !important; /* Light red background for errors */
+  border-color: #ef4444 !important; /* Red border for errors */
 }

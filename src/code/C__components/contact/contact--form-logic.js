@@ -20,57 +20,57 @@
   // Performance: Cache regex patterns
   const DIGIT_REGEX = /\D/g;
   const DIGIT_TEST = /\d/;
-  
+
   // Enhanced email validation patterns
-  const EMAIL_PATTERN = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,3}$/;
-  const DOMAIN_NO_NUMBERS = /^[a-zA-Z.-]+$/;
-  const TLD_PATTERN = /\.[a-zA-Z]{2,3}$/;
-  
+  const EMAIL_PATTERN =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const TLD_PATTERN = /\.[a-zA-Z]{2,}$/;
+
   // Performance: Cache selectors
   const FIELD_CACHE = new WeakMap();
-  
+
   /* ─────────────────────────────────────────────────────────────
      1. Core Validation Functions
   ────────────────────────────────────────────────────────────────*/
-  
-  // Enhanced email validation with strict domain rules
+
+  // Enhanced email validation
   function isValidEmail(email) {
     // Basic format check
     if (!EMAIL_PATTERN.test(email)) {
       return false;
     }
-    
+
     // Extract domain part
-    const emailParts = email.split('@');
+    const emailParts = email.split("@");
     if (emailParts.length !== 2) {
       return false;
     }
-    
+
     const domain = emailParts[1];
-    
-    // Check domain doesn't contain numbers
-    if (!DOMAIN_NO_NUMBERS.test(domain)) {
-      return false;
-    }
-    
-    // Check TLD is 2-3 characters
+
+    // Check TLD is valid
     if (!TLD_PATTERN.test(domain)) {
       return false;
     }
-    
+
     // Additional domain validation
-    const domainParts = domain.split('.');
+    const domainParts = domain.split(".");
     if (domainParts.length < 2) {
       return false;
     }
-    
+
     // Check each domain part is valid (no empty parts, no special chars at start/end)
     for (const part of domainParts) {
-      if (!part || part.startsWith('-') || part.endsWith('-') || part.length < 1) {
+      if (
+        !part ||
+        part.startsWith("-") ||
+        part.endsWith("-") ||
+        part.length < 1
+      ) {
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -107,15 +107,22 @@
       ) {
         valid = false;
       }
-    } else if (
-      input instanceof HTMLInputElement &&
-      input.type === "email"
-    ) {
+    } else if (input instanceof HTMLInputElement && input.type === "email") {
       // Enhanced email validation with strict domain rules
       if (value) {
         valid = isValidEmail(value);
       } else {
         valid = !input.hasAttribute("required");
+      }
+    } else if (input instanceof HTMLInputElement && input.type === "tel") {
+      // Phone number validation
+      if (input.hasAttribute("required") && !value) {
+        valid = false;
+      } else if (value) {
+        // Check min/max for phone numbers - use digits count, not formatted length
+        const digits = value.replace(DIGIT_REGEX, "");
+        if (minAttr && digits.length < min) valid = false;
+        if (maxAttr && digits.length > max) valid = false;
       }
     } else if (
       input instanceof HTMLInputElement &&
@@ -128,9 +135,14 @@
         valid = true; // Not required = always valid
       }
     } else {
-      // Text/textarea validation - check length requirements
-      if (minAttr && length < min) valid = false;
-      if (maxAttr && length > max) valid = false;
+      // Text/textarea validation - check required and length requirements
+      if (input.hasAttribute("required") && !value) {
+        valid = false;
+      } else if (value || minAttr) {
+        // Check length requirements if there's content or min is specified
+        if (minAttr && length < min) valid = false;
+        if (maxAttr && length > max) valid = false;
+      }
     }
 
     return valid;
@@ -145,7 +157,7 @@
   /* ─────────────────────────────────────────────────────────────
      2. Form Memory (Auto-save & Restore)
   ────────────────────────────────────────────────────────────────*/
-  
+
   function createFormMemory(form) {
     const formId = form.getAttribute("id") || `form_${Date.now()}`;
     const memoryKey = `form_memory_${formId}`;
@@ -258,7 +270,7 @@
   /* ─────────────────────────────────────────────────────────────
      3. Visual State Management
   ────────────────────────────────────────────────────────────────*/
-  
+
   function updateFieldStatus(/** @type {HTMLElement} */ fieldGroup) {
     // Handle visual states for regular input fields
     const input =
@@ -278,11 +290,12 @@
 
     // Manage validation states (error only)
     const valid = isValid(fieldGroup);
+
     if (valid) {
       fieldGroup.classList.remove("live-error");
     } else {
       // Only show error if user has started interacting with this field
-      if (input.validationStarted) {
+      if (input.__validationStarted) {
         fieldGroup.classList.add("live-error");
       } else {
         fieldGroup.classList.remove("live-error");
@@ -303,7 +316,7 @@
       if (!input) return;
 
       // Force validation to start for all fields (even if user hasn't interacted)
-      input.validationStarted = true;
+      input.__validationStarted = true;
 
       // Update visual state (will now show errors for invalid fields)
       updateFieldStatus(fieldGroup);
@@ -328,7 +341,7 @@
   /* ─────────────────────────────────────────────────────────────
      4. Event Handlers
   ────────────────────────────────────────────────────────────────*/
-  
+
   function handleInputEvent(input, fieldGroup, { saveFormData }) {
     const value = input.value.trim();
     const length = value.length;
@@ -336,9 +349,9 @@
     const maxAttr = input.getAttribute("max");
     const min = minAttr ? parseInt(minAttr) : 0;
     const max = maxAttr ? parseInt(maxAttr) : Infinity;
-    
+
     // Phone number auto-formatting with debounce
-    if (input.type === 'tel') {
+    if (input.type === "tel") {
       if (input.formatTimeout) {
         clearTimeout(input.formatTimeout);
       }
@@ -346,17 +359,17 @@
         const cursorPos = input.selectionStart;
         const oldValue = input.value;
         const formattedValue = formatPhoneNumber(input.value);
-        
+
         if (formattedValue !== oldValue) {
           input.value = formattedValue;
-          
+
           // Smart cursor position
           const digitsBeforeCursor = oldValue
             .slice(0, cursorPos)
             .replace(DIGIT_REGEX, "").length;
           let newCursorPos = 0;
           let digitCount = 0;
-          
+
           for (let i = 0; i < formattedValue.length; i++) {
             if (DIGIT_TEST.test(formattedValue[i])) {
               digitCount++;
@@ -366,16 +379,16 @@
               }
             }
           }
-          
+
           if (digitCount < digitsBeforeCursor || newCursorPos === 0) {
             newCursorPos = formattedValue.length;
           }
-          
+
           input.setSelectionRange(newCursorPos, newCursorPos);
         }
       }, 100);
     }
-    
+
     // Save form data with debounce
     if (input.form.saveTimeout) {
       clearTimeout(input.form.saveTimeout);
@@ -383,59 +396,65 @@
     input.form.saveTimeout = setTimeout(() => {
       saveFormData();
     }, 300);
-    
-    // Validation logic
-    if (!input.validationStarted) {
-      if (input.type === "email") {
-        if (isValid(fieldGroup)) {
-          input.validationStarted = true;
-        }
-      } else {
-        if ((minAttr && length >= min) || (maxAttr && length <= max)) {
-          input.validationStarted = true;
-        }
-      }
+
+    // Debug: Log what we're working with
+    console.log("Input event:", {
+      type: input.type,
+      name: input.name,
+      value: value,
+      length: length,
+      minAttr: minAttr,
+      min: min,
+      validationStarted: input.__validationStarted,
+    });
+
+    // Validation logic - start validation immediately when user types
+    if (!input.__validationStarted && length > 0) {
+      input.__validationStarted = true;
     }
-    
-    if (input.validationStarted) {
-      updateFieldStatus(fieldGroup);
-    }
+
+    // Always update field status
+    updateFieldStatus(fieldGroup);
   }
-  
+
   function handleChangeEvent(input, fieldGroup, { saveFormData }) {
     // Save form data on change
     saveFormData();
-    
+
     // For checkbox and radio inputs, start validation immediately when clicked
-    if ((input.type === "checkbox" || input.type === "radio") && !input.validationStarted) {
-      input.validationStarted = true;
+    if (
+      (input.type === "checkbox" || input.type === "radio") &&
+      !input.__validationStarted
+    ) {
+      input.__validationStarted = true;
     }
-    
+
     // Handle select dropdowns
-    if (input instanceof HTMLSelectElement && !input.validationStarted) {
-      input.validationStarted = true;
+    if (input instanceof HTMLSelectElement && !input.__validationStarted) {
+      input.__validationStarted = true;
     }
-    
-    if (input.validationStarted) {
+
+    if (input.__validationStarted) {
       updateFieldStatus(fieldGroup);
     }
   }
-  
+
   function handleBlurEvent(input, fieldGroup) {
-    input.validationStarted = true;
+    // Always start validation on blur
+    input.__validationStarted = true;
     updateFieldStatus(fieldGroup);
   }
 
   /* ─────────────────────────────────────────────────────────────
      5. Helper Functions
   ────────────────────────────────────────────────────────────────*/
-  
+
   // Performance: Reusable spam error function
   function showSpamError(form, realSubmitInput) {
     // Check if error already exists
-    const existingError = form.querySelector('.form-spam-error');
+    const existingError = form.querySelector(".form-spam-error");
     if (existingError) return;
-    
+
     const errorMsg = document.createElement("div");
     errorMsg.className = "form-spam-error";
     errorMsg.setAttribute("role", "alert");
@@ -497,11 +516,7 @@
     }
 
     // Handle other Dutch numbers (landline, etc.)
-    if (
-      digits.length >= 9 &&
-      digits.length <= 10 &&
-      !digits.startsWith("31")
-    ) {
+    if (digits.length >= 9 && digits.length <= 10 && !digits.startsWith("31")) {
       // Format as (+31) XX XXXX XXXX
       let formatted = `(+31) ${digits.slice(0, 2)}`;
       if (digits.length > 2) {
@@ -520,7 +535,7 @@
   /* ─────────────────────────────────────────────────────────────
      6. Form Initialization
   ────────────────────────────────────────────────────────────────*/
-  
+
   function initFormValidation() {
     // Find all forms marked with our validation attribute
     const forms = document.querySelectorAll("[data-live-validate]");
@@ -542,7 +557,9 @@
       // Look for custom submit button or fall back to regular Webflow submit
       let customSubmitBtn = form.querySelector("[data-form-submit]");
       let realSubmitInput = /** @type {HTMLInputElement|HTMLElement|null} */ (
-        form.querySelector('input[type="submit"], [type="submit"], [data-form-submit]')
+        form.querySelector(
+          'input[type="submit"], [type="submit"], [data-form-submit]'
+        )
       );
 
       if (!realSubmitInput) return; // No submit button found
@@ -553,42 +570,49 @@
       // Set up initial validation state for each field
       validateFields.forEach(function (fieldGroup) {
         const inputs = fieldGroup.querySelectorAll("input, textarea, select");
-        inputs.forEach(input => {
+        inputs.forEach((input) => {
           // Initially, validation hasn't started
-          input.validationStarted = false;
+          input.__validationStarted = false;
         });
       });
 
       // Performance: Use event delegation instead of individual listeners
-      form.addEventListener('input', function(event) {
+      form.addEventListener("input", function (event) {
         const target = event.target;
-        if (!target.matches('input, textarea, select')) return;
-        
-        const fieldGroup = target.closest('[data-field-validate]');
+        if (!target.matches("input, textarea, select")) return;
+
+        const fieldGroup = target.closest("[data-field-validate]");
         if (!fieldGroup) return;
-        
+
         handleInputEvent(target, fieldGroup, formMemory);
       });
-      
-      form.addEventListener('change', function(event) {
+
+      form.addEventListener("change", function (event) {
         const target = event.target;
-        if (!target.matches('input[type="radio"], input[type="checkbox"], select')) return;
-        
-        const fieldGroup = target.closest('[data-field-validate]');
+        if (
+          !target.matches('input[type="radio"], input[type="checkbox"], select')
+        )
+          return;
+
+        const fieldGroup = target.closest("[data-field-validate]");
         if (!fieldGroup) return;
-        
+
         handleChangeEvent(target, fieldGroup, formMemory);
       });
-      
-      form.addEventListener('blur', function(event) {
-        const target = event.target;
-        if (!target.matches('input, textarea, select')) return;
-        
-        const fieldGroup = target.closest('[data-field-validate]');
-        if (!fieldGroup) return;
-        
-        handleBlurEvent(target, fieldGroup);
-      }, true); // Use capture for blur
+
+      form.addEventListener(
+        "blur",
+        function (event) {
+          const target = event.target;
+          if (!target.matches("input, textarea, select")) return;
+
+          const fieldGroup = target.closest("[data-field-validate]");
+          if (!fieldGroup) return;
+
+          handleBlurEvent(target, fieldGroup);
+        },
+        true
+      ); // Use capture for blur
 
       // Restore form data on page load
       formMemory.restoreFormData();
@@ -602,7 +626,10 @@
           }
 
           event.preventDefault();
-          if (validateAndStartLiveValidationForAll(validateFields) && !isSpam(startTime)) {
+          if (
+            validateAndStartLiveValidationForAll(validateFields) &&
+            !isSpam(startTime)
+          ) {
             // Trigger submit button click instead of form.submit() to maintain Webflow compatibility
             const submitBtn = realSubmitInput;
             if (submitBtn) {
@@ -615,10 +642,16 @@
       });
 
       // Custom submit button support (only if not handled by Formspark setup)
-      if (customSubmitBtn && !customSubmitBtn.hasAttribute('data-formspark-handled')) {
+      if (
+        customSubmitBtn &&
+        !customSubmitBtn.hasAttribute("data-formspark-handled")
+      ) {
         customSubmitBtn.addEventListener("click", function (event) {
           event.preventDefault();
-          if (validateAndStartLiveValidationForAll(validateFields) && !isSpam(startTime)) {
+          if (
+            validateAndStartLiveValidationForAll(validateFields) &&
+            !isSpam(startTime)
+          ) {
             // Trigger actual submit button to maintain Webflow flow
             const submitBtn = realSubmitInput;
             if (submitBtn) {
@@ -648,14 +681,11 @@
 
         // Clear validation states
         validateFields.forEach((fieldGroup) => {
-          fieldGroup.classList.remove(
-            "live-filled",
-            "live-error"
-          );
+          fieldGroup.classList.remove("live-filled", "live-error");
           const inputs = fieldGroup.querySelectorAll("input, textarea, select");
           inputs.forEach((input) => {
-            if (input.validationStarted !== undefined) {
-              input.validationStarted = false;
+            if (input.__validationStarted !== undefined) {
+              input.__validationStarted = false;
             }
             if (input.formatTimeout) {
               clearTimeout(input.formatTimeout);
@@ -665,15 +695,15 @@
         });
 
         // Override Webflow's default behavior: keep form visible when reset is requested
-        const formContainer = form.closest('.w-form');
+        const formContainer = form.closest(".w-form");
         if (formContainer) {
           // Force form to stay visible (override Webflow's hide)
-          formContainer.style.display = 'block';
-          
+          formContainer.style.display = "block";
+
           // Find the actual form element and make sure it's visible
-          const formElement = formContainer.querySelector('form');
+          const formElement = formContainer.querySelector("form");
           if (formElement) {
-            formElement.style.display = 'block';
+            formElement.style.display = "block";
           }
         }
       });
