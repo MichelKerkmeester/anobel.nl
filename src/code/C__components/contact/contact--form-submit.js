@@ -581,51 +581,46 @@
   };
 
   /* ─────────────────────────────────────────────────────────────
-       9. Auto-initialization
+       9. Module Interface for Coordinator
     ────────────────────────────────────────────────────────────────*/
   
-  // Initialize on page load (Slater handles DOM ready)
-  initFormSubmit();
-  
-  // Re-initialize when Webflow updates DOM
-  if (typeof Webflow !== 'undefined' && Webflow.push) {
-    Webflow.push(() => {
-      initFormSubmit();
-    });
-  }
-  
-  // Observe for dynamically added forms
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      // Handle added nodes
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType === 1) { // Element node
-          if (node.matches && (node.matches(CONFIG.SELECTORS.FORM) || node.matches(CONFIG.SELECTORS.FORM_LEGACY))) {
-            initializeForm(node);
-            setupModuleIntegrations(node);
-          } else if (node.querySelectorAll) {
-            const newForms = node.querySelectorAll(CONFIG.SELECTORS.FORM);
-            const legacyForms = node.querySelectorAll(CONFIG.SELECTORS.FORM_LEGACY);
-            if (newForms.length > 0 || legacyForms.length > 0) {
-              initFormSubmit(node);
-            }
-          }
-        }
-      });
+  const SubmitModule = {
+    name: 'submit',
+    
+    init: function(container = document) {
+      initFormSubmit(container);
+    },
+    
+    initForm: function(form) {
+      // Check if form should have submit handling
+      const shouldInit = form.matches(CONFIG.SELECTORS.FORM) || form.matches(CONFIG.SELECTORS.FORM_LEGACY);
+      
+      if (shouldInit && !FORM_STATES.has(form)) {
+        initializeForm(form);
+        setupModuleIntegrations(form);
+      }
+    },
+    
+    cleanupForm: function(form) {
+      cleanupForm(form);
+    }
+  };
 
-      // Handle removed nodes
-      mutation.removedNodes.forEach(node => {
-        if (node.nodeType === 1 && node.matches && 
-            (node.matches(CONFIG.SELECTORS.FORM) || node.matches(CONFIG.SELECTORS.FORM_LEGACY))) {
-          cleanupForm(node);
-        }
-      });
-    });
-  });
+  /* ─────────────────────────────────────────────────────────────
+       10. Auto-initialization
+    ────────────────────────────────────────────────────────────────*/
   
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('submit', SubmitModule);
+  } else {
+    // Fallback if coordinator not available
+    initFormSubmit();
+  
+    if (typeof Webflow !== 'undefined' && Webflow.push) {
+      Webflow.push(() => {
+        initFormSubmit();
+      });
+    }
+  }
 })();

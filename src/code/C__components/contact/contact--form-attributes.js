@@ -284,6 +284,30 @@
   // Export Configuration
   // ─────────────────────────────────────────────────────────────
   
+  // ─────────────────────────────────────────────────────────────
+  // Module Interface for Coordinator
+  // ─────────────────────────────────────────────────────────────
+  
+  const AttributesModule = {
+    name: 'attributes',
+    
+    init: function() {
+      // Attributes module doesn't need initialization
+      // It just provides configuration
+      return true;
+    },
+    
+    initForm: function(form) {
+      // No per-form initialization needed
+      return true;
+    },
+    
+    cleanupForm: function(form) {
+      // No cleanup needed
+      return true;
+    }
+  };
+  
   // Export to window for use by all modules
   window.ContactFormAttributes = {
     CORE: CORE_SELECTORS,
@@ -343,5 +367,10 @@
   
   // Add migration helper to exports
   window.ContactFormAttributes.utils.logMigrationWarning = logMigrationWarning;
+  
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('attributes', AttributesModule);
+  }
   
 })();

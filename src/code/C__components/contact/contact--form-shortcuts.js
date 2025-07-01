@@ -336,49 +336,63 @@
     forms.forEach(enhanceForm);
   }
 
-  // Initialize on page load (Slater handles DOM ready)
-  initFormShortcuts();
-
-  // Global keydown listener (event delegation)
-  document.addEventListener("keydown", handleKeydown);
-
-  // Re-initialize when Webflow updates DOM (with safety check)
-  if (typeof Webflow !== "undefined" && Webflow.push) {
-    try {
-      Webflow.push(() => {
-        initFormShortcuts();
-      });
-    } catch (e) {
-      console.warn("Webflow integration failed for form shortcuts:", e);
+  // ─────────────────────────────────────────────────────────────
+  // Module Interface for Coordinator
+  // ─────────────────────────────────────────────────────────────
+  
+  const ShortcutsModule = {
+    name: 'shortcuts',
+    
+    init: function(container = document) {
+      initFormShortcuts(container);
+      
+      // Global keydown listener (only add once)
+      if (!document._shortcutsListenerAdded) {
+        document.addEventListener("keydown", handleKeydown);
+        document._shortcutsListenerAdded = true;
+      }
+    },
+    
+    initForm: function(form) {
+      enhanceForm(form);
+    },
+    
+    cleanupForm: function(form) {
+      if (formCache.has(form)) {
+        formCache.delete(form);
+      }
+      
+      // Remove tooltips
+      const tooltip = tooltipCache.get(form);
+      if (tooltip && tooltip.parentNode) {
+        tooltip.parentNode.removeChild(tooltip);
+        tooltipCache.delete(form);
+      }
     }
-  }
-
-  // Observe for dynamically added forms
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === 1) {
-          // Element node
-          if (node.matches && node.matches("form")) {
-            enhanceForm(node);
-          } else if (node.querySelectorAll) {
-            const forms = node.querySelectorAll("form");
-            forms.forEach(enhanceForm);
-          }
-        }
-      });
-    });
-  });
-
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
+  };
 
   // Export for debugging
   window.__formShortcuts = {
     showFeedback,
     shortcuts: SHORTCUTS,
   };
+  
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('shortcuts', ShortcutsModule);
+  } else {
+    // Fallback if coordinator not available
+    initFormShortcuts();
+    document.addEventListener("keydown", handleKeydown);
+
+    if (typeof Webflow !== "undefined" && Webflow.push) {
+      try {
+        Webflow.push(() => {
+          initFormShortcuts();
+        });
+      } catch (e) {
+        console.warn("Webflow integration failed for form shortcuts:", e);
+      }
+    }
+  }
 })();

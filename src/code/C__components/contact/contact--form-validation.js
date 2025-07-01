@@ -792,38 +792,55 @@
   };
 
   // ─────────────────────────────────────────────────────────────
-  // 9. Auto-initialization
+  // 9. Module Interface for Coordinator
   // ─────────────────────────────────────────────────────────────
   
-  // Initialize on page load (Slater handles DOM ready)
-  initValidation();
-  
-  // Re-initialize when Webflow updates DOM
-  Webflow.push(() => {
-    initValidation();
-  });
-  
-  // Observe for dynamically added forms
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType === 1) { // Element node
-          if (node.matches && node.matches(CONFIG.SELECTORS.FORM)) {
-            initializeForm(node);
-          } else if (node.querySelectorAll) {
-            const forms = node.querySelectorAll(CONFIG.SELECTORS.FORM);
-            if (forms.length > 0) {
-              initValidation(node);
-            }
+  const ValidationModule = {
+    name: 'validation',
+    
+    init: function(container = document) {
+      initValidation(container);
+    },
+    
+    initForm: function(form) {
+      // Check if form should have validation
+      if (form.matches(CONFIG.SELECTORS.FORM)) {
+        initializeForm(form);
+      }
+    },
+    
+    cleanupForm: function(form) {
+      if (FORM_CACHE.has(form)) {
+        const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+        fields.forEach(field => {
+          // Clear validation timeouts
+          if (field._validationTimeout) {
+            clearTimeout(field._validationTimeout);
           }
-        }
-      });
-    });
-  });
+          // Reset validation flags
+          field._validationStarted = false;
+          field._validationTouched = false;
+        });
+        FORM_CACHE.delete(form);
+      }
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────
+  // 10. Auto-initialization
+  // ─────────────────────────────────────────────────────────────
   
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('validation', ValidationModule);
+  } else {
+    // Fallback if coordinator not available
+    initValidation();
+    
+    if (typeof Webflow !== 'undefined' && Webflow.push) {
+      Webflow.push(() => {
+        initValidation();
+      });
+    }
+  }
 })();

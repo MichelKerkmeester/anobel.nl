@@ -352,39 +352,88 @@
   });
 
   /* ---------------------------------------------------------------
+     Module Interface for Coordinator
+  --------------------------------------------------------------- */
+  
+  const MemoryModule = {
+    name: 'memory',
+    
+    init: function(container = document) {
+      initFormMemory(container);
+    },
+    
+    initForm: function(form) {
+      // Check if this specific form should have memory
+      const shouldInit = form.dataset.memory === "true" || form.hasAttribute('data-live-validate');
+      
+      if (shouldInit && !form._memoryInitialized) {
+        // Skip if explicitly disabled
+        if (form.dataset.memory === "false") return;
+
+        // Mark as initialized
+        form._memoryInitialized = true;
+
+        // Create memory instance
+        const memory = createFormMemory(form);
+
+        // Store on form for external access
+        form._memory = memory;
+
+        // Auto-save on input/change
+        form.addEventListener("input", memory.saveFormData);
+        form.addEventListener("change", memory.saveFormData);
+
+        // Clear on successful submit (if configured)
+        if (form.dataset.memoryClearOnSubmit !== "false") {
+          form.addEventListener("submit", () => {
+            // Clear after a delay to allow submission
+            setTimeout(() => memory.clearFormMemory(), 100);
+          });
+        }
+
+        // Clear on reset
+        form.addEventListener("reset", memory.clearFormMemory);
+
+        // Restore data on initialization
+        memory.restoreFormData();
+
+        // Listen for custom clear event
+        form.addEventListener("form-reset-requested", () => {
+          memory.clearFormMemory();
+        });
+      }
+    },
+    
+    cleanupForm: function(form) {
+      if (form._memory) {
+        form._memory.clearFormMemory();
+        form._memory = null;
+        form._memoryInitialized = false;
+      }
+    }
+  };
+
+  /* ---------------------------------------------------------------
      Auto-initialization
   --------------------------------------------------------------- */
+  
+  // Export for manual use
+  window.FormMemory = {
+    init: initFormMemory,
+    create: createFormMemory
+  };
 
-  // Initialize on page load (Slater handles DOM ready)
-  initFormMemory();
-
-  // Re-initialize when Webflow updates DOM
-  Webflow.push(() => {
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('memory', MemoryModule);
+  } else {
+    // Fallback if coordinator not available
     initFormMemory();
-  });
 
-  // Observe for dynamically added forms
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === 1) {
-          // Element node
-          if (node.matches && node.matches("form")) {
-            initFormMemory(node.parentElement);
-          } else if (node.querySelectorAll) {
-            const forms = node.querySelectorAll("form");
-            if (forms.length > 0) {
-              initFormMemory(node);
-            }
-          }
-        }
+    if (typeof Webflow !== 'undefined' && Webflow.push) {
+      Webflow.push(() => {
+        initFormMemory();
       });
-    });
-  });
-
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
+    }
+  }
 })();

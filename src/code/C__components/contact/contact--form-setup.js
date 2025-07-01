@@ -433,10 +433,98 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-       8. Initialization
+       8. Module Interface for Coordinator
     ────────────────────────────────────────────────────────────────*/
+  
+  const SetupModule = {
+    name: 'setup',
+    
+    init: function(container = document) {
+      // Find all forms with live validation (compatible with your validation)
+      const formContainers = container.querySelectorAll(FORM_CONTAINER_SELECTOR);
 
-  initContactForms();
+      formContainers.forEach((formContainer) => {
+        const form = formContainer.querySelector(WEBFLOW_FORM_SELECTOR);
+        if (form && !form._formspark_initialized) {
+          initializeFormsparkIntegration(form);
+        }
+      });
+    },
+    
+    initForm: function(form) {
+      // Check if form should have Formspark integration
+      const formContainer = form.closest(FORM_CONTAINER_SELECTOR);
+      if (formContainer && !form._formspark_initialized) {
+        initializeFormsparkIntegration(form);
+      }
+    },
+    
+    cleanupForm: function(form) {
+      if (form._formspark_initialized) {
+        form._formspark_initialized = false;
+      }
+    }
+  };
+  
+  /**
+   * Initialize Formspark integration for a single form
+   * @param {HTMLFormElement} form - Form element
+   */
+  function initializeFormsparkIntegration(form) {
+    const submitButton = form.querySelector(SUBMIT_BUTTON_SELECTOR);
+    
+    if (!form || !submitButton) {
+      console.warn("Contact form or submit button not found in:", form);
+      return;
+    }
+
+    // Mark as initialized
+    form._formspark_initialized = true;
+
+    // Store original action for fallback
+    const originalAction = form.action;
+
+    // Store submit handler to avoid infinite loops with validation script
+    let isSubmitting = false;
+
+    // Override form submission with loop protection
+    form.addEventListener("submit", (event) => {
+      if (isSubmitting) return; // Prevent infinite loops
+      isSubmitting = true;
+
+      handleFormSubmission(event, form, submitButton, originalAction).finally(
+        () => {
+          isSubmitting = false;
+        }
+      );
+    });
+    
+    // Handle custom submit elements that might not trigger form submit event
+    if (submitButton && submitButton.tagName.toLowerCase() !== 'input') {
+      // Mark as handled by Formspark to prevent conflicts with validation script
+      submitButton.setAttribute('data-formspark-handled', 'true');
+      
+      submitButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (isSubmitting) return;
+        
+        // Trigger form submission
+        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+        form.dispatchEvent(submitEvent);
+      });
+    }
+    
+    // Store reset preference for use by logic script  
+    if (submitButton && submitButton.hasAttribute("data-form-reset")) {
+      form.dataset.shouldReset = "true";
+    }
+
+    console.log("Formspark integration initialized for form:", form);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+       9. Initialization
+    ────────────────────────────────────────────────────────────────*/
 
   // Expose configuration for easy updates
   window.ContactFormConfig = {
@@ -447,4 +535,12 @@
       BOTPOISON_PUBLIC_KEY = publicKey;
     },
   };
+  
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('setup', SetupModule);
+  } else {
+    // Fallback if coordinator not available
+    initContactForms();
+  }
 })();

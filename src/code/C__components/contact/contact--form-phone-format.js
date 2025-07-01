@@ -147,41 +147,72 @@
     });
   }
   
-  // Auto-init
-  initPhoneFormat();
+  // ─────────────────────────────────────────────────────────────
+  // Module Interface for Coordinator
+  // ─────────────────────────────────────────────────────────────
   
-  // Webflow integration
-  if (typeof Webflow !== 'undefined' && Webflow.push) {
-    Webflow.push(initPhoneFormat);
-  }
-  
-  // Observe for dynamically added forms
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach(mutation => {
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType === 1) { // Element node
-          if (node.matches && node.matches('input[type="tel"]')) {
-            initPhoneFormat();
-          } else if (node.querySelectorAll) {
-            const telInputs = node.querySelectorAll('input[type="tel"]');
-            if (telInputs.length > 0) {
-              initPhoneFormat();
+  const PhoneFormatModule = {
+    name: 'phone',
+    
+    init: function(container = document) {
+      initPhoneFormat(container);
+    },
+    
+    initForm: function(form) {
+      const phoneInputs = form.querySelectorAll('input[type="tel"]');
+      phoneInputs.forEach(input => {
+        if (!input._phoneFormatInitialized) {
+          input._phoneFormatInitialized = true;
+          
+          input.addEventListener('input', () => {
+            // Clear existing timeout
+            if (input._formatTimeout) {
+              clearTimeout(input._formatTimeout);
             }
-          }
+            
+            // Debounce formatting
+            input._formatTimeout = setTimeout(() => {
+              const cursorPos = input.selectionStart;
+              const oldValue = input.value;
+              const formatted = formatPhone(oldValue);
+              
+              if (formatted !== oldValue) {
+                input.value = formatted;
+                
+                // Restore cursor position
+                const newCursor = calculateCursor(oldValue, formatted, cursorPos);
+                input.setSelectionRange(newCursor, newCursor);
+              }
+            }, 100);
+          });
         }
       });
-    });
-  });
-  
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-  
+    },
+    
+    cleanupForm: function(form) {
+      const phoneInputs = form.querySelectorAll('input[type="tel"]');
+      phoneInputs.forEach(input => {
+        input._phoneFormatInitialized = false;
+      });
+    }
+  };
+
   // Export
   window.PhoneFormat = { 
     format: formatPhone,
-    validate: validatePhone 
+    validate: validatePhone,
+    init: initPhoneFormat
   };
+  
+  // Register with coordinator
+  if (window.ContactFormCoordinator) {
+    window.ContactFormCoordinator.register('phone', PhoneFormatModule);
+  } else {
+    // Fallback if coordinator not available
+    initPhoneFormat();
+    
+    if (typeof Webflow !== 'undefined' && Webflow.push) {
+      Webflow.push(initPhoneFormat);
+    }
+  }
 })();
