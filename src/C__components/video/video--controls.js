@@ -1,10 +1,66 @@
 // ───────────────────────────────────────────────────────────────
 // Video: Controls
-// Fullscreen Support & Control Panel Hover Animation
+// Fullscreen Support, Control Panel Animation & Autoplay Fallback
 // ───────────────────────────────────────────────────────────────
 (() => {
   /* ─────────────────────────────────────────────────────────────
-     1. Mobile Fullscreen Support
+     1. Autoplay Fallback with User Interaction
+  ────────────────────────────────────────────────────────────────*/
+  function initAutoplayFallback() {
+    // @ts-ignore - Webflow global loaded externally
+    if (typeof window.Webflow !== "undefined") {
+      window.Webflow.push(() => {
+        // Wait 3 seconds before trying to play the video
+        setTimeout(() => {
+          const videos = document.querySelectorAll(
+            "video.hero--video-element, video.blog--video-element"
+          );
+
+          // If no video elements exist, return
+          if (!videos.length) return;
+
+          videos.forEach((vid) => {
+            // Set attributes for autoplay and looping
+            vid.loop = true;
+            vid.muted = true;
+            vid.playsInline = true;
+
+            // Attempt to play the video
+            const promise = vid.play();
+
+            if (promise !== undefined) {
+              promise.catch((error) => {
+                console.warn(
+                  "Autoplay was prevented. Waiting for user interaction.",
+                  error
+                );
+                // Autoplay was prevented. We'll set up a one-time listener to play on interaction.
+                const playOnFirstInteraction = () => {
+                  vid
+                    .play()
+                    .catch((e) =>
+                      console.warn("Play on interaction also failed.", e)
+                    );
+                  // Remove the listeners after the first interaction
+                  document.removeEventListener("click", playOnFirstInteraction);
+                  document.removeEventListener(
+                    "touchstart",
+                    playOnFirstInteraction
+                  );
+                };
+
+                document.addEventListener("click", playOnFirstInteraction);
+                document.addEventListener("touchstart", playOnFirstInteraction);
+              });
+            }
+          });
+        }, 3000); // 3-second delay
+      });
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     2. Mobile Fullscreen Support
   ────────────────────────────────────────────────────────────────*/
   function setupMobileFullscreen() {
     // Enable fullscreen video playback on mobile devices
@@ -15,9 +71,9 @@
           const target = /** @type {HTMLElement|null} */ (e.target);
           if (target?.closest(".video--control-resize .video--control-btn")) {
             e.preventDefault();
-            const video = /** @type {any} */ (target
-              .closest(".rich-text--video-w")
-              ?.querySelector("video"));
+            const video = /** @type {any} */ (
+              target.closest(".rich-text--video-w")?.querySelector("video")
+            );
             video?.webkitEnterFullscreen?.() || video?.requestFullscreen?.();
           }
         },
@@ -27,7 +83,7 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-     2. Import Motion.dev
+     3. Import Motion.dev
   ────────────────────────────────────────────────────────────────*/
   function initControlPanelAnimation() {
     // @ts-ignore - Motion.dev library loaded externally
@@ -39,21 +95,21 @@
     }
 
     /* ─────────────────────────────────────────────────────────────
-       3. Element Detection & Viewport Check
+       4. Element Detection & Viewport Check
     ────────────────────────────────────────────────────────────────*/
     const controlPanel = /** @type {HTMLElement|null} */ (
       document.querySelector("#control-panel")
     );
-    
+
     // Debug logging for development
     console.log("Control panel found:", !!controlPanel);
     console.log("Window width:", window.innerWidth);
-    
+
     if (!controlPanel) {
       console.warn("Control panel (#control-panel) not found");
       return;
     }
-    
+
     // Skip animation on mobile/tablet
     if (window.innerWidth <= 768) {
       console.log("Skipping control panel animation on mobile");
@@ -64,17 +120,16 @@
       controlPanel.closest(".rich-text--video-w") ||
         controlPanel.closest('[class*="video"]')
     );
-    
+
     console.log("Video container found:", !!videoContainer);
-    
+
     if (!videoContainer) {
       console.warn("Video container not found for control panel");
       return;
     }
 
-
     /* ─────────────────────────────────────────────────────────────
-       4. Animation Configuration & Performance Setup
+       5. Animation Configuration & Performance Setup
     ────────────────────────────────────────────────────────────────*/
     // Cache reduced motion preference for accessibility
     const prefersReducedMotion = window.matchMedia(
@@ -95,7 +150,7 @@
     let hoverTimeout = null;
 
     /* ─────────────────────────────────────────────────────────────
-       5. Initial State Setup (Prevent Flickering)
+       6. Initial State Setup (Prevent Flickering)
     ────────────────────────────────────────────────────────────────*/
     // Set initial hidden state with hardware acceleration
     Object.assign(controlPanel.style, {
@@ -108,11 +163,11 @@
     });
 
     /* ─────────────────────────────────────────────────────────────
-       6. Show Animation (Mouse Enter)
+       7. Show Animation (Mouse Enter)
     ────────────────────────────────────────────────────────────────*/
     videoContainer.addEventListener("mouseenter", () => {
       console.log("Mouse entered video container, isVisible:", isVisible);
-      
+
       if (isVisible) return;
 
       // Clear any pending hide animation
@@ -147,7 +202,7 @@
     });
 
     /* ─────────────────────────────────────────────────────────────
-       7. Hide Animation (Mouse Leave)
+       8. Hide Animation (Mouse Leave)
     ────────────────────────────────────────────────────────────────*/
     videoContainer.addEventListener("mouseleave", () => {
       if (!isVisible) return;
@@ -180,8 +235,11 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-     8. Initialize Everything
+     9. Initialize Everything
   ────────────────────────────────────────────────────────────────*/
+  // Initialize autoplay fallback
+  initAutoplayFallback();
+
   // Set up mobile fullscreen support immediately
   setupMobileFullscreen();
 

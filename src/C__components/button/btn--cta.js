@@ -2,17 +2,13 @@
 // Button: CTA (Optimized)
 // Animate on Hover
 // ───────────────────────────────────────────────────────────────
-
-// Import centralized utilities
-import { DEVICE, EASING } from '../utils/motion-config.js';
-
 (() => {
   /* ─────────────────────────────────────────────────────────────
      1. Device Detection Helpers
   ────────────────────────────────────────────────────────────────*/
 
-  // Use centralized device detection
-  const isDesktopOrTablet = DEVICE.isTabletOrDesktop;
+  // Device detection helpers
+  const isDesktopOrTablet = () => window.innerWidth >= 768;
 
   /* ─────────────────────────────────────────────────────────────
      2. Initial State Setup
@@ -62,8 +58,8 @@ import { DEVICE, EASING } from '../utils/motion-config.js';
     /* ─────────────────────────────────────────────────────────────
        4. Easing maps – Webflow ≈ Motion.dev
     ────────────────────────────────────────────────────────────────*/
-    // Use centralized easing curves
-    const power1Out = EASING.power1Out;
+    // Easing curves
+    const power1Out = [0.25, 0.46, 0.45, 0.94]; // "Power1 Out"
     const power0 = [0, 0, 1, 1]; // "Linear" (Power0)
 
     /* ─────────────────────────────────────────────────────────────
