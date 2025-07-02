@@ -7,55 +7,60 @@
      1. Autoplay Fallback with User Interaction
   ────────────────────────────────────────────────────────────────*/
   function initAutoplayFallback() {
+    // Prevent multiple initializations
+    if (window._videoAutoplayInitialized) return;
+    window._videoAutoplayInitialized = true;
+
+    const startAutoplay = () => {
+      // Wait 3 seconds before trying to play the video
+      setTimeout(() => {
+        const videos = document.querySelectorAll(
+          "video.hero--video-element, video.blog--video-element"
+        );
+
+        // If no video elements exist, return
+        if (!videos.length) return;
+
+        videos.forEach((vid) => {
+          // Type guard for video element
+          if (!(vid instanceof HTMLVideoElement)) return;
+
+          // Set attributes for autoplay and looping
+          vid.loop = true;
+          vid.muted = true;
+          vid.playsInline = true;
+
+          // Attempt to play the video
+          const promise = vid.play();
+
+          if (promise !== undefined) {
+            promise.catch((error) => {
+              // Autoplay was prevented. Set up one-time listener for user interaction
+              const playOnFirstInteraction = () => {
+                if (vid instanceof HTMLVideoElement) {
+                  vid.play().catch(() => {
+                    // Silently fail if play on interaction also fails
+                  });
+                }
+                // Remove the listeners after the first interaction
+                document.removeEventListener("click", playOnFirstInteraction);
+                document.removeEventListener("touchstart", playOnFirstInteraction);
+              };
+
+              document.addEventListener("click", playOnFirstInteraction, { once: true });
+              document.addEventListener("touchstart", playOnFirstInteraction, { once: true });
+            });
+          }
+        });
+      }, 3000); // 3-second delay
+    };
+
     // @ts-ignore - Webflow global loaded externally
     if (typeof window.Webflow !== "undefined") {
-      window.Webflow.push(() => {
-        // Wait 3 seconds before trying to play the video
-        setTimeout(() => {
-          const videos = document.querySelectorAll(
-            "video.hero--video-element, video.blog--video-element"
-          );
-
-          // If no video elements exist, return
-          if (!videos.length) return;
-
-          videos.forEach((vid) => {
-            // Set attributes for autoplay and looping
-            vid.loop = true;
-            vid.muted = true;
-            vid.playsInline = true;
-
-            // Attempt to play the video
-            const promise = vid.play();
-
-            if (promise !== undefined) {
-              promise.catch((error) => {
-                console.warn(
-                  "Autoplay was prevented. Waiting for user interaction.",
-                  error
-                );
-                // Autoplay was prevented. We'll set up a one-time listener to play on interaction.
-                const playOnFirstInteraction = () => {
-                  vid
-                    .play()
-                    .catch((e) =>
-                      console.warn("Play on interaction also failed.", e)
-                    );
-                  // Remove the listeners after the first interaction
-                  document.removeEventListener("click", playOnFirstInteraction);
-                  document.removeEventListener(
-                    "touchstart",
-                    playOnFirstInteraction
-                  );
-                };
-
-                document.addEventListener("click", playOnFirstInteraction);
-                document.addEventListener("touchstart", playOnFirstInteraction);
-              });
-            }
-          });
-        }, 3000); // 3-second delay
-      });
+      window.Webflow.push(startAutoplay);
+    } else {
+      // Fallback if Webflow is not available
+      startAutoplay();
     }
   }
 
@@ -63,6 +68,10 @@
      2. Mobile Fullscreen Support
   ────────────────────────────────────────────────────────────────*/
   function setupMobileFullscreen() {
+    // Prevent multiple initializations
+    if (window._videoFullscreenInitialized) return;
+    window._videoFullscreenInitialized = true;
+
     // Enable fullscreen video playback on mobile devices
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       document.addEventListener(
@@ -71,10 +80,16 @@
           const target = /** @type {HTMLElement|null} */ (e.target);
           if (target?.closest(".video--control-resize .video--control-btn")) {
             e.preventDefault();
-            const video = /** @type {any} */ (
-              target.closest(".rich-text--video-w")?.querySelector("video")
-            );
-            video?.webkitEnterFullscreen?.() || video?.requestFullscreen?.();
+            const video = target.closest(".rich-text--video-w")?.querySelector("video");
+            
+            // Type guard and method availability check
+            if (video instanceof HTMLVideoElement) {
+              if (typeof video.webkitEnterFullscreen === 'function') {
+                video.webkitEnterFullscreen();
+              } else if (typeof video.requestFullscreen === 'function') {
+                video.requestFullscreen();
+              }
+            }
           }
         },
         true
@@ -101,18 +116,12 @@
       document.querySelector("#control-panel")
     );
 
-    // Debug logging for development
-    console.log("Control panel found:", !!controlPanel);
-    console.log("Window width:", window.innerWidth);
-
     if (!controlPanel) {
-      console.warn("Control panel (#control-panel) not found");
       return;
     }
 
     // Skip animation on mobile/tablet
     if (window.innerWidth <= 768) {
-      console.log("Skipping control panel animation on mobile");
       return;
     }
 
@@ -121,10 +130,7 @@
         controlPanel.closest('[class*="video"]')
     );
 
-    console.log("Video container found:", !!videoContainer);
-
     if (!videoContainer) {
-      console.warn("Video container not found for control panel");
       return;
     }
 
@@ -166,8 +172,6 @@
        7. Show Animation (Mouse Enter)
     ────────────────────────────────────────────────────────────────*/
     videoContainer.addEventListener("mouseenter", () => {
-      console.log("Mouse entered video container, isVisible:", isVisible);
-
       if (isVisible) return;
 
       // Clear any pending hide animation
@@ -176,7 +180,6 @@
         hoverTimeout = null;
       }
 
-      console.log("Starting control panel show animation");
       isVisible = true;
       controlPanel.style.pointerEvents = "auto";
 
@@ -190,11 +193,7 @@
         {
           duration,
           easing,
-          onStart: () => {
-            console.log("Control panel animation started");
-          },
           onComplete: () => {
-            console.log("Control panel animation completed");
             controlPanel.style.willChange = "auto";
           },
         }
