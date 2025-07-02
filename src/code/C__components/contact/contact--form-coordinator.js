@@ -55,8 +55,7 @@
     INIT_ORDER: [
       'attributes',  // Must load first - provides selectors
       'memory',      // Early initialization for auto-restore
-      'validation',  // Before submit handling
-      'phone',       // Formatting before validation
+      'validation',  // Before submit handling (now includes phone formatting)
       'shortcuts',   // Before submit handling
       'submission'   // Unified submission and post-action handling
     ],

@@ -9,8 +9,7 @@
    This file centralizes all data attribute definitions used across
    the contact form modules for consistency and maintainability.
    
-   All modules support both new unified attributes and legacy 
-   attributes for backward compatibility.
+   All modules support unified attributes for consistency.
 ────────────────────────────────────────────────────────────────*/
 
 (() => {
@@ -45,11 +44,7 @@
   const PHONE_ATTRIBUTES = {
     // New unified attributes
     COUNTRY: 'data-contact-phone-country',
-    PRESERVE_INVALID: 'data-contact-phone-preserve-invalid',
-    
-    // Legacy attributes (for backward compatibility)
-    COUNTRY_LEGACY: 'data-phone-country',
-    PRESERVE_INVALID_LEGACY: 'data-phone-preserve-invalid'
+    PRESERVE_INVALID: 'data-contact-phone-preserve-invalid'
   };
   
   const PHONE_SELECTORS = {
@@ -68,19 +63,11 @@
     EXCLUDE: 'data-contact-memory-exclude',
     STORAGE: 'data-contact-memory-storage',
     CLEAR_ON_SUBMIT: 'data-contact-memory-clear-on-submit',
-    FIELD_EXCLUDE: 'data-contact-memory-exclude-field',
-    
-    // Legacy attributes (for backward compatibility)
-    ENABLED_LEGACY: 'data-memory',
-    EXPIRE_LEGACY: 'data-memory-expire',
-    EXCLUDE_LEGACY: 'data-memory-exclude',
-    STORAGE_LEGACY: 'data-memory-storage',
-    CLEAR_ON_SUBMIT_LEGACY: 'data-memory-clear-on-submit',
-    FIELD_EXCLUDE_LEGACY: 'data-memory-exclude'
+    FIELD_EXCLUDE: 'data-contact-memory-exclude-field'
   };
   
   const MEMORY_SELECTORS = {
-    FORM: `form[${MEMORY_ATTRIBUTES.ENABLED}="true"], form[${MEMORY_ATTRIBUTES.ENABLED_LEGACY}="true"], form[${CORE_SELECTORS.FORM_LIVE_VALIDATE.slice(1, -1)}]`,
+    FORM: `form[${MEMORY_ATTRIBUTES.ENABLED}="true"], form[${CORE_SELECTORS.FORM_LIVE_VALIDATE.slice(1, -1)}]`,
     FORM_AUTO: CORE_SELECTORS.FORM_LIVE_VALIDATE
   };
   
@@ -98,24 +85,16 @@
     SUBMIT: 'data-contact-submit',
     
     // Rule-specific messages
-    MESSAGE_PREFIX: 'data-contact-validate',
-    
-    // Legacy attributes (for backward compatibility)
-    FORM_LEGACY: 'data-validation-form',
-    GROUP_LEGACY: 'data-validation-group',
-    FIELD_LEGACY: 'data-validate',
-    ERROR_CONTAINER_LEGACY: 'data-error-container',
-    SUCCESS_CONTAINER_LEGACY: 'data-success-container',
-    SUBMIT_LEGACY: 'data-form-submit'
+    MESSAGE_PREFIX: 'data-contact-validate'
   };
   
   const VALIDATION_SELECTORS = {
-    FORM: `[${VALIDATION_ATTRIBUTES.FORM}], [${VALIDATION_ATTRIBUTES.FORM_LEGACY}]`,
-    GROUP: `[${VALIDATION_ATTRIBUTES.GROUP}], [${VALIDATION_ATTRIBUTES.GROUP_LEGACY}]`,
-    FIELD: `[${VALIDATION_ATTRIBUTES.FIELD}], [${VALIDATION_ATTRIBUTES.FIELD_LEGACY}]`,
-    ERROR_CONTAINER: `[${VALIDATION_ATTRIBUTES.ERROR_CONTAINER}], [${VALIDATION_ATTRIBUTES.ERROR_CONTAINER_LEGACY}]`,
-    SUCCESS_CONTAINER: `[${VALIDATION_ATTRIBUTES.SUCCESS_CONTAINER}], [${VALIDATION_ATTRIBUTES.SUCCESS_CONTAINER_LEGACY}]`,
-    SUBMIT: `input[type="submit"], button[type="submit"], [${VALIDATION_ATTRIBUTES.SUBMIT}], [${VALIDATION_ATTRIBUTES.SUBMIT_LEGACY}]`
+    FORM: `[${VALIDATION_ATTRIBUTES.FORM}]`,
+    GROUP: `[${VALIDATION_ATTRIBUTES.GROUP}]`,
+    FIELD: `[${VALIDATION_ATTRIBUTES.FIELD}]`,
+    ERROR_CONTAINER: `[${VALIDATION_ATTRIBUTES.ERROR_CONTAINER}]`,
+    SUCCESS_CONTAINER: `[${VALIDATION_ATTRIBUTES.SUCCESS_CONTAINER}]`,
+    SUBMIT: `input[type="submit"], button[type="submit"], [${VALIDATION_ATTRIBUTES.SUBMIT}]`
   };
   
   // ─────────────────────────────────────────────────────────────
@@ -133,38 +112,14 @@
     EXCLUDE: 'data-contact-submit-exclude',
     REDIRECT: 'data-contact-submit-redirect',
     RELOAD: 'data-contact-submit-reload',
-    DISABLE: 'data-contact-submit-disable',
-    
-    // Legacy attributes (for backward compatibility)
-    FORM_LEGACY: 'data-submit-form',
-    TRIGGER_LEGACY: 'data-submit-trigger',
-    RESET_BUTTON_LEGACY: 'data-submit-reset',
-    SUBMIT_BUTTON_LEGACY: 'data-submit-button',
-    AUTO_RESET_LEGACY: 'data-submit-auto-reset',
-    DELAY_LEGACY: 'data-submit-delay',
-    EXCLUDE_LEGACY: 'data-submit-exclude',
-    REDIRECT_LEGACY: 'data-submit-redirect',
-    RELOAD_LEGACY: 'data-submit-reload',
-    DISABLE_LEGACY: 'data-submit-disable',
-    
-    // Finsweet legacy attributes (for backward compatibility)
-    FORM_FINSWEET: 'fs-formsubmit-element="form"',
-    TRIGGER_FINSWEET: 'fs-formsubmit-element="ix-trigger"',
-    RESET_BUTTON_FINSWEET: 'fs-formsubmit-element="reset"',
-    SUBMIT_BUTTON_FINSWEET: 'fs-formsubmit-element="submit"',
-    AUTO_RESET_FINSWEET: 'fs-formsubmit-reset',
-    DELAY_FINSWEET: 'fs-formsubmit-delay',
-    EXCLUDE_FINSWEET: 'fs-formsubmit-exclude',
-    REDIRECT_FINSWEET: 'fs-formsubmit-redirect',
-    RELOAD_FINSWEET: 'fs-formsubmit-reload',
-    DISABLE_FINSWEET: 'fs-formsubmit-disable'
+    DISABLE: 'data-contact-submit-disable'
   };
   
   const SUBMIT_SELECTORS = {
-    FORM: `[${SUBMIT_ATTRIBUTES.FORM}], [${SUBMIT_ATTRIBUTES.FORM_LEGACY}], [${SUBMIT_ATTRIBUTES.FORM_FINSWEET}]`,
-    TRIGGER: `[${SUBMIT_ATTRIBUTES.TRIGGER}], [${SUBMIT_ATTRIBUTES.TRIGGER_LEGACY}], [${SUBMIT_ATTRIBUTES.TRIGGER_FINSWEET}]`,
-    RESET_BUTTON: `[${SUBMIT_ATTRIBUTES.RESET_BUTTON}], [${SUBMIT_ATTRIBUTES.RESET_BUTTON_LEGACY}], [${SUBMIT_ATTRIBUTES.RESET_BUTTON_FINSWEET}]`,
-    SUBMIT_BUTTON: `[${SUBMIT_ATTRIBUTES.SUBMIT_BUTTON}], [${SUBMIT_ATTRIBUTES.SUBMIT_BUTTON_LEGACY}], [${SUBMIT_ATTRIBUTES.SUBMIT_BUTTON_FINSWEET}]`
+    FORM: `[${SUBMIT_ATTRIBUTES.FORM}]`,
+    TRIGGER: `[${SUBMIT_ATTRIBUTES.TRIGGER}]`,
+    RESET_BUTTON: `[${SUBMIT_ATTRIBUTES.RESET_BUTTON}]`,
+    SUBMIT_BUTTON: `[${SUBMIT_ATTRIBUTES.SUBMIT_BUTTON}]`
   };
   
   // ─────────────────────────────────────────────────────────────
@@ -176,17 +131,11 @@
     FORM_CONTAINER: 'data-contact-form-container',
     AUTO_RESET: 'data-contact-auto-reset',
     RESET_BUTTON: 'data-contact-form-reset',
-    FORMSPARK_HANDLED: 'data-contact-formspark-handled',
-    
-    // Legacy attributes (for backward compatibility)
-    FORM_CONTAINER_LEGACY: 'data-live-validate',
-    AUTO_RESET_LEGACY: 'data-should-reset',
-    RESET_BUTTON_LEGACY: 'data-form-reset',
-    FORMSPARK_HANDLED_LEGACY: 'data-formspark-handled'
+    FORMSPARK_HANDLED: 'data-contact-formspark-handled'
   };
   
   const SETUP_SELECTORS = {
-    FORM_CONTAINER: `[${SETUP_ATTRIBUTES.FORM_CONTAINER}], [${SETUP_ATTRIBUTES.FORM_CONTAINER_LEGACY}]`,
+    FORM_CONTAINER: `[${SETUP_ATTRIBUTES.FORM_CONTAINER}]`,
     FORM: 'form',
     SUBMIT_BUTTON: 'input[type="submit"], [type="submit"], [data-form-submit]'
   };
@@ -242,43 +191,6 @@
   // Utility Functions
   // ─────────────────────────────────────────────────────────────
   
-  /**
-   * Get attribute value supporting both new and legacy attributes
-   * @param {HTMLElement} element - Element to check
-   * @param {string} newAttr - New attribute name
-   * @param {string} legacyAttr - Legacy attribute name
-   * @returns {string|null} Attribute value
-   */
-  function getCompatibleAttribute(element, newAttr, legacyAttr) {
-    return element.getAttribute(newAttr) || element.getAttribute(legacyAttr);
-  }
-  
-  /**
-   * Check if element has attribute (new or legacy)
-   * @param {HTMLElement} element - Element to check
-   * @param {string} newAttr - New attribute name
-   * @param {string} legacyAttr - Legacy attribute name
-   * @returns {boolean} Has attribute
-   */
-  function hasCompatibleAttribute(element, newAttr, legacyAttr) {
-    return element.hasAttribute(newAttr) || element.hasAttribute(legacyAttr);
-  }
-  
-  /**
-   * Query elements supporting both new and legacy selectors
-   * @param {HTMLElement|Document} container - Container to search
-   * @param {string} newSelector - New selector
-   * @param {string} legacySelector - Legacy selector
-   * @returns {NodeList} Found elements
-   */
-  function queryCompatibleElements(container, newSelector, legacySelector) {
-    const newElements = container.querySelectorAll(newSelector);
-    const legacyElements = container.querySelectorAll(legacySelector);
-    
-    // Combine and deduplicate
-    const allElements = [...newElements, ...legacyElements];
-    return [...new Set(allElements)];
-  }
   
   // ─────────────────────────────────────────────────────────────
   // Export Configuration
@@ -335,39 +247,8 @@
       SELECTORS: SHORTCUTS_SELECTORS
     },
     CONFIG: CONTACT_FORM_CONFIG,
-    
-    // Utility functions
-    utils: {
-      getCompatibleAttribute,
-      hasCompatibleAttribute,
-      queryCompatibleElements
-    }
   };
   
-  // ─────────────────────────────────────────────────────────────
-  // Migration Helper
-  // ─────────────────────────────────────────────────────────────
-  
-  /**
-   * Log migration warnings for deprecated attributes
-   * @param {HTMLElement} element - Element with deprecated attributes
-   * @param {string} oldAttr - Old attribute name
-   * @param {string} newAttr - New attribute name
-   * @param {string} moduleName - Module name for context
-   */
-  function logMigrationWarning(element, oldAttr, newAttr, moduleName) {
-    if (element.hasAttribute(oldAttr) && !element.hasAttribute(newAttr)) {
-      const logger = window.ContactFormCoordinator?.Logger || console;
-      logger.warn(
-        `[${moduleName}] Deprecated attribute "${oldAttr}" found. ` +
-        `Please migrate to "${newAttr}" for future compatibility.`,
-        element
-      );
-    }
-  }
-  
-  // Add migration helper to exports
-  window.ContactFormAttributes.utils.logMigrationWarning = logMigrationWarning;
   
   // Register with coordinator
   if (window.ContactFormCoordinator) {

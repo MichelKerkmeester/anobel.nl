@@ -88,12 +88,184 @@
     INTEGER: /^-?\d+$/
   };
 
+  // Phone formatting configurations
+  const PHONE_FORMATS = {
+    NL: {
+      patterns: {
+        international: /^31(\d{9})$/,
+        mobile: /^0?6(\d{8})$/,
+        landline: /^0([1-578]\d{7,8})$/
+      },
+      format: (digits) => {
+        // Dutch phone number formatting logic
+        if (digits.startsWith('31')) {
+          const rest = digits.slice(2);
+          if (rest.length >= 1) {
+            let formatted = '(+31) ' + rest.charAt(0);
+            if (rest.length > 1) formatted += ' ' + rest.slice(1, 5);
+            if (rest.length > 5) formatted += ' ' + rest.slice(5);
+            return formatted;
+          }
+        }
+        
+        if (digits.startsWith('6') || digits.startsWith('06')) {
+          const clean = digits.startsWith('06') ? digits.slice(1) : digits;
+          let formatted = '(+31) ' + clean.charAt(0);
+          if (clean.length > 1) formatted += ' ' + clean.slice(1, 5);
+          if (clean.length > 5) formatted += ' ' + clean.slice(5);
+          return formatted;
+        }
+        
+        if (digits.startsWith('0') && digits.length >= 3) {
+          const areaCode = digits.slice(1, 3);
+          if (/^[1-578]/.test(areaCode)) {
+            let formatted = '(+31) ' + areaCode;
+            if (digits.length > 3) formatted += ' ' + digits.slice(3, 7);
+            if (digits.length > 7) formatted += ' ' + digits.slice(7);
+            return formatted;
+          }
+        }
+        
+        if (/^[1-578]/.test(digits) && digits.length >= 2) {
+          let formatted = '(+31) ' + digits.slice(0, 2);
+          if (digits.length > 2) formatted += ' ' + digits.slice(2, 6);
+          if (digits.length > 6) formatted += ' ' + digits.slice(6);
+          return formatted;
+        }
+        
+        return null; // No formatting applied
+      },
+      validate: (digits) => {
+        if (digits.startsWith('31') && digits.length === 11) return true;
+        if (digits.startsWith('6') && digits.length === 9) return true;
+        if (digits.startsWith('06') && digits.length === 10) return true;
+        if (digits.length >= 9 && digits.length <= 10 && /^0[1-578]/.test(digits)) return true;
+        return false;
+      }
+    },
+    INTERNATIONAL: {
+      format: (digits) => {
+        // Basic international formatting
+        if (digits.length >= 7 && digits.length <= 15) {
+          return digits.replace(/(\d{1,3})(\d{3})(\d{3,4})(\d*)/, (match, p1, p2, p3, p4) => {
+            let formatted = p1;
+            if (p2) formatted += ' ' + p2;
+            if (p3) formatted += ' ' + p3;
+            if (p4) formatted += ' ' + p4;
+            return formatted;
+          });
+        }
+        return null;
+      },
+      validate: (digits) => {
+        return digits.length >= 7 && digits.length <= 15;
+      }
+    }
+  };
+
   // Performance: Cache field elements
   const FIELD_CACHE = new WeakMap();
   const FORM_CACHE = new WeakMap();
 
   // ─────────────────────────────────────────────────────────────
-  // 2. Validation Rules Library
+  // 2. Phone Formatting Utilities
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Format phone number based on country
+   * @param {string} value - Raw phone input
+   * @param {string} country - Country code (default: NL)
+   * @returns {string} Formatted phone number or original value
+   */
+  function formatPhone(value, country = 'NL') {
+    if (!value) return '';
+    
+    // Extract digits only
+    const digits = value.replace(/\D/g, '');
+    
+    // Don't format if too short or too long
+    if (digits.length < 3 || digits.length > 15) return value;
+    
+    const formatter = PHONE_FORMATS[country] || PHONE_FORMATS.INTERNATIONAL;
+    const formatted = formatter.format(digits);
+    
+    return formatted || value;
+  }
+
+  /**
+   * Validate phone number based on country
+   * @param {string} value - Phone number to validate
+   * @param {string} country - Country code (default: NL)
+   * @returns {boolean} Is valid phone number
+   */
+  function validatePhoneNumber(value, country = 'NL') {
+    if (!value) return false;
+    
+    const digits = value.replace(/\D/g, '');
+    const validator = PHONE_FORMATS[country] || PHONE_FORMATS.INTERNATIONAL;
+    
+    return validator.validate(digits);
+  }
+
+  /**
+   * Calculate cursor position after formatting
+   * @param {string} oldValue - Original value
+   * @param {string} newValue - Formatted value
+   * @param {number} oldCursor - Original cursor position
+   * @returns {number} New cursor position
+   */
+  function calculateCursorPosition(oldValue, newValue, oldCursor) {
+    // Count digits before cursor in old value
+    const digitsBefore = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
+    
+    // Find position after same number of digits in new value
+    let newCursor = 0;
+    let digitCount = 0;
+    
+    for (let i = 0; i < newValue.length; i++) {
+      if (/\d/.test(newValue[i])) {
+        digitCount++;
+        if (digitCount === digitsBefore) {
+          newCursor = i + 1;
+          break;
+        }
+      }
+    }
+    
+    // If couldn't match digit count, put cursor at end
+    if (digitCount < digitsBefore || newCursor === 0) {
+      newCursor = newValue.length;
+    }
+    
+    return newCursor;
+  }
+
+  /**
+   * Apply phone formatting to input element
+   * @param {HTMLInputElement} element - Phone input element
+   * @param {string} country - Country code for formatting
+   */
+  function applyPhoneFormatting(element, country = 'NL') {
+    if (element.type !== 'tel') return;
+    
+    const cursorPos = element.selectionStart;
+    const oldValue = element.value;
+    const formatted = formatPhone(oldValue, country);
+    
+    if (formatted !== oldValue) {
+      element.value = formatted;
+      
+      // Restore cursor position
+      const newCursor = calculateCursorPosition(oldValue, formatted, cursorPos);
+      element.setSelectionRange(newCursor, newCursor);
+      
+      // Dispatch input event for other handlers
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // 3. Validation Rules Library
   // ─────────────────────────────────────────────────────────────
 
   /**
@@ -168,11 +340,27 @@
     },
 
     /**
-     * International phone validation
+     * Enhanced phone validation with auto-formatting
      */
     phone: (value, element, params = {}) => {
       if (!value) return { valid: true }; // Empty is valid unless required
       
+      // Apply formatting if element is type="tel"
+      if (element.type === 'tel') {
+        const country = element.dataset.phoneCountry || 'NL';
+        applyPhoneFormatting(element, country);
+        
+        // Use the formatted value for validation
+        const formattedValue = element.value;
+        const isValid = validatePhoneNumber(formattedValue, country);
+        
+        return {
+          valid: isValid,
+          message: params.message || CONFIG.DEFAULT_MESSAGES.phone
+        };
+      }
+      
+      // Fallback to international validation for non-tel inputs
       const digitsOnly = value.replace(REGEX_CACHE.PHONE_NON_DIGITS, '');
       const isValid = digitsOnly.length >= 7 && digitsOnly.length <= 15 && 
                      REGEX_CACHE.PHONE_INTERNATIONAL.test(value);

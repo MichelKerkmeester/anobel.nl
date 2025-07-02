@@ -13,7 +13,6 @@
    - Loading states and user feedback
    - Webflow interaction integration
    - Manual reset button support
-   - Finsweet compatibility layer
    - Graceful error handling and cleanup
 ────────────────────────────────────────────────────────────────*/
 
@@ -43,12 +42,6 @@
       IX_TRIGGER: '[data-submit-trigger]',
       RESET_BUTTON: '[data-submit-reset]',
       SUBMIT_BUTTON_CUSTOM: '[data-submit-button]',
-      
-      // Legacy Finsweet compatibility
-      FORM_LEGACY: '[fs-formsubmit-element="form"]',
-      IX_TRIGGER_LEGACY: '[fs-formsubmit-element="ix-trigger"]',
-      RESET_BUTTON_LEGACY: '[fs-formsubmit-element="reset"]',
-      SUBMIT_BUTTON_LEGACY: '[fs-formsubmit-element="submit"]'
     },
     
     // Data attributes (unified)
@@ -60,14 +53,6 @@
       REDIRECT: 'data-submit-redirect',
       RELOAD: 'data-submit-reload',
       DISABLE: 'data-submit-disable',
-      
-      // Legacy attributes for backward compatibility
-      AUTO_RESET_LEGACY: 'fs-formsubmit-reset',
-      DELAY_LEGACY: 'fs-formsubmit-delay',
-      EXCLUDE_LEGACY: 'fs-formsubmit-exclude',
-      REDIRECT_LEGACY: 'fs-formsubmit-redirect',
-      RELOAD_LEGACY: 'fs-formsubmit-reload',
-      DISABLE_LEGACY: 'fs-formsubmit-disable',
       
       // Setup attributes
       FORM_CONTAINER: 'data-live-validate',
@@ -532,11 +517,6 @@
       }
     }
 
-    // Also clear legacy validation classes
-    const legacyGroups = form.querySelectorAll('[data-field-validate]');
-    legacyGroups.forEach(group => {
-      group.classList.remove('live-filled', 'live-error');
-    });
   }
 
   /**
@@ -757,8 +737,7 @@
   function initializeForm(form) {
     // Skip if already initialized or disabled
     if (FORM_STATES.has(form) || 
-        form.hasAttribute(CONFIG.ATTRIBUTES.DISABLE) || 
-        form.hasAttribute(CONFIG.ATTRIBUTES.DISABLE_LEGACY)) {
+        form.hasAttribute(CONFIG.ATTRIBUTES.DISABLE)) {
       return;
     }
 
@@ -770,17 +749,17 @@
       return;
     }
 
-    // Initialize form state (support both new and legacy attributes)
+    // Initialize form state
     const state = {
       isSubmitting: false,
       hasSubmitted: false,
-      ixTrigger: form.querySelector(CONFIG.SELECTORS.IX_TRIGGER) || form.querySelector(CONFIG.SELECTORS.IX_TRIGGER_LEGACY),
-      resetButton: form.querySelector(CONFIG.SELECTORS.RESET_BUTTON) || form.querySelector(CONFIG.SELECTORS.RESET_BUTTON_LEGACY),
-      delay: parseInt(form.getAttribute(CONFIG.ATTRIBUTES.DELAY) || form.getAttribute(CONFIG.ATTRIBUTES.DELAY_LEGACY)) || CONFIG.DEFAULT_DELAY,
-      autoReset: form.hasAttribute(CONFIG.ATTRIBUTES.AUTO_RESET) || form.hasAttribute(CONFIG.ATTRIBUTES.AUTO_RESET_LEGACY),
-      excludeFields: parseExcludeFields(form.getAttribute(CONFIG.ATTRIBUTES.EXCLUDE) || form.getAttribute(CONFIG.ATTRIBUTES.EXCLUDE_LEGACY)),
-      redirectUrl: form.getAttribute(CONFIG.ATTRIBUTES.REDIRECT) || form.getAttribute(CONFIG.ATTRIBUTES.REDIRECT_LEGACY),
-      shouldReload: form.hasAttribute(CONFIG.ATTRIBUTES.RELOAD) || form.hasAttribute(CONFIG.ATTRIBUTES.RELOAD_LEGACY)
+      ixTrigger: form.querySelector(CONFIG.SELECTORS.IX_TRIGGER),
+      resetButton: form.querySelector(CONFIG.SELECTORS.RESET_BUTTON),
+      delay: parseInt(form.getAttribute(CONFIG.ATTRIBUTES.DELAY)) || CONFIG.DEFAULT_DELAY,
+      autoReset: form.hasAttribute(CONFIG.ATTRIBUTES.AUTO_RESET),
+      excludeFields: parseExcludeFields(form.getAttribute(CONFIG.ATTRIBUTES.EXCLUDE)),
+      redirectUrl: form.getAttribute(CONFIG.ATTRIBUTES.REDIRECT),
+      shouldReload: form.hasAttribute(CONFIG.ATTRIBUTES.RELOAD)
     };
 
     FORM_STATES.set(form, state);
