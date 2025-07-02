@@ -34,8 +34,7 @@ Copy these scripts to your Webflow project (in this exact order):
 <script src="contact--form-memory.js"></script>       <!-- Auto-save -->
 <script src="contact--form-phone-format.js"></script> <!-- Phone formatting -->
 <script src="contact--form-shortcuts.js"></script>   <!-- Keyboard shortcuts -->
-<script src="contact--form-setup.js"></script>       <!-- Formspark integration -->
-<script src="contact--form-submit.js"></script>      <!-- Modal popups -->
+<script src="contact--form-submission.js"></script>  <!-- Formspark & modal handling -->
 
 <!-- Required: Styling -->
 <link rel="stylesheet" href="contact--form-logic.css">
@@ -293,7 +292,7 @@ Add these to any input's `data-validate` attribute:
 ✅ Check for CSS conflicts with Webflow's default styles  
 
 ### ❌ **Formspark not submitting?**
-✅ Check if `contact--form-setup.js` is loaded  
+✅ Check if `contact--form-submission.js` is loaded  
 ✅ Verify Formspark action URL is correct  
 ✅ Check browser console for network errors  
 ✅ Look for CORS errors in console  
@@ -303,6 +302,7 @@ Add these to any input's `data-validate` attribute:
 ✅ Make sure coordinator loads first  
 ✅ Don't add custom submit handlers - use coordinator events  
 ✅ Check for duplicate script includes  
+✅ Remove old `contact--form-setup.js` and `contact--form-submit.js` if present  
 
 ### ❌ **Forms in Collection Lists not working?**
 ✅ Forms are re-initialized when CMS content updates  
@@ -330,9 +330,8 @@ Add these to any input's `data-validate` attribute:
 | `contact--form-logic.css` | Styling | ✅ Required |
 | `contact--form-memory.js` | Auto-save feature | Optional |
 | `contact--form-phone-format.js` | Phone formatting | Optional |
-| `contact--form-submit.js` | Modal popups & form reset | Optional |
 | `contact--form-shortcuts.js` | Keyboard shortcuts | Optional |
-| `contact--form-setup.js` | Formspark integration | Optional |
+| `contact--form-submission.js` | Formspark integration & modal popups | Optional |
 
 ---
 
@@ -348,8 +347,7 @@ contact--form-coordinator.js (REQUIRED - loads first)
         ├── contact--form-memory.js (auto-save)
         ├── contact--form-phone-format.js (phone formatting)
         ├── contact--form-shortcuts.js (keyboard shortcuts)
-        ├── contact--form-setup.js (Formspark integration)
-        └── contact--form-submit.js (modal popups & reset)
+        └── contact--form-submission.js (Formspark integration & modal popups)
 ```
 
 **Note:** The coordinator manages module initialization order and prevents conflicts between modules.

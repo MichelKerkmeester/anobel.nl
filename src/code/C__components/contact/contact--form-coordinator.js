@@ -58,8 +58,7 @@
       'validation',  // Before submit handling
       'phone',       // Formatting before validation
       'shortcuts',   // Before submit handling
-      'setup',       // Formspark integration
-      'submit'       // Final submit handling
+      'submission'   // Unified submission and post-action handling
     ],
     
     // Debounce timing
