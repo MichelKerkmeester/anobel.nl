@@ -1,4 +1,4 @@
-# Vite-Webflow Starter
+# Vite + Webflow
 
 A modern development toolkit that bridges professional JavaScript workflows with Webflow projects. Built with Vite, this starter enables developers to use contemporary development practices while leveraging Webflow's visual design capabilities.
 
