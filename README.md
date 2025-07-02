@@ -1,4 +1,4 @@
-# Vite-Webflow Starter
+# Vite + Webflow
 
 A modern development toolkit that bridges professional JavaScript workflows with Webflow projects. Built with Vite, this starter enables developers to use contemporary development practices while leveraging Webflow's visual design capabilities.
 
@@ -13,8 +13,6 @@ A modern development toolkit that bridges professional JavaScript workflows with
 7. [Customization](#customization)
 8. [Best Practices](#best-practices)
 9. [Troubleshooting](#troubleshooting)
-10. [Contributing](#contributing)
-11. [License](#license)
 
 ## Features
 
@@ -60,20 +58,13 @@ A modern development toolkit that bridges professional JavaScript workflows with
 
 ### Installation
 
-1. Clone the repository:
-
-```bash
-git clone <repository-url> vite-webflow-starter
-cd vite-webflow-starter
-```
-
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Start development server:
+2. Start development server:
 
 ```bash
 npm run dev
@@ -82,7 +73,7 @@ npm run dev
 ## Project Structure
 
 ```plaintext
-vite-webflow-starter/
+project/
 ├── dist/                    # Build output
 │   ├── latest/             # Most recent build
 │   │   └── index.js
@@ -323,20 +314,3 @@ const apiKey = process.env.API_KEY;
    - Verify port availability
    - Check file permissions
    - Clear cache if needed
-
-## Contributing
-
-1. Fork repository
-2. Create feature branch
-3. Submit pull request with:
-   - Clear description
-   - Test coverage
-   - Documentation updates
-
-## License
-
-MIT License - See LICENSE file for details.
-
----
-
-For more information and updates, visit the repository or submit issues through GitHub.
