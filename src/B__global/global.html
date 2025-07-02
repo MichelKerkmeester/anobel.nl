@@ -1,0 +1,77 @@
+<!----------
+  HEADER 
+----------->
+
+<!-- Pre-Connect -->
+<link rel="preconnect" href="cdn.prod.website-files.com" crossorigin>
+<link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+<!-- Pre-Load -->
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/motion@12.15.0/+esm" as="script" crossorigin>
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" as="script">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" as="script">
+
+<!-- Motion.dev -->
+<script type="module">
+    console.log('🚀 Motion.dev import starting...')
+
+    try {
+        const {
+            // Core Animation Functions
+            animate,
+            scroll,
+            inView,
+            hover,
+            press,
+            resize,
+            // Utility Functions
+            delay,
+            frame,
+            mix,
+            spring,
+            stagger,
+            transform,
+            wrap,
+            // Motion Values
+            motionValue,
+            mapValue,
+            transformValue,
+            springValue,
+            // Renderers
+            attrEffect,
+            propEffect,
+            styleEffect,
+            svgEffect
+        } = await import("https://cdn.jsdelivr.net/npm/motion@12.15.0/+esm")
+
+        // Make functions globally available for Slater
+        window.Motion = {
+            animate, scroll, inView, hover, press, resize,
+            delay, frame, mix, spring, stagger, transform, wrap,
+            motionValue, mapValue, transformValue, springValue,
+            attrEffect, propEffect, styleEffect, svgEffect
+        }
+
+        // Also make available as lowercase for existing code
+        window.motion = window.Motion
+
+        console.log('✅ Motion.dev loaded successfully!')
+        console.log('Available at window.Motion:', Object.keys(window.Motion))
+
+    } catch (error) {
+        console.error('❌ Motion.dev failed to load:', error)
+    }
+</script>
+
+<!-- GSAP -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"
+    onload="gsap.registerPlugin(ScrollTrigger);"></script>
+
+<!----------
+  FOOTER 
+----------->
+
+<!-- Slater: Temporary Dev. Solution -->
+<script>document.addEventListener("DOMContentLoaded", function () { function loadanobelnl3c48008951374bae94a19c4600d8c765(e) { let t = document.createElement("script"); t.setAttribute("src", e), t.setAttribute("type", "module"), document.body.appendChild(t), t.addEventListener("load", () => { console.log("Slater.app") }), t.addEventListener("error", e => { console.log("Error loading file", e) }) } let src = window.location.host.includes("webflow.io") ? "https://slater.app/14613.js" : "https://assets.slater.app/slater/14613.js?v=1.0"; loadanobelnl3c48008951374bae94a19c4600d8c765(src); })</script>
