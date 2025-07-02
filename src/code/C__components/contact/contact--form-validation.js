@@ -288,7 +288,8 @@
           message: params.message || CONFIG.DEFAULT_MESSAGES.pattern
         };
       } catch (e) {
-        console.warn('Invalid regex pattern:', params.pattern);
+        const logger = window.ContactFormCoordinator?.Logger || console;
+        logger.warn('Invalid regex pattern:', params.pattern);
         return { valid: true };
       }
     },
@@ -364,7 +365,8 @@
         
         return { name, params };
       } catch (e) {
-        console.warn('Failed to parse validation parameters:', paramString);
+        const logger = window.ContactFormCoordinator?.Logger || console;
+        logger.warn('Failed to parse validation parameters:', paramString);
         return { name, params: {} };
       }
     });
@@ -411,7 +413,8 @@
     for (const rule of rules) {
       const validator = VALIDATION_RULES[rule.name];
       if (!validator) {
-        console.warn(`Unknown validation rule: ${rule.name}`);
+        const logger = window.ContactFormCoordinator?.Logger || console;
+        logger.warn(`Unknown validation rule: ${rule.name}`);
         continue;
       }
       
@@ -658,9 +661,10 @@
   /**
    * Handle form submit event
    * @param {Event} event - Submit event
+   * @returns {boolean} - Whether form is valid
    */
   function handleFormSubmit(event) {
-    const form = event.target;
+    const form = event.target || event.currentTarget;
     const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
     let formValid = true;
     let firstInvalidField = null;
@@ -740,8 +744,20 @@
       }
     });
     
-    // Add form submit listener
-    form.addEventListener('submit', handleFormSubmit);
+    // Use coordinator's submit handler if available
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.on('coordinator:pre-submit', (event) => {
+        if (event.detail.form === form) {
+          const validationResult = handleFormSubmit(event.detail.originalEvent);
+          if (!validationResult) {
+            event.detail.preventDefault();
+          }
+        }
+      });
+    } else {
+      // Fallback: Add form submit listener directly
+      form.addEventListener('submit', handleFormSubmit);
+    }
     
     // Initial submit button state
     updateSubmitButtonState(form);

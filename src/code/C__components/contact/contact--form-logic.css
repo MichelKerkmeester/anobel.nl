@@ -78,7 +78,13 @@
 /* Smooth Transitions for All Form Elements */
 [data-field-validate] input,
 [data-field-validate] textarea,
-[data-field-validate] select {
+[data-field-validate] select,
+[data-contact-field-group] input,
+[data-contact-field-group] textarea,
+[data-contact-field-group] select,
+[data-validation-group] input,
+[data-validation-group] textarea,
+[data-validation-group] select {
   transition: border-color 0.2s ease, background-color 0.2s ease,
     color 0.2s ease;
 }
@@ -90,7 +96,13 @@
 @media (prefers-reduced-motion: reduce) {
   [data-field-validate] input,
   [data-field-validate] textarea,
-  [data-field-validate] select {
+  [data-field-validate] select,
+  [data-contact-field-group] input,
+  [data-contact-field-group] textarea,
+  [data-contact-field-group] select,
+  [data-validation-group] input,
+  [data-validation-group] textarea,
+  [data-validation-group] select {
     transition: none;
   }
 }
@@ -106,7 +118,49 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   6. Webflow Form Compatibility
+   6. Validation States (New Unified System)
+────────────────────────────────────────────────────────────────*/
+
+/* Error message styling */
+.validation-error {
+  color: var(--_color-tokens---state--warning);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Success message styling */
+.validation-success {
+  color: var(--_color-tokens---state--success, #10b981);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Submit button disabled state */
+.submit-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Form states */
+.form-submitting {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.form-success {
+  /* Success state styling if needed */
+}
+
+.form-resetting {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. Webflow Form Compatibility
 ────────────────────────────────────────────────────────────────*/
 /* Ensure our styles don't conflict with Webflow's error states */
 .w-form-fail [data-field-validate].live-error input,
@@ -118,6 +172,17 @@
 .w-form-fail [data-field-validate].live-error textarea.w-input,
 .w-form-fail [data-field-validate].live-error select.input,
 .w-form-fail [data-field-validate].live-error select.w-select {
+  background-color: var(--_color-tokens---bg-input--error);
+  border-color: var(--_color-tokens---state--warning);
+}
+
+/* Also support new unified selectors in Webflow fail state */
+.w-form-fail [data-contact-field-group].validation-invalid input,
+.w-form-fail [data-contact-field-group].validation-invalid textarea,
+.w-form-fail [data-contact-field-group].validation-invalid select,
+.w-form-fail [data-validation-group].validation-invalid input,
+.w-form-fail [data-validation-group].validation-invalid textarea,
+.w-form-fail [data-validation-group].validation-invalid select {
   background-color: var(--_color-tokens---bg-input--error);
   border-color: var(--_color-tokens---state--warning);
 }

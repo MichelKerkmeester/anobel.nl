@@ -20,23 +20,28 @@ Perfect for designers who want powerful forms without complex coding!
 ## 🚀 Quick Setup (3 Minutes)
 
 ### Step 1: Add the Scripts
-Copy these scripts to your Webflow project (in order):
+Copy these scripts to your Webflow project (in this exact order):
 
 ```html
+<!-- Required: Coordinator (MUST load first) -->
+<script src="contact--form-coordinator.js"></script>
+
 <!-- Required: Core system -->
 <script src="contact--form-attributes.js"></script>
 <script src="contact--form-validation.js"></script>
 
 <!-- Optional: Pick what you need -->
-<script src="contact--form-memory.js"></script>     <!-- Auto-save -->
+<script src="contact--form-memory.js"></script>       <!-- Auto-save -->
 <script src="contact--form-phone-format.js"></script> <!-- Phone formatting -->
-<script src="contact--form-submit.js"></script>    <!-- Modal popups -->
-<script src="contact--form-shortcuts.js"></script> <!-- Keyboard shortcuts -->
-<script src="contact--form-setup.js"></script>     <!-- Spam protection -->
+<script src="contact--form-shortcuts.js"></script>   <!-- Keyboard shortcuts -->
+<script src="contact--form-setup.js"></script>       <!-- Formspark integration -->
+<script src="contact--form-submit.js"></script>      <!-- Modal popups -->
 
 <!-- Required: Styling -->
 <link rel="stylesheet" href="contact--form-logic.css">
 ```
+
+**⚠️ Important:** The coordinator script MUST load first as it manages all other modules!
 
 ### Step 2: Update Your HTML
 Add these attributes to your existing Webflow form:
@@ -252,26 +257,57 @@ Add these to any input's `data-validate` attribute:
 
 ## 🐛 Troubleshooting
 
+### ❌ **Scripts not loading?**
+✅ **Load coordinator first:** `contact--form-coordinator.js` MUST be the first script  
+✅ Check browser console for errors (F12 → Console tab)  
+✅ Verify script paths are correct in Webflow  
+✅ Make sure scripts load in the correct order  
+
 ### ❌ **Form not validating?**
 ✅ Make sure your form has `data-validation-form`  
 ✅ Each field group needs `data-validation-group`  
 ✅ Add `data-error-container` divs for error messages  
+✅ Check if validation module loaded: `window.FormValidation` should exist  
 
 ### ❌ **Phone formatting not working?**
 ✅ Use `type="tel"` on phone inputs  
 ✅ Check browser console for JavaScript errors  
+✅ Verify phone format module loaded: `window.PhoneFormat` should exist  
 
 ### ❌ **Auto-save not working?**
 ✅ Make sure your form has an `id` attribute  
 ✅ Check if localStorage is enabled in browser  
+✅ Look for `form_memory_` keys in browser's localStorage  
+✅ Verify form has `data-memory="true"` or `data-live-validate`  
 
 ### ❌ **Modal not showing?**
 ✅ Create a Webflow interaction on `data-submit-trigger` element  
 ✅ Make sure the trigger element exists in your form  
+✅ Check if form has `data-submit-form` attribute  
+✅ Verify Webflow interactions are published  
 
 ### ❌ **Styles not working?**
 ✅ Include the `contact--form-logic.css` file  
 ✅ Check that CSS classes are being applied in browser inspector  
+✅ Verify CSS custom properties (--_color-tokens) are defined  
+✅ Check for CSS conflicts with Webflow's default styles  
+
+### ❌ **Formspark not submitting?**
+✅ Check if `contact--form-setup.js` is loaded  
+✅ Verify Formspark action URL is correct  
+✅ Check browser console for network errors  
+✅ Look for CORS errors in console  
+✅ Ensure form is inside a `[data-live-validate]` container  
+
+### ❌ **Multiple submit handlers firing?**
+✅ Make sure coordinator loads first  
+✅ Don't add custom submit handlers - use coordinator events  
+✅ Check for duplicate script includes  
+
+### ❌ **Forms in Collection Lists not working?**
+✅ Forms are re-initialized when CMS content updates  
+✅ Use unique IDs for forms in collections  
+✅ Check if forms are properly initialized after CMS render  
 
 ---
 
@@ -288,14 +324,35 @@ Add these to any input's `data-validate` attribute:
 
 | File | What it does | Required? |
 |------|--------------|-----------|
+| `contact--form-coordinator.js` | Module coordinator & event system | ✅ Required |
 | `contact--form-attributes.js` | Core system setup | ✅ Required |
 | `contact--form-validation.js` | Form validation | ✅ Required |
 | `contact--form-logic.css` | Styling | ✅ Required |
 | `contact--form-memory.js` | Auto-save feature | Optional |
 | `contact--form-phone-format.js` | Phone formatting | Optional |
-| `contact--form-submit.js` | Modal popups | Optional |
+| `contact--form-submit.js` | Modal popups & form reset | Optional |
 | `contact--form-shortcuts.js` | Keyboard shortcuts | Optional |
-| `contact--form-setup.js` | Spam protection | Optional |
+| `contact--form-setup.js` | Formspark integration | Optional |
+
+---
+
+## 🔗 Module Dependencies
+
+Understanding module dependencies helps troubleshoot issues:
+
+```
+contact--form-coordinator.js (REQUIRED - loads first)
+    ├── contact--form-attributes.js (REQUIRED - provides selectors)
+    ├── contact--form-validation.js (REQUIRED - core validation)
+    └── Optional modules (can be used independently):
+        ├── contact--form-memory.js (auto-save)
+        ├── contact--form-phone-format.js (phone formatting)
+        ├── contact--form-shortcuts.js (keyboard shortcuts)
+        ├── contact--form-setup.js (Formspark integration)
+        └── contact--form-submit.js (modal popups & reset)
+```
+
+**Note:** The coordinator manages module initialization order and prevents conflicts between modules.
 
 ---
 

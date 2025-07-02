@@ -75,7 +75,8 @@
       const { solution } = result;
       return solution;
     } catch (error) {
-      console.warn("Botpoison challenge failed:", error);
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn("Botpoison challenge failed:", error);
       return null; // Continue without Botpoison if it fails
     }
   }
@@ -143,7 +144,8 @@
       const result = await response.json();
       return { success: true, data: result };
     } catch (error) {
-      console.error("Formspark submission failed:", error);
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.error("Formspark submission failed:", error);
       return { success: false, error: error.message };
     }
   }
@@ -210,7 +212,13 @@
         const successMsg = document.createElement("div");
         successMsg.className = "contact--form-success-temp";
         successMsg.style.cssText = "padding: 1rem; background: #10b981; color: white; border-radius: 8px; margin: 0 0 1rem 0; text-align: center;";
-        successMsg.innerHTML = `<p style="margin: 0;">✅ Message sent successfully! Feel free to send another message.</p>`;
+        
+        // Create paragraph element safely
+        const paragraph = document.createElement("p");
+        paragraph.style.margin = "0";
+        paragraph.textContent = "✅ Message sent successfully! Feel free to send another message.";
+        successMsg.appendChild(paragraph);
+        
         form.parentNode.insertBefore(successMsg, form.parentNode.firstChild);
         // Remove after 5 seconds
         setTimeout(() => {
@@ -250,10 +258,16 @@
           // Create fallback success message
           const successMsg = document.createElement("div");
           successMsg.className = "contact--form-success";
-          successMsg.innerHTML = `
-            <h3>Thank you!</h3>
-            <p>Your message has been sent successfully. We'll get back to you soon.</p>
-          `;
+          
+          // Create elements safely
+          const heading = document.createElement("h3");
+          heading.textContent = "Thank you!";
+          successMsg.appendChild(heading);
+          
+          const paragraph = document.createElement("p");
+          paragraph.textContent = "Your message has been sent successfully. We'll get back to you soon.";
+          successMsg.appendChild(paragraph);
+          
           form.parentNode.appendChild(successMsg);
         }
       }
@@ -322,7 +336,8 @@
 
       // 5. Handle response
       if (result.success) {
-        console.log("Form submitted successfully:", result.data);
+        const logger = window.ContactFormCoordinator?.Logger || console;
+        logger.log("Form submitted successfully:", result.data);
         
         // Hide loading state before showing success message
         hideLoadingState(form, submitButton, originalButtonText);
@@ -396,17 +411,33 @@
       // Store submit handler to avoid infinite loops with validation script
       let isSubmitting = false;
 
-      // Override form submission with loop protection
-      form.addEventListener("submit", (event) => {
-        if (isSubmitting) return; // Prevent infinite loops
-        isSubmitting = true;
-
-        handleFormSubmission(event, form, submitButton, originalAction).finally(
-          () => {
-            isSubmitting = false;
+      // Use coordinator's submit handler if available
+      if (window.ContactFormCoordinator) {
+        window.ContactFormCoordinator.on('coordinator:pre-submit', (event) => {
+          if (event.detail.form === form) {
+            if (isSubmitting) return; // Prevent infinite loops
+            isSubmitting = true;
+            
+            handleFormSubmission(event.detail.originalEvent, form, submitButton, originalAction).finally(
+              () => {
+                isSubmitting = false;
+              }
+            );
           }
-        );
-      });
+        });
+      } else {
+        // Fallback: Override form submission with loop protection
+        form.addEventListener("submit", (event) => {
+          if (isSubmitting) return; // Prevent infinite loops
+          isSubmitting = true;
+
+          handleFormSubmission(event, form, submitButton, originalAction).finally(
+            () => {
+              isSubmitting = false;
+            }
+          );
+        });
+      }
       
       // Handle custom submit elements that might not trigger form submit event
       if (submitButton && submitButton.tagName.toLowerCase() !== 'input') {
@@ -487,17 +518,33 @@
     // Store submit handler to avoid infinite loops with validation script
     let isSubmitting = false;
 
-    // Override form submission with loop protection
-    form.addEventListener("submit", (event) => {
-      if (isSubmitting) return; // Prevent infinite loops
-      isSubmitting = true;
-
-      handleFormSubmission(event, form, submitButton, originalAction).finally(
-        () => {
-          isSubmitting = false;
+    // Use coordinator's submit handler if available
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.on('coordinator:pre-submit', (event) => {
+        if (event.detail.form === form) {
+          if (isSubmitting) return; // Prevent infinite loops
+          isSubmitting = true;
+          
+          handleFormSubmission(event.detail.originalEvent, form, submitButton, originalAction).finally(
+            () => {
+              isSubmitting = false;
+            }
+          );
         }
-      );
-    });
+      });
+    } else {
+      // Fallback: Override form submission with loop protection
+      form.addEventListener("submit", (event) => {
+        if (isSubmitting) return; // Prevent infinite loops
+        isSubmitting = true;
+
+        handleFormSubmission(event, form, submitButton, originalAction).finally(
+          () => {
+            isSubmitting = false;
+          }
+        );
+      });
+    }
     
     // Handle custom submit elements that might not trigger form submit event
     if (submitButton && submitButton.tagName.toLowerCase() !== 'input') {

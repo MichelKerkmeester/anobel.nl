@@ -164,7 +164,8 @@
         })
       );
     } catch (error) {
-      console.warn("Failed to save form data:", error);
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn("Failed to save form data:", error);
       try {
         const storage = getStorage(form);
         storage.removeItem(getStorageKey(form));
@@ -225,7 +226,8 @@
         })
       );
     } catch (error) {
-      console.warn("Failed to restore form data:", error);
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn("Failed to restore form data:", error);
       clearFormMemory(form);
     }
   }
@@ -242,7 +244,8 @@
       // Dispatch custom event
       form.dispatchEvent(new CustomEvent("form-memory-cleared"));
     } catch (error) {
-      console.warn("Failed to clear form memory:", error);
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn("Failed to clear form memory:", error);
     }
   }
 
@@ -311,10 +314,21 @@
 
       // Clear on successful submit (if configured)
       if (form.dataset.memoryClearOnSubmit !== "false") {
-        form.addEventListener("submit", () => {
-          // Clear after a delay to allow submission
-          setTimeout(() => memory.clearFormMemory(), 100);
-        });
+        // Use coordinator's post-submit event if available
+        if (window.ContactFormCoordinator) {
+          window.ContactFormCoordinator.on('coordinator:post-submit', (event) => {
+            if (event.detail.form === form) {
+              // Clear after a delay to allow submission
+              setTimeout(() => memory.clearFormMemory(), 100);
+            }
+          });
+        } else {
+          // Fallback: Use form submit event
+          form.addEventListener("submit", () => {
+            // Clear after a delay to allow submission
+            setTimeout(() => memory.clearFormMemory(), 100);
+          });
+        }
       }
 
       // Clear on reset
@@ -385,10 +399,21 @@
 
         // Clear on successful submit (if configured)
         if (form.dataset.memoryClearOnSubmit !== "false") {
-          form.addEventListener("submit", () => {
-            // Clear after a delay to allow submission
-            setTimeout(() => memory.clearFormMemory(), 100);
-          });
+          // Use coordinator's post-submit event if available
+          if (window.ContactFormCoordinator) {
+            window.ContactFormCoordinator.on('coordinator:post-submit', (event) => {
+              if (event.detail.form === form) {
+                // Clear after a delay to allow submission
+                setTimeout(() => memory.clearFormMemory(), 100);
+              }
+            });
+          } else {
+            // Fallback: Use form submit event
+            form.addEventListener("submit", () => {
+              // Clear after a delay to allow submission
+              setTimeout(() => memory.clearFormMemory(), 100);
+            });
+          }
         }
 
         // Clear on reset

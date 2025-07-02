@@ -16,6 +16,37 @@
 
 (() => {
   // ─────────────────────────────────────────────────────────────
+  // 0. Logger System
+  // ─────────────────────────────────────────────────────────────
+  
+  const Logger = {
+    isEnabled: false, // Set to true for debugging
+    
+    log: function(message, ...args) {
+      if (this.isEnabled && typeof console !== 'undefined' && console.log) {
+        console.log(`[ContactForm] ${message}`, ...args);
+      }
+    },
+    
+    warn: function(message, ...args) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(`[ContactForm] ${message}`, ...args);
+      }
+    },
+    
+    error: function(message, ...args) {
+      if (typeof console !== 'undefined' && console.error) {
+        console.error(`[ContactForm] ${message}`, ...args);
+      }
+    }
+  };
+  
+  // Enable logging in development
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    Logger.isEnabled = true;
+  }
+  
+  // ─────────────────────────────────────────────────────────────
   // 1. Configuration & State
   // ─────────────────────────────────────────────────────────────
   
@@ -61,7 +92,7 @@
    */
   function registerModule(name, module) {
     if (STATE.moduleInstances.has(name)) {
-      console.warn(`Module ${name} already registered`);
+      Logger.warn(`Module ${name} already registered`);
       return;
     }
     
@@ -73,7 +104,7 @@
       module.init = createCoordinatedInit(name, module._originalInit);
     }
     
-    console.log(`Module ${name} registered with coordinator`);
+    Logger.log(`Module ${name} registered with coordinator`);
   }
   
   /**
@@ -96,7 +127,7 @@
         const missingDeps = dependencies.filter(dep => !STATE.initializedModules.has(dep));
         
         if (missingDeps.length > 0) {
-          console.warn(`Module ${moduleName} waiting for dependencies:`, missingDeps);
+          Logger.warn(`Module ${moduleName} waiting for dependencies:`, missingDeps);
           STATE.pendingInitializations.add(moduleName);
           return;
         }
@@ -115,9 +146,9 @@
         // Try to initialize pending modules
         processPendingInitializations();
         
-        console.log(`Module ${moduleName} initialized`);
+        Logger.log(`Module ${moduleName} initialized`);
       } catch (error) {
-        console.error(`Failed to initialize module ${moduleName}:`, error);
+        Logger.error(`Failed to initialize module ${moduleName}:`, error);
       }
     };
   }
@@ -154,6 +185,9 @@
     // Mark as initialized early to prevent re-entry
     STATE.initializedForms.add(form);
     
+    // Set up centralized submit handler BEFORE module initialization
+    setupCentralizedSubmitHandler(form);
+    
     // Initialize modules in order
     CONFIG.INIT_ORDER.forEach(moduleName => {
       const module = STATE.moduleInstances.get(moduleName);
@@ -161,7 +195,7 @@
         try {
           module.initForm(form);
         } catch (error) {
-          console.error(`Failed to initialize ${moduleName} for form:`, error);
+          Logger.error(`Failed to initialize ${moduleName} for form:`, error);
         }
       }
     });
@@ -171,7 +205,66 @@
       detail: { form }
     }));
     
-    console.log('Form initialized with all modules:', form);
+    Logger.log('Form initialized with all modules:', form);
+  }
+  
+  /**
+   * Setup centralized submit handler to prevent duplicate submissions
+   * @param {HTMLFormElement} form - Form element
+   */
+  function setupCentralizedSubmitHandler(form) {
+    // Store submission state
+    const submissionState = {
+      isSubmitting: false,
+      lastSubmitTime: 0,
+      debounceMs: 1000 // Prevent double-clicks
+    };
+    
+    form._coordinatorSubmissionState = submissionState;
+    
+    // Single submit handler for the form
+    form.addEventListener('submit', function(event) {
+      const now = Date.now();
+      
+      // Debounce check
+      if (submissionState.isSubmitting || 
+          (now - submissionState.lastSubmitTime) < submissionState.debounceMs) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+      
+      // Update submission state
+      submissionState.isSubmitting = true;
+      submissionState.lastSubmitTime = now;
+      
+      // Emit pre-submit event for modules to handle
+      const preSubmitEvent = new CustomEvent('coordinator:pre-submit', {
+        detail: { 
+          form, 
+          originalEvent: event,
+          preventDefault: () => event.preventDefault()
+        },
+        cancelable: true
+      });
+      
+      const shouldContinue = eventBus.dispatchEvent(preSubmitEvent);
+      
+      // Reset state after processing
+      setTimeout(() => {
+        submissionState.isSubmitting = false;
+      }, submissionState.debounceMs);
+      
+      // If any module cancelled the event, stop here
+      if (!shouldContinue || event.defaultPrevented) {
+        return;
+      }
+      
+      // Emit post-submit event
+      eventBus.dispatchEvent(new CustomEvent('coordinator:post-submit', {
+        detail: { form, originalEvent: event }
+      }));
+    }, true); // Use capture phase to run before module handlers
   }
   
   /**
@@ -191,7 +284,7 @@
         try {
           module.cleanupForm(form);
         } catch (error) {
-          console.error(`Failed to cleanup ${moduleName} for form:`, error);
+          Logger.error(`Failed to cleanup ${moduleName} for form:`, error);
         }
       }
     });
@@ -203,7 +296,22 @@
       detail: { form }
     }));
     
-    console.log('Form cleaned up:', form);
+    Logger.log('Form cleaned up:', form);
+  }
+  
+  /**
+   * Stop DOM observation and cleanup
+   */
+  function stopDOMObservation() {
+    if (mutationObserver) {
+      mutationObserver.disconnect();
+      mutationObserver = null;
+    }
+    
+    if (STATE.intersectionObserver) {
+      STATE.intersectionObserver.disconnect();
+      STATE.intersectionObserver = null;
+    }
   }
   
   // ─────────────────────────────────────────────────────────────
@@ -276,12 +384,49 @@
     }
     
     mutationObserver = new MutationObserver(handleMutations);
-    mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true
+    
+    // Optimize: Only observe containers likely to have forms
+    const observeTargets = [
+      document.body,
+      ...document.querySelectorAll('.w-form, .form-container, [data-form-container]')
+    ];
+    
+    // Set up intersection observer for performance
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target._formObserved) {
+          entry.target._formObserved = true;
+          // Only observe visible form containers
+          mutationObserver.observe(entry.target, {
+            childList: true,
+            subtree: true,
+            attributes: false, // Don't need attribute changes
+            characterData: false // Don't need text changes
+          });
+        }
+      });
+    }, {
+      rootMargin: '50px' // Start observing slightly before visible
     });
     
-    console.log('Centralized DOM observation started');
+    // Observe main container and specific form areas
+    observeTargets.forEach(target => {
+      if (target === document.body) {
+        // For body, only watch direct children to catch new sections
+        mutationObserver.observe(target, {
+          childList: true,
+          subtree: false // Key optimization: don't watch entire subtree
+        });
+      } else {
+        // Use intersection observer for form containers
+        intersectionObserver.observe(target);
+      }
+    });
+    
+    // Store observers for cleanup
+    STATE.intersectionObserver = intersectionObserver;
+    
+    Logger.log('Optimized DOM observation started');
   }
   
   // ─────────────────────────────────────────────────────────────
@@ -356,7 +501,7 @@
       });
     }
     
-    console.log('Contact Form Coordinator started');
+    Logger.log('Contact Form Coordinator started');
   }
   
   // ─────────────────────────────────────────────────────────────
@@ -379,6 +524,10 @@
     
     // System control
     start,
+    stop: stopDOMObservation,
+    
+    // Logger
+    Logger,
     
     // State inspection (for debugging)
     getState: () => ({ ...STATE }),

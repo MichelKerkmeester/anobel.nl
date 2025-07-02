@@ -128,10 +128,19 @@
    * @param {Object} state - Form state object
    */
   function setupFormListeners(form, state) {
-    // Intercept form submission
-    form.addEventListener('submit', (event) => {
-      handleFormSubmit(event, form, state);
-    });
+    // Use coordinator's submit handler if available
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.on('coordinator:post-submit', (event) => {
+        if (event.detail.form === form) {
+          handleFormSubmit(event.detail.originalEvent, form, state);
+        }
+      });
+    } else {
+      // Fallback: Intercept form submission directly
+      form.addEventListener('submit', (event) => {
+        handleFormSubmit(event, form, state);
+      });
+    }
 
     // Listen for Webflow's success/error events
     form.addEventListener('webflow-success', () => {

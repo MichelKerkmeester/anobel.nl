@@ -8,7 +8,7 @@
    - Ctrl + Enter: Submit form (validates first)
    - Ctrl + Shift + R: Reset form and clear memory
    - Ctrl + S: Save form state manually
-   - Escape: Clear current field
+   - lEscape: Clear current field
    - Visual feedback on shortcut activation
    - Works with dynamic Webflow forms
    - Respects form validation
@@ -145,18 +145,18 @@
     const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
     const modSymbol = isMac ? "" : "Ctrl";
 
-    tooltip.innerHTML = shortcuts
-      .map((s) => {
-        const mods = s.modifiers.map((m) =>
-          m === "cmd" || m === "ctrl"
-            ? modSymbol
-            : m.charAt(0).toUpperCase() + m.slice(1)
-        );
-        return `<div>${mods.join("+")}${mods.length ? "+" : ""}${s.key}: ${
-          s.label
-        }</div>`;
-      })
-      .join("");
+    // Create shortcut elements safely
+    shortcuts.forEach((s) => {
+      const shortcutDiv = document.createElement("div");
+      const mods = s.modifiers.map((m) =>
+        m === "cmd" || m === "ctrl"
+          ? modSymbol
+          : m.charAt(0).toUpperCase() + m.slice(1)
+      );
+      const shortcutText = `${mods.join("+")}${mods.length ? "+" : ""}${s.key}: ${s.label}`;
+      shortcutDiv.textContent = shortcutText;
+      tooltip.appendChild(shortcutDiv);
+    });
 
     element.style.position = "relative";
     element.appendChild(tooltip);
@@ -189,16 +189,28 @@
     );
     if (!submitBtn) return;
 
+    // Check if form is already submitting via coordinator
+    if (form._coordinatorSubmissionState && form._coordinatorSubmissionState.isSubmitting) {
+      showFeedback("Form is already being submitted", "info");
+      return;
+    }
+
     // Check if form has validation
-    const hasValidation = form.closest("[data-live-validate]");
+    const hasValidation = form.closest("[data-live-validate]") || form.hasAttribute("data-validation-form");
     if (hasValidation) {
-      // Trigger click to use existing validation flow
-      submitBtn.click();
-      showFeedback("Form submitted!", "success");
+      // Trigger form submit event to use validation flow
+      const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+      const result = form.dispatchEvent(submitEvent);
+      
+      if (!submitEvent.defaultPrevented) {
+        showFeedback("Form submitted!", "success");
+      } else {
+        showFeedback("Please fix form errors", "error");
+      }
     } else {
       // Direct submit for non-validated forms
       if (form.checkValidity()) {
-        submitBtn.click();
+        form.requestSubmit();
         showFeedback("Form submitted!", "success");
       } else {
         form.reportValidity();
@@ -339,36 +351,36 @@
   // ─────────────────────────────────────────────────────────────
   // Module Interface for Coordinator
   // ─────────────────────────────────────────────────────────────
-  
+
   const ShortcutsModule = {
-    name: 'shortcuts',
-    
-    init: function(container = document) {
+    name: "shortcuts",
+
+    init: function (container = document) {
       initFormShortcuts(container);
-      
+
       // Global keydown listener (only add once)
       if (!document._shortcutsListenerAdded) {
         document.addEventListener("keydown", handleKeydown);
         document._shortcutsListenerAdded = true;
       }
     },
-    
-    initForm: function(form) {
+
+    initForm: function (form) {
       enhanceForm(form);
     },
-    
-    cleanupForm: function(form) {
+
+    cleanupForm: function (form) {
       if (formCache.has(form)) {
         formCache.delete(form);
       }
-      
+
       // Remove tooltips
       const tooltip = tooltipCache.get(form);
       if (tooltip && tooltip.parentNode) {
         tooltip.parentNode.removeChild(tooltip);
         tooltipCache.delete(form);
       }
-    }
+    },
   };
 
   // Export for debugging
@@ -376,14 +388,18 @@
     showFeedback,
     shortcuts: SHORTCUTS,
   };
-  
+
   // Register with coordinator
   if (window.ContactFormCoordinator) {
-    window.ContactFormCoordinator.register('shortcuts', ShortcutsModule);
+    window.ContactFormCoordinator.register("shortcuts", ShortcutsModule);
   } else {
     // Fallback if coordinator not available
     initFormShortcuts();
-    document.addEventListener("keydown", handleKeydown);
+    // Only add keydown listener once
+    if (!document._shortcutsListenerAdded) {
+      document.addEventListener("keydown", handleKeydown);
+      document._shortcutsListenerAdded = true;
+    }
 
     if (typeof Webflow !== "undefined" && Webflow.push) {
       try {

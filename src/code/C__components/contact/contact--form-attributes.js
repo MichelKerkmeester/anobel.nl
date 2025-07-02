@@ -357,8 +357,9 @@
    */
   function logMigrationWarning(element, oldAttr, newAttr, moduleName) {
     if (element.hasAttribute(oldAttr) && !element.hasAttribute(newAttr)) {
-      console.warn(
-        `[Contact Form ${moduleName}] Deprecated attribute "${oldAttr}" found. ` +
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn(
+        `[${moduleName}] Deprecated attribute "${oldAttr}" found. ` +
         `Please migrate to "${newAttr}" for future compatibility.`,
         element
       );
