@@ -8,7 +8,7 @@
    - Ctrl + Enter: Submit form (validates first)
    - Ctrl + Shift + R: Reset form and clear memory
    - Ctrl + S: Save form state manually
-   - lEscape: Clear current field
+   - Escape: Clear current field
    - Visual feedback on shortcut activation
    - Works with dynamic Webflow forms
    - Respects form validation
@@ -153,7 +153,9 @@
           ? modSymbol
           : m.charAt(0).toUpperCase() + m.slice(1)
       );
-      const shortcutText = `${mods.join("+")}${mods.length ? "+" : ""}${s.key}: ${s.label}`;
+      const shortcutText = `${mods.join("+")}${mods.length ? "+" : ""}${
+        s.key
+      }: ${s.label}`;
       shortcutDiv.textContent = shortcutText;
       tooltip.appendChild(shortcutDiv);
     });
@@ -190,18 +192,26 @@
     if (!submitBtn) return;
 
     // Check if form is already submitting via coordinator
-    if (form._coordinatorSubmissionState && form._coordinatorSubmissionState.isSubmitting) {
+    if (
+      form._coordinatorSubmissionState &&
+      form._coordinatorSubmissionState.isSubmitting
+    ) {
       showFeedback("Form is already being submitted", "info");
       return;
     }
 
     // Check if form has validation
-    const hasValidation = form.closest("[data-live-validate]") || form.hasAttribute("data-validation-form");
+    const hasValidation =
+      form.closest("[data-live-validate]") ||
+      form.hasAttribute("data-validation-form");
     if (hasValidation) {
       // Trigger form submit event to use validation flow
-      const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+      const submitEvent = new Event("submit", {
+        bubbles: true,
+        cancelable: true,
+      });
       const result = form.dispatchEvent(submitEvent);
-      
+
       if (!submitEvent.defaultPrevented) {
         showFeedback("Form submitted!", "success");
       } else {
