@@ -1,4 +1,4 @@
-import { queryElement, addClass } from "../../utils/index.js";
+import { queryElement, addClass } from "../utils/index.js";
 
 /**
  * Example component demonstrating component structure
