@@ -1,6 +1,6 @@
 // ───────────────────────────────────────────────────────────────
-// Browser: Lenis Smooth Scrolling
-// Dynamic Script Loader
+// Browser
+// Lenis Smooth Scrolling
 // ───────────────────────────────────────────────────────────────
 (() => {
   /* ─────────────────────────────────────────────────────────────
@@ -17,17 +17,18 @@
     useControls: "true",
     useAnchor: "true",
     useRaf: "true",
-    infinite: "false"
+    infinite: "false",
   };
 
-  const scriptSrc = "https://uploads-ssl.webflow.com/645e0e1ff7fdb6dc8c85f3a2/653b82ecf87f552a98ac66b9_lenis-master-offbrand.02.txt";
+  const scriptSrc =
+    "https://uploads-ssl.webflow.com/645e0e1ff7fdb6dc8c85f3a2/653b82ecf87f552a98ac66b9_lenis-master-offbrand.02.txt";
 
   /* ─────────────────────────────────────────────────────────────
      2. Script Creation & Configuration
   ────────────────────────────────────────────────────────────────*/
   function createLenisScript() {
     const script = document.createElement("script");
-    
+
     // Set core attributes
     script.setAttribute("data-id-scroll", "");
     script.setAttribute("data-autoinit", "true");
