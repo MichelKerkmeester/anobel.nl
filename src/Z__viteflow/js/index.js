@@ -30,7 +30,7 @@ import "../../C__components/tab/tab--autoplay.js";
 import "../../C__components/tab/tab--menu.js";
 
 // Import Form components
-import "../../C__components/contact/contact-form.js";
+import "../../C__components/contact/contact--form.js";
 
 // Import Input components
 import "../../C__components/input/input--focus-handler.js";

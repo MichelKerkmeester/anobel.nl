@@ -294,6 +294,94 @@ const apiKey = process.env.API_KEY;
    - Review commits for sensitive data
    - Use security scanning tools
 
+## Components Documentation
+
+### Enhanced Contact Form
+
+The contact form includes live validation, anti-spam protection, and modal support for success messages.
+
+#### HTML Structure
+
+```html
+<!-- Form with validation -->
+<form data-form-validate data-success-modal="#success-modal" action="https://submit-form.com/your-form-id">
+  
+  <!-- Field wrapper with validation -->
+  <div data-validate>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required min="2">
+  </div>
+  
+  <!-- Email field -->
+  <div data-validate>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  
+  <!-- Custom submit button -->
+  <div data-submit>
+    <input type="submit" value="Send Message">
+  </div>
+</form>
+
+<!-- Success Modal -->
+<div id="success-modal" data-success-modal>
+  <div>
+    <button data-modal-close>&times;</button>
+    <h3>Thank You!</h3>
+    <p>Your message has been sent successfully.</p>
+  </div>
+</div>
+```
+
+#### Features
+
+1. **Live Validation**
+   - Real-time field validation after first submit attempt
+   - Visual states: `is--filled`, `is--success`, `is--error`
+   - Supports `min` and `max` attributes for length validation
+   - Email format validation
+
+2. **Anti-Spam Protection**
+   - Prevents form submission within 5 seconds of page load
+   - No visible captcha required
+
+3. **Modal Support**
+   - Add `data-success-modal="#modal-id"` to show custom success modal
+   - Supports Motion.dev animations or instant show
+   - Falls back to alert if no modal specified
+
+4. **Attributes**
+   - `data-form-validate` - Enable validation on form
+   - `data-validate` - Mark field wrapper for validation
+   - `data-submit` - Custom submit button wrapper
+   - `data-success-modal` - Success modal selector
+   - `data-modal-close` - Close button inside modal
+
+#### CSS Classes
+
+```css
+/* Validation states */
+.is--filled { /* Field has content */ }
+.is--success { /* Field is valid */ }
+.is--error { /* Field is invalid */ }
+
+/* Form states */
+.form-submitting { /* Form is being submitted */ }
+.form-success { /* Form submitted successfully */ }
+```
+
+#### JavaScript API
+
+```javascript
+// Manual initialization
+window.ContactFormValidator.init();
+
+// Access modal manager
+window.ContactFormValidator.modalManager.show('#modal-id');
+window.ContactFormValidator.modalManager.hide();
+```
+
 ## Troubleshooting
 
 ### Common Issues
@@ -314,3 +402,9 @@ const apiKey = process.env.API_KEY;
    - Verify port availability
    - Check file permissions
    - Clear cache if needed
+
+4. **Contact Form Issues**
+   - Ensure form has `data-form-validate` attribute
+   - Check field wrappers have `data-validate`
+   - Verify form action URL is correct
+   - Check browser console for errors
