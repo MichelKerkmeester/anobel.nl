@@ -1,12 +1,25 @@
 // ───────────────────────────────────────────────────────────────
 // Video: Controls
-// Fullscreen Support & Control Panel Hover Animation
+// Fullscreen Support & Control Panel Animation
 // ───────────────────────────────────────────────────────────────
 (() => {
+  /* ─────────────────────────────────────────────────────────────
+     Module State Management
+  ────────────────────────────────────────────────────────────────*/
+  // Namespaced initialization flags to prevent conflicts
+  const moduleState = {
+    fullscreenInitialized: false,
+    controlPanelInitialized: false
+  };
+
   /* ─────────────────────────────────────────────────────────────
      1. Mobile Fullscreen Support
   ────────────────────────────────────────────────────────────────*/
   function setupMobileFullscreen() {
+    // Prevent multiple initializations
+    if (moduleState.fullscreenInitialized) return;
+    moduleState.fullscreenInitialized = true;
+
     // Enable fullscreen video playback on mobile devices
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       document.addEventListener(
@@ -15,10 +28,16 @@
           const target = /** @type {HTMLElement|null} */ (e.target);
           if (target?.closest(".video--control-resize .video--control-btn")) {
             e.preventDefault();
-            const video = /** @type {any} */ (target
-              .closest(".rich-text--video-w")
-              ?.querySelector("video"));
-            video?.webkitEnterFullscreen?.() || video?.requestFullscreen?.();
+            const video = target.closest(".rich-text--video-w")?.querySelector("video");
+            
+            // Type guard and method availability check
+            if (video instanceof HTMLVideoElement) {
+              if (typeof video.webkitEnterFullscreen === 'function') {
+                video.webkitEnterFullscreen();
+              } else if (typeof video.requestFullscreen === 'function') {
+                video.requestFullscreen();
+              }
+            }
           }
         },
         true
@@ -30,10 +49,16 @@
      2. Import Motion.dev
   ────────────────────────────────────────────────────────────────*/
   function initControlPanelAnimation() {
+    // Prevent multiple initializations
+    if (moduleState.controlPanelInitialized) return;
+    moduleState.controlPanelInitialized = true;
+
     // @ts-ignore - Motion.dev library loaded externally
     const { animate } = window.Motion || {};
-    if (!animate) {
+    if (!animate || typeof animate !== 'function') {
       console.warn("Motion.dev not ready for control panel, retrying…");
+      // Reset flag to allow retry
+      moduleState.controlPanelInitialized = false;
       setTimeout(initControlPanelAnimation, 100);
       return;
     }
@@ -44,19 +69,13 @@
     const controlPanel = /** @type {HTMLElement|null} */ (
       document.querySelector("#control-panel")
     );
-    
-    // Debug logging for development
-    console.log("Control panel found:", !!controlPanel);
-    console.log("Window width:", window.innerWidth);
-    
+
     if (!controlPanel) {
-      console.warn("Control panel (#control-panel) not found");
       return;
     }
-    
+
     // Skip animation on mobile/tablet
     if (window.innerWidth <= 768) {
-      console.log("Skipping control panel animation on mobile");
       return;
     }
 
@@ -64,14 +83,10 @@
       controlPanel.closest(".rich-text--video-w") ||
         controlPanel.closest('[class*="video"]')
     );
-    
-    console.log("Video container found:", !!videoContainer);
-    
+
     if (!videoContainer) {
-      console.warn("Video container not found for control panel");
       return;
     }
-
 
     /* ─────────────────────────────────────────────────────────────
        4. Animation Configuration & Performance Setup
@@ -111,8 +126,6 @@
        6. Show Animation (Mouse Enter)
     ────────────────────────────────────────────────────────────────*/
     videoContainer.addEventListener("mouseenter", () => {
-      console.log("Mouse entered video container, isVisible:", isVisible);
-      
       if (isVisible) return;
 
       // Clear any pending hide animation
@@ -121,7 +134,6 @@
         hoverTimeout = null;
       }
 
-      console.log("Starting control panel show animation");
       isVisible = true;
       controlPanel.style.pointerEvents = "auto";
 
@@ -135,11 +147,7 @@
         {
           duration,
           easing,
-          onStart: () => {
-            console.log("Control panel animation started");
-          },
           onComplete: () => {
-            console.log("Control panel animation completed");
             controlPanel.style.willChange = "auto";
           },
         }
@@ -180,7 +188,7 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-     8. Initialize Everything
+     Initialize Everything
   ────────────────────────────────────────────────────────────────*/
   // Set up mobile fullscreen support immediately
   setupMobileFullscreen();

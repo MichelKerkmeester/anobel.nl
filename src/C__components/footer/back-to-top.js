@@ -1,28 +1,37 @@
 // ───────────────────────────────────────────────────────────────
-// Browser
-// Change Page Title on Leave
+// Footer: Back to Top
+// Smooth scroll to page top with reduced motion support
 // ───────────────────────────────────────────────────────────────
 (() => {
   /* ─────────────────────────────────────────────────────────────
-     1. Configuration
+     Desktop Only: Early return for mobile/tablet
   ────────────────────────────────────────────────────────────────*/
-  const documentTitleStore = document.title;
-  const documentTitleOnBlur = "🚢 Mis de boot niet";
+  if (window.innerWidth < 992) return;
 
   /* ─────────────────────────────────────────────────────────────
-     2. Event Handlers
+     Back to Top Button Handler
   ────────────────────────────────────────────────────────────────*/
-  const handleFocus = () => {
-    document.title = documentTitleStore;
-  };
+  const backToTopButton = document.querySelector("#back-to-top");
 
-  const handleBlur = () => {
-    document.title = documentTitleOnBlur;
-  };
+  if (backToTopButton) {
+    backToTopButton.addEventListener("click", (e) => {
+      e.preventDefault();
 
-  /* ─────────────────────────────────────────────────────────────
-     3. Initialize Event Listeners
-  ────────────────────────────────────────────────────────────────*/
-  window.addEventListener("focus", handleFocus);
-  window.addEventListener("blur", handleBlur);
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      if (prefersReducedMotion) {
+        window.scrollTo(0, 0);
+      } else {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      // Remove focus from button
+      backToTopButton.blur();
+    });
+  }
 })();

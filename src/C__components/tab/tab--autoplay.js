@@ -51,7 +51,9 @@
       // Find progress bar
       let singleProgressBar = null;
       if (autoplay) {
-        singleProgressBar = wrapper.querySelector('[data-tabs="item-progress"]');
+        singleProgressBar = wrapper.querySelector(
+          '[data-tabs="item-progress"]'
+        );
         if (!singleProgressBar) {
           console.warn(
             '⚠️ Autoplay is enabled but no progress bar found! Add a single data-tabs="item-progress" element'
@@ -189,7 +191,8 @@
               {
                 duration: 0,
                 onComplete: () => {
-                  /** @type {HTMLElement} */ (outgoingVisual).style.visibility = "hidden";
+                  /** @type {HTMLElement} */ (outgoingVisual).style.visibility =
+                    "hidden";
                 },
               }
             );
@@ -198,7 +201,7 @@
           // Show incoming visual
           const incomingEl = /** @type {HTMLElement} */ (incomingVisual);
           incomingEl.style.visibility = "visible";
-          
+
           await animate(
             incomingVisual,
             {
@@ -212,7 +215,7 @@
           // Complete transition
           activeVisual = incomingVisual;
           isAnimating = false;
-          
+
           if (autoplay) {
             startProgressBar(index);
           }

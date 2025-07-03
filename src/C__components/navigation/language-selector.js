@@ -1,11 +1,7 @@
 // ───────────────────────────────────────────────────────────────
-// Navigation: Language Selector (Optimized)
-// Animated dropdown language selection
+// Navigation
+// Language Selector
 // ───────────────────────────────────────────────────────────────
-
-// Import centralized utilities
-import { EASING } from '../utils/motion-config.js';
-
 (() => {
   /* ─────────────────────────────────────────────────────────────
      1. Import Motion.dev
@@ -37,8 +33,11 @@ import { EASING } from '../utils/motion-config.js';
     /* ─────────────────────────────────────────────────────────────
        3. Easing maps – Webflow ≈ Motion.dev
     ────────────────────────────────────────────────────────────────*/
-    // Use centralized easing curves
-    const { power2Out, power2In, power3Out, power3In } = EASING;
+    // Easing curves
+    const power2Out = [0.165, 0.84, 0.44, 1]; // "Power2 Out"
+    const power2In = [0.55, 0.055, 0.675, 0.19]; // "Power2 In"
+    const power3Out = [0.215, 0.61, 0.355, 1]; // "Power3 Out"
+    const power3In = [0.55, 0.055, 0.675, 0.19]; // "Power3 In"
 
     /* ─────────────────────────────────────────────────────────────
        4. Animation functions

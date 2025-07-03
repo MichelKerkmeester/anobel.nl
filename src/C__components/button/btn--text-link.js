@@ -2,17 +2,13 @@
 // Button: Text Link (Optimized)
 // Animate on Hover - Desktop & Tablet Only
 // ───────────────────────────────────────────────────────────────
-
-// Import centralized utilities
-import { DEVICE, EASING } from '../utils/motion-config.js';
-
 (() => {
   /* ─────────────────────────────────────────────────────────────
      1. Device Detection Helpers
   ────────────────────────────────────────────────────────────────*/
-  // Use centralized device detection
-  const isDesktopOrTablet = DEVICE.isTabletOrDesktop;
-  const isTouchDevice = () => DEVICE.isMobileOrTablet();
+  // Device detection helpers
+  const isDesktopOrTablet = () => window.innerWidth >= 768;
+  const isTouchDevice = () => window.innerWidth < 992;
 
   /* ─────────────────────────────────────────────────────────────
      2. Initial State Setup

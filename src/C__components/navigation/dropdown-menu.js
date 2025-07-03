@@ -1,11 +1,7 @@
 // ───────────────────────────────────────────────────────────────
-// Navigation: Dropdown Menu (Optimized)
-// Multi-dropdown navigation system
+// Navigation
+// Dropdown Menu
 // ───────────────────────────────────────────────────────────────
-
-// Import centralized utilities
-import { EASING } from '../utils/motion-config.js';
-
 (() => {
   /* ─────────────────────────────────────────────────────────────
      1. Import Motion.dev
@@ -66,9 +62,9 @@ import { EASING } from '../utils/motion-config.js';
     /* ─────────────────────────────────────────────────────────────
        4. Easing maps – Webflow ≈ Motion.dev
     ────────────────────────────────────────────────────────────────*/
-    // Use centralized easing curves
-    const power2Out = EASING.power2Out;
-    const power2In = EASING.power2In;
+    // Easing curves
+    const power2Out = [0.165, 0.84, 0.44, 1]; // "Power2 Out"
+    const power2In = [0.55, 0.055, 0.675, 0.19]; // "Power2 In"
 
     /* ─────────────────────────────────────────────────────────────
        5. Animation functions
@@ -117,10 +113,7 @@ import { EASING } from '../utils/motion-config.js';
       animate(
         d.toggle,
         {
-          backgroundColor: [
-            "transparent",
-            "var(--secondary--darkest)",
-          ],
+          backgroundColor: ["transparent", "var(--secondary--darkest)"],
         },
         {
           duration: 0.3,
@@ -195,10 +188,7 @@ import { EASING } from '../utils/motion-config.js';
       animate(
         d.toggle,
         {
-          backgroundColor: [
-            "var(--secondary--darkest)",
-            "transparent",
-          ],
+          backgroundColor: ["var(--secondary--darkest)", "transparent"],
         },
         {
           duration: 0.3,
