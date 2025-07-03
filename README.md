@@ -303,28 +303,38 @@ The contact form includes live validation, anti-spam protection, and modal suppo
 #### HTML Structure
 
 ```html
-<!-- Form with validation -->
-<form data-form-validate data-success-modal="#success-modal" action="https://submit-form.com/your-form-id">
+<!-- Webflow Form Structure -->
+<div class="w-form">
+  <form data-form-validate data-success-modal="#success-modal" action="https://submit-form.com/your-form-id">
+    
+    <!-- Field wrapper with validation -->
+    <div data-validate>
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required min="2">
+    </div>
+    
+    <!-- Email field -->
+    <div data-validate>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    
+    <!-- Custom submit button -->
+    <div data-submit>
+      <input type="submit" value="Send Message">
+    </div>
+  </form>
   
-  <!-- Field wrapper with validation -->
-  <div data-validate>
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required min="2">
+  <!-- Webflow's success/error messages (will be hidden) -->
+  <div class="w-form-done">
+    <div>Thank you! Your submission has been received!</div>
   </div>
-  
-  <!-- Email field -->
-  <div data-validate>
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
+  <div class="w-form-fail">
+    <div>Oops! Something went wrong while submitting the form.</div>
   </div>
-  
-  <!-- Custom submit button -->
-  <div data-submit>
-    <input type="submit" value="Send Message">
-  </div>
-</form>
+</div>
 
-<!-- Success Modal -->
+<!-- Success Modal (outside form wrapper) -->
 <div id="success-modal" data-success-modal>
   <div>
     <button data-modal-close>&times;</button>
@@ -351,7 +361,13 @@ The contact form includes live validation, anti-spam protection, and modal suppo
    - Supports Motion.dev animations or instant show
    - Falls back to alert if no modal specified
 
-4. **Attributes**
+4. **Webflow Integration**
+   - Automatically hides Webflow's default success/error messages
+   - Properly manages Webflow form states to prevent conflicts
+   - Resets both custom and Webflow states after submission
+   - Works seamlessly with Webflow's `.w-form` structure
+
+5. **Attributes**
    - `data-form-validate` - Enable validation on form
    - `data-validate` - Mark field wrapper for validation
    - `data-submit` - Custom submit button wrapper
