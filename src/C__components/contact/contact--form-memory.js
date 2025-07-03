@@ -16,33 +16,32 @@
    - Configurable via data attributes
 ────────────────────────────────────────────────────────────────*/
 
-(() => {
-  // Configuration defaults
-  const CONFIG = {
-    DEFAULT_EXPIRE_HOURS: 24,
-    MAX_VALUE_LENGTH: 10000,
-    SAVE_DEBOUNCE_MS: 300,
-    STORAGE_PREFIX: "form_memory_",
-  };
+// Configuration defaults
+const MEMORY_CONFIG = {
+  DEFAULT_EXPIRE_HOURS: 24,
+  MAX_VALUE_LENGTH: 10000,
+  SAVE_DEBOUNCE_MS: 300,
+  STORAGE_PREFIX: "form_memory_",
+};
 
-  // HTML entity escape map
-  const ESCAPE_MAP = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#x27;",
-  };
+// HTML entity escape map
+const ESCAPE_MAP = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#x27;",
+};
 
-  // Field types to skip
-  const SKIP_TYPES = [
-    "password",
-    "hidden",
-    "file",
-    "submit",
-    "button",
-    "reset",
-  ];
+// Field types to skip
+const SKIP_TYPES = [
+  "password",
+  "hidden",
+  "file",
+  "submit",
+  "button",
+  "reset",
+];
 
   /* ──────────────────────────────────────────────────────────────
      Utility Functions
@@ -64,7 +63,7 @@
    */
   function getStorageKey(form) {
     const formId = form.getAttribute("id") || `form_${Date.now()}`;
-    return CONFIG.STORAGE_PREFIX + formId;
+    return MEMORY_CONFIG.STORAGE_PREFIX + formId;
   }
 
   /**
@@ -74,7 +73,7 @@
    */
   function getExpirationHours(form) {
     const hours = parseInt(form.dataset.memoryExpire);
-    return isNaN(hours) ? CONFIG.DEFAULT_EXPIRE_HOURS : hours;
+    return isNaN(hours) ? MEMORY_CONFIG.DEFAULT_EXPIRE_HOURS : hours;
   }
 
   /**
@@ -143,7 +142,7 @@
           }
         } else {
           const value = input.value.trim();
-          if (value && value.length <= CONFIG.MAX_VALUE_LENGTH) {
+          if (value && value.length <= MEMORY_CONFIG.MAX_VALUE_LENGTH) {
             formData[fieldName] = escapeHtml(value);
           }
         }
@@ -265,7 +264,7 @@
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
         saveFormData(form);
-      }, CONFIG.SAVE_DEBOUNCE_MS);
+      }, MEMORY_CONFIG.SAVE_DEBOUNCE_MS);
     };
 
     const restore = () => restoreFormData(form);
@@ -349,7 +348,7 @@
   --------------------------------------------------------------- */
 
   window.addEventListener("storage", (event) => {
-    if (!event.key || !event.key.startsWith(CONFIG.STORAGE_PREFIX)) return;
+    if (!event.key || !event.key.startsWith(MEMORY_CONFIG.STORAGE_PREFIX)) return;
 
     // Find matching form
     const forms = document.querySelectorAll(
@@ -448,17 +447,19 @@
     create: createFormMemory
   };
 
-  // Register with coordinator
-  if (window.ContactFormCoordinator) {
-    window.ContactFormCoordinator.register('memory', MemoryModule);
-  } else {
-    // Fallback if coordinator not available
-    initFormMemory();
-
-    if (typeof Webflow !== 'undefined' && Webflow.push) {
-      Webflow.push(() => {
-        initFormMemory();
-      });
+// Add initialization guard
+if (!window.__ContactFormMemoryInitialized) {
+  window.__ContactFormMemoryInitialized = true;
+  
+  try {
+    // Register with coordinator
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.register('memory', MemoryModule);
+    } else {
+      // Fallback if coordinator not available
+      initFormMemory();
     }
+  } catch (error) {
+    console.error('[Contact Form Memory] Initialization failed:', error);
   }
-})();
+}

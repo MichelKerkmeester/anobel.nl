@@ -15,9 +15,8 @@
    - Accessibility compliant
 ────────────────────────────────────────────────────────────────*/
 
-(() => {
-  // Configuration
-  const SHORTCUTS = {
+// Configuration
+const SHORTCUTS = {
     SUBMIT: { key: "Enter", modifiers: ["cmd", "ctrl"] },
     RESET: { key: "r", modifiers: ["cmd", "ctrl", "shift"] },
     SAVE: { key: "s", modifiers: ["cmd", "ctrl"] },
@@ -399,26 +398,24 @@
     shortcuts: SHORTCUTS,
   };
 
-  // Register with coordinator
-  if (window.ContactFormCoordinator) {
-    window.ContactFormCoordinator.register("shortcuts", ShortcutsModule);
-  } else {
-    // Fallback if coordinator not available
-    initFormShortcuts();
-    // Only add keydown listener once
-    if (!document._shortcutsListenerAdded) {
-      document.addEventListener("keydown", handleKeydown);
-      document._shortcutsListenerAdded = true;
-    }
-
-    if (typeof Webflow !== "undefined" && Webflow.push) {
-      try {
-        Webflow.push(() => {
-          initFormShortcuts();
-        });
-      } catch (e) {
-        console.warn("Webflow integration failed for form shortcuts:", e);
+  // Add initialization guard
+  if (!window.__ContactFormShortcutsInitialized) {
+    window.__ContactFormShortcutsInitialized = true;
+    
+    try {
+      // Register with coordinator
+      if (window.ContactFormCoordinator) {
+        window.ContactFormCoordinator.register("shortcuts", ShortcutsModule);
+      } else {
+        // Fallback if coordinator not available
+        initFormShortcuts();
+        // Only add keydown listener once
+        if (!document._shortcutsListenerAdded) {
+          document.addEventListener("keydown", handleKeydown);
+          document._shortcutsListenerAdded = true;
+        }
       }
+    } catch (error) {
+      console.error('[Contact Form Shortcuts] Initialization failed:', error);
     }
   }
-})();

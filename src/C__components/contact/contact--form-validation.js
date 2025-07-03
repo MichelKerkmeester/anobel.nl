@@ -20,12 +20,11 @@
    - Accessibility features with ARIA support
 ────────────────────────────────────────────────────────────────*/
 
-(() => {
-  // ─────────────────────────────────────────────────────────────
-  // 1. Configuration & Constants
-  // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 1. Configuration & Constants
+// ─────────────────────────────────────────────────────────────
 
-  const CONFIG = {
+const VALIDATION_CONFIG = {
     // CSS classes for validation states
     CLASSES: {
       GROUP: 'validation-group',
@@ -280,7 +279,7 @@
       const isValid = value.trim() !== '';
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.required
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.required
       };
     },
 
@@ -294,7 +293,7 @@
       if (!REGEX_CACHE.EMAIL.test(value)) {
         return {
           valid: false,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.email
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.email
         };
       }
 
@@ -303,7 +302,7 @@
       if (emailParts.length !== 2) {
         return {
           valid: false,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.email
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.email
         };
       }
 
@@ -313,7 +312,7 @@
       if (!REGEX_CACHE.TLD.test(domain)) {
         return {
           valid: false,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.email
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.email
         };
       }
 
@@ -322,7 +321,7 @@
       if (domainParts.length < 2) {
         return {
           valid: false,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.email
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.email
         };
       }
 
@@ -331,7 +330,7 @@
         if (!part || part.startsWith('-') || part.endsWith('-') || part.length < 1) {
           return {
             valid: false,
-            message: params.message || CONFIG.DEFAULT_MESSAGES.email
+            message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.email
           };
         }
       }
@@ -356,7 +355,7 @@
         
         return {
           valid: isValid,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.phone
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.phone
         };
       }
       
@@ -367,7 +366,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.phone
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.phone
       };
     },
 
@@ -380,7 +379,7 @@
       const isValid = REGEX_CACHE.URL.test(value);
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.url
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.url
       };
     },
 
@@ -395,7 +394,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.number
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.number
       };
     },
 
@@ -410,7 +409,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.minLength.replace('{min}', min)
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.minLength.replace('{min}', min)
       };
     },
 
@@ -425,7 +424,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.maxLength.replace('{max}', max)
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.maxLength.replace('{max}', max)
       };
     },
 
@@ -441,7 +440,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.min.replace('{min}', min)
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.min.replace('{min}', min)
       };
     },
 
@@ -457,7 +456,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.max.replace('{max}', max)
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.max.replace('{max}', max)
       };
     },
 
@@ -473,7 +472,7 @@
         
         return {
           valid: isValid,
-          message: params.message || CONFIG.DEFAULT_MESSAGES.pattern
+          message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.pattern
         };
       } catch (e) {
         const logger = window.ContactFormCoordinator?.Logger || console;
@@ -494,7 +493,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.fileSize.replace('{max}', formatFileSize(maxSize))
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.fileSize.replace('{max}', formatFileSize(maxSize))
       };
     },
 
@@ -513,7 +512,7 @@
       
       return {
         valid: isValid,
-        message: params.message || CONFIG.DEFAULT_MESSAGES.fileType
+        message: params.message || VALIDATION_CONFIG.DEFAULT_MESSAGES.fileType
       };
     }
   };
@@ -655,28 +654,28 @@
   function updateFieldState(group, field, validationResult) {
     // Remove all validation classes
     group.classList.remove(
-      CONFIG.CLASSES.VALID,
-      CONFIG.CLASSES.INVALID,
-      CONFIG.CLASSES.PENDING
+      VALIDATION_CONFIG.CLASSES.VALID,
+      VALIDATION_CONFIG.CLASSES.INVALID,
+      VALIDATION_CONFIG.CLASSES.PENDING
     );
     
     // Add touched class if field has been interacted with
     if (field._validationTouched) {
-      group.classList.add(CONFIG.CLASSES.TOUCHED);
-      group.classList.remove(CONFIG.CLASSES.PRISTINE);
+      group.classList.add(VALIDATION_CONFIG.CLASSES.TOUCHED);
+      group.classList.remove(VALIDATION_CONFIG.CLASSES.PRISTINE);
     } else {
-      group.classList.add(CONFIG.CLASSES.PRISTINE);
-      group.classList.remove(CONFIG.CLASSES.TOUCHED);
+      group.classList.add(VALIDATION_CONFIG.CLASSES.PRISTINE);
+      group.classList.remove(VALIDATION_CONFIG.CLASSES.TOUCHED);
     }
     
     // Add validation state classes
     if (field._validationStarted) {
       if (validationResult.valid) {
-        group.classList.add(CONFIG.CLASSES.VALID);
+        group.classList.add(VALIDATION_CONFIG.CLASSES.VALID);
         showSuccessMessage(group, field);
         clearErrorMessage(group);
       } else {
-        group.classList.add(CONFIG.CLASSES.INVALID);
+        group.classList.add(VALIDATION_CONFIG.CLASSES.INVALID);
         showErrorMessage(group, validationResult.message);
         clearSuccessMessage(group);
       }
@@ -703,10 +702,10 @@
    * @param {string} message - Error message
    */
   function showErrorMessage(group, message) {
-    const container = group.querySelector(CONFIG.SELECTORS.ERROR_CONTAINER);
+    const container = group.querySelector(VALIDATION_CONFIG.SELECTORS.ERROR_CONTAINER);
     if (container && message) {
       container.textContent = message;
-      container.classList.add(CONFIG.CLASSES.ERROR_CONTAINER);
+      container.classList.add(VALIDATION_CONFIG.CLASSES.ERROR_CONTAINER);
       container.setAttribute('role', 'alert');
     }
   }
@@ -716,10 +715,10 @@
    * @param {HTMLElement} group - Validation group
    */
   function clearErrorMessage(group) {
-    const container = group.querySelector(CONFIG.SELECTORS.ERROR_CONTAINER);
+    const container = group.querySelector(VALIDATION_CONFIG.SELECTORS.ERROR_CONTAINER);
     if (container) {
       container.textContent = '';
-      container.classList.remove(CONFIG.CLASSES.ERROR_CONTAINER);
+      container.classList.remove(VALIDATION_CONFIG.CLASSES.ERROR_CONTAINER);
       container.removeAttribute('role');
     }
   }
@@ -730,9 +729,9 @@
    * @param {HTMLElement} field - Input field
    */
   function showSuccessMessage(group, field) {
-    const container = group.querySelector(CONFIG.SELECTORS.SUCCESS_CONTAINER);
+    const container = group.querySelector(VALIDATION_CONFIG.SELECTORS.SUCCESS_CONTAINER);
     if (container && field.value.trim()) {
-      container.classList.add(CONFIG.CLASSES.SUCCESS_CONTAINER);
+      container.classList.add(VALIDATION_CONFIG.CLASSES.SUCCESS_CONTAINER);
     }
   }
 
@@ -741,9 +740,9 @@
    * @param {HTMLElement} group - Validation group
    */
   function clearSuccessMessage(group) {
-    const container = group.querySelector(CONFIG.SELECTORS.SUCCESS_CONTAINER);
+    const container = group.querySelector(VALIDATION_CONFIG.SELECTORS.SUCCESS_CONTAINER);
     if (container) {
-      container.classList.remove(CONFIG.CLASSES.SUCCESS_CONTAINER);
+      container.classList.remove(VALIDATION_CONFIG.CLASSES.SUCCESS_CONTAINER);
     }
   }
 
@@ -756,10 +755,10 @@
    * @param {HTMLFormElement} form - Form element
    */
   function updateSubmitButtonState(form) {
-    const submitButton = form.querySelector(CONFIG.SELECTORS.SUBMIT);
+    const submitButton = form.querySelector(VALIDATION_CONFIG.SELECTORS.SUBMIT);
     if (!submitButton) return;
     
-    const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+    const fields = form.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FIELD);
     let formValid = true;
     
     for (const field of fields) {
@@ -772,10 +771,10 @@
     
     if (formValid) {
       submitButton.disabled = false;
-      submitButton.classList.remove(CONFIG.CLASSES.SUBMIT_DISABLED);
+      submitButton.classList.remove(VALIDATION_CONFIG.CLASSES.SUBMIT_DISABLED);
     } else {
       submitButton.disabled = true;
-      submitButton.classList.add(CONFIG.CLASSES.SUBMIT_DISABLED);
+      submitButton.classList.add(VALIDATION_CONFIG.CLASSES.SUBMIT_DISABLED);
     }
     
     // Dispatch custom event
@@ -794,7 +793,7 @@
    */
   function handleFieldInput(event) {
     const field = event.target;
-    const group = field.closest(CONFIG.SELECTORS.GROUP);
+    const group = field.closest(VALIDATION_CONFIG.SELECTORS.GROUP);
     if (!group) return;
     
     // Mark field as touched
@@ -819,7 +818,7 @@
           bubbles: true
         }));
       }
-    }, CONFIG.DEBOUNCE_MS);
+    }, VALIDATION_CONFIG.DEBOUNCE_MS);
   }
 
   /**
@@ -828,7 +827,7 @@
    */
   function handleFieldBlur(event) {
     const field = event.target;
-    const group = field.closest(CONFIG.SELECTORS.GROUP);
+    const group = field.closest(VALIDATION_CONFIG.SELECTORS.GROUP);
     if (!group) return;
     
     // Always start validation on blur
@@ -853,7 +852,7 @@
    */
   function handleFormSubmit(event) {
     const form = event.target || event.currentTarget;
-    const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+    const fields = form.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FIELD);
     let formValid = true;
     let firstInvalidField = null;
     
@@ -862,7 +861,7 @@
       field._validationStarted = true;
       field._validationTouched = true;
       
-      const group = field.closest(CONFIG.SELECTORS.GROUP);
+      const group = field.closest(VALIDATION_CONFIG.SELECTORS.GROUP);
       const validationResult = validateField(field);
       
       if (group) {
@@ -913,7 +912,7 @@
     // Skip if already initialized
     if (FORM_CACHE.has(form)) return;
     
-    const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+    const fields = form.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FIELD);
     
     // Initialize each field
     fields.forEach(field => {
@@ -926,9 +925,9 @@
       field.addEventListener('blur', handleFieldBlur);
       
       // Initial state update
-      const group = field.closest(CONFIG.SELECTORS.GROUP);
+      const group = field.closest(VALIDATION_CONFIG.SELECTORS.GROUP);
       if (group) {
-        group.classList.add(CONFIG.CLASSES.PRISTINE);
+        group.classList.add(VALIDATION_CONFIG.CLASSES.PRISTINE);
       }
     });
     
@@ -964,7 +963,7 @@
    * @param {HTMLElement|Document} container - Container to search within
    */
   function initValidation(container = document) {
-    const forms = container.querySelectorAll(CONFIG.SELECTORS.FORM);
+    const forms = container.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FORM);
     forms.forEach(initializeForm);
   }
 
@@ -984,7 +983,7 @@
     
     // Utility methods
     isValid: (form) => {
-      const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+      const fields = form.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FIELD);
       return Array.from(fields).every(field => {
         const result = validateField(field);
         return result.valid;
@@ -1008,14 +1007,14 @@
     
     initForm: function(form) {
       // Check if form should have validation
-      if (form.matches(CONFIG.SELECTORS.FORM)) {
+      if (form.matches(VALIDATION_CONFIG.SELECTORS.FORM)) {
         initializeForm(form);
       }
     },
     
     cleanupForm: function(form) {
       if (FORM_CACHE.has(form)) {
-        const fields = form.querySelectorAll(CONFIG.SELECTORS.FIELD);
+        const fields = form.querySelectorAll(VALIDATION_CONFIG.SELECTORS.FIELD);
         fields.forEach(field => {
           // Clear validation timeouts
           if (field._validationTimeout) {
@@ -1034,17 +1033,19 @@
   // 10. Auto-initialization
   // ─────────────────────────────────────────────────────────────
   
-  // Register with coordinator
-  if (window.ContactFormCoordinator) {
-    window.ContactFormCoordinator.register('validation', ValidationModule);
-  } else {
-    // Fallback if coordinator not available
-    initValidation();
-    
-    if (typeof Webflow !== 'undefined' && Webflow.push) {
-      Webflow.push(() => {
-        initValidation();
-      });
+// Add initialization guard
+if (!window.__ContactFormValidationInitialized) {
+  window.__ContactFormValidationInitialized = true;
+  
+  try {
+    // Register with coordinator
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.register('validation', ValidationModule);
+    } else {
+      // Fallback if coordinator not available
+      initValidation();
     }
+  } catch (error) {
+    console.error('[Contact Form Validation] Initialization failed:', error);
   }
-})();
+}

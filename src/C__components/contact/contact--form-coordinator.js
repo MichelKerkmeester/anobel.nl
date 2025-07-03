@@ -14,74 +14,75 @@
    - Initialization guards to prevent conflicts
 ────────────────────────────────────────────────────────────────*/
 
-(() => {
-  // ─────────────────────────────────────────────────────────────
-  // 0. Logger System
-  // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 0. Logger System
+// ─────────────────────────────────────────────────────────────
+
+const Logger = {
+  isEnabled: false, // Set to true for debugging
   
-  const Logger = {
-    isEnabled: false, // Set to true for debugging
-    
-    log: function(message, ...args) {
-      if (this.isEnabled && typeof console !== 'undefined' && console.log) {
-        console.log(`[ContactForm] ${message}`, ...args);
-      }
-    },
-    
-    warn: function(message, ...args) {
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn(`[ContactForm] ${message}`, ...args);
-      }
-    },
-    
-    error: function(message, ...args) {
-      if (typeof console !== 'undefined' && console.error) {
-        console.error(`[ContactForm] ${message}`, ...args);
-      }
+  log: function(message, ...args) {
+    if (this.isEnabled && typeof console !== 'undefined' && console.log) {
+      console.log(`[ContactForm] ${message}`, ...args);
     }
-  };
+  },
   
-  // Enable logging in development
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    Logger.isEnabled = true;
+  warn: function(message, ...args) {
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn(`[ContactForm] ${message}`, ...args);
+    }
+  },
+  
+  error: function(message, ...args) {
+    if (typeof console !== 'undefined' && console.error) {
+      console.error(`[ContactForm] ${message}`, ...args);
+    }
   }
+};
   
-  // ─────────────────────────────────────────────────────────────
-  // 1. Configuration & State
-  // ─────────────────────────────────────────────────────────────
+// Enable logging in development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  Logger.isEnabled = true;
+}
   
-  const CONFIG = {
-    // Module initialization order (dependencies first)
-    INIT_ORDER: [
-      'attributes',  // Must load first - provides selectors
-      'memory',      // Early initialization for auto-restore
-      'validation',  // Before submit handling (now includes phone formatting)
-      'shortcuts',   // Before submit handling
-      'submission'   // Unified submission and post-action handling
-    ],
-    
-    // Debounce timing
-    DEBOUNCE_MS: 100,
-    
-    // Event namespaces
-    EVENT_NAMESPACE: 'contact-form'
-  };
+// ─────────────────────────────────────────────────────────────
+// 1. Configuration & State
+// ─────────────────────────────────────────────────────────────
   
-  // Global state
-  const STATE = {
-    initializedModules: new Set(),
-    initializedForms: new WeakSet(),
-    eventListeners: new Map(),
-    moduleInstances: new Map(),
-    pendingInitializations: new Set()
-  };
+const COORDINATOR_CONFIG = {
+  // Module initialization order (dependencies first)
+  INIT_ORDER: [
+    'attributes',  // Must load first - provides selectors
+    'memory',      // Early initialization for auto-restore
+    'validation',  // Before submit handling (now includes phone formatting)
+    'shortcuts',   // Before submit handling
+    'submission'   // Unified submission and post-action handling
+  ],
   
-  // Event bus for inter-module communication
-  const eventBus = new EventTarget();
+  // Debounce timing
+  DEBOUNCE_MS: 100,
   
-  // ─────────────────────────────────────────────────────────────
-  // 2. Module Registration System
-  // ─────────────────────────────────────────────────────────────
+  // Event namespaces
+  EVENT_NAMESPACE: 'contact-form'
+};
+  
+// Global state
+const STATE = {
+  initializedModules: new Set(),
+  initializedForms: new WeakSet(),
+  eventListeners: new Map(),
+  moduleInstances: new Map(),
+  pendingInitializations: new Set(),
+  intersectionObserver: null,
+  mutationObserver: null
+};
+  
+// Event bus for inter-module communication
+const eventBus = new EventTarget();
+  
+// ─────────────────────────────────────────────────────────────
+// 2. Module Registration System
+// ─────────────────────────────────────────────────────────────
   
   /**
    * Register a module with the coordinator
@@ -119,9 +120,9 @@
       }
       
       // Check dependencies
-      const moduleIndex = CONFIG.INIT_ORDER.indexOf(moduleName);
+      const moduleIndex = COORDINATOR_CONFIG.INIT_ORDER.indexOf(moduleName);
       if (moduleIndex > 0) {
-        const dependencies = CONFIG.INIT_ORDER.slice(0, moduleIndex);
+        const dependencies = COORDINATOR_CONFIG.INIT_ORDER.slice(0, moduleIndex);
         const missingDeps = dependencies.filter(dep => !STATE.initializedModules.has(dep));
         
         if (missingDeps.length > 0) {
@@ -187,7 +188,7 @@
     setupCentralizedSubmitHandler(form);
     
     // Initialize modules in order
-    CONFIG.INIT_ORDER.forEach(moduleName => {
+    COORDINATOR_CONFIG.INIT_ORDER.forEach(moduleName => {
       const module = STATE.moduleInstances.get(moduleName);
       if (module && module.initForm && typeof module.initForm === 'function') {
         try {
@@ -275,7 +276,7 @@
     }
     
     // Cleanup modules in reverse order
-    const reverseOrder = [...CONFIG.INIT_ORDER].reverse();
+    const reverseOrder = [...COORDINATOR_CONFIG.INIT_ORDER].reverse();
     reverseOrder.forEach(moduleName => {
       const module = STATE.moduleInstances.get(moduleName);
       if (module && module.cleanupForm && typeof module.cleanupForm === 'function') {
@@ -327,7 +328,7 @@
     clearTimeout(observerTimeout);
     observerTimeout = setTimeout(() => {
       processMutations(mutations);
-    }, CONFIG.DEBOUNCE_MS);
+    }, COORDINATOR_CONFIG.DEBOUNCE_MS);
   }
   
   /**
@@ -492,12 +493,7 @@
     // Start DOM observation
     startDOMObservation();
     
-    // Integrate with Webflow
-    if (typeof Webflow !== 'undefined' && Webflow.push) {
-      Webflow.push(() => {
-        initAllForms();
-      });
-    }
+    // No need for Webflow.push - Slater handles timing
     
     Logger.log('Contact Form Coordinator started');
   }
@@ -538,7 +534,10 @@
   // 8. Auto-Start
   // ─────────────────────────────────────────────────────────────
   
-  // Start coordinator (Slater handles DOM ready)
-  start();
+// Add initialization guard
+if (!window.__ContactFormCoordinatorInitialized) {
+  window.__ContactFormCoordinatorInitialized = true;
   
-})();
+  // Don't start immediately - wait for modules to register
+  // The main init file or individual modules will call start() when ready
+}

@@ -16,18 +16,15 @@
    - Graceful error handling and cleanup
 ────────────────────────────────────────────────────────────────*/
 
-(() => {
-  /* ─────────────────────────────────────────────────────────────
-       1. Configuration & Constants
-    ────────────────────────────────────────────────────────────────*/
+/* ─────────────────────────────────────────────────────────────
+     1. Configuration & Constants
+  ────────────────────────────────────────────────────────────────*/
 
-  // Formspark configuration - using let for dynamic updates
-  let FORMSPARK_ACTION_URL = "https://submit-form.com/PbxxhNQQW";
+// API configuration - will be read from data attributes
+let FORMSPARK_ACTION_URL = null;
+let BOTPOISON_PUBLIC_KEY = null;
 
-  // Botpoison configuration - using let for dynamic updates
-  let BOTPOISON_PUBLIC_KEY = "pk_011ee0f4-b613-4bd6-8cf2-f74653b42ae3";
-
-  const CONFIG = {
+const SUBMISSION_CONFIG = {
     // Form selectors (unified from both modules)
     SELECTORS: {
       // Primary containers
@@ -77,6 +74,30 @@
   // Form state tracking (unified)
   const FORM_STATES = new WeakMap();
 
+  /**
+   * Read API configuration from form data attributes
+   * @param {HTMLFormElement} form - Form element
+   */
+  function readAPIConfig(form) {
+    // Read Formspark URL from data attribute
+    const formsparkUrl = form.getAttribute('data-formspark-url');
+    if (formsparkUrl) {
+      FORMSPARK_ACTION_URL = formsparkUrl;
+    }
+    
+    // Read Botpoison key from data attribute
+    const botpoisonKey = form.getAttribute('data-botpoison-key');
+    if (botpoisonKey) {
+      BOTPOISON_PUBLIC_KEY = botpoisonKey;
+    }
+    
+    // Warn if API keys are missing
+    if (!FORMSPARK_ACTION_URL || !BOTPOISON_PUBLIC_KEY) {
+      const logger = window.ContactFormCoordinator?.Logger || console;
+      logger.warn('Missing API configuration. Add data-formspark-url and data-botpoison-key to your form.');
+    }
+  }
+
   /* ─────────────────────────────────────────────────────────────
        2. Botpoison Integration
     ────────────────────────────────────────────────────────────────*/
@@ -113,12 +134,19 @@
   // Get Botpoison challenge solution with timeout
   async function getBotpoisonSolution() {
     try {
+      // Skip Botpoison if no key is configured
+      if (!BOTPOISON_PUBLIC_KEY) {
+        const logger = window.ContactFormCoordinator?.Logger || console;
+        logger.warn('Botpoison key not configured. Proceeding without bot protection.');
+        return null;
+      }
+      
       const Botpoison = await loadBotpoison();
 
       // Add timeout for challenge
       const challengePromise = Botpoison.challenge(BOTPOISON_PUBLIC_KEY);
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Botpoison timeout")), CONFIG.BOTPOISON_TIMEOUT)
+        setTimeout(() => reject(new Error("Botpoison timeout")), SUBMISSION_CONFIG.BOTPOISON_TIMEOUT)
       );
 
       const result = await Promise.race([
@@ -227,7 +255,7 @@
     
     form.style.opacity = "0.7";
     form.style.pointerEvents = "none";
-    form.classList.add(CONFIG.CLASSES.SUBMITTING);
+    form.classList.add(SUBMISSION_CONFIG.CLASSES.SUBMITTING);
   }
 
   // Hide loading state
@@ -244,7 +272,7 @@
     
     form.style.opacity = "1";
     form.style.pointerEvents = "auto";
-    form.classList.remove(CONFIG.CLASSES.SUBMITTING);
+    form.classList.remove(SUBMISSION_CONFIG.CLASSES.SUBMITTING);
   }
 
   // Show success message
@@ -563,7 +591,7 @@
    * @param {Object} state - Form state
    */
   function resetForm(form, state) {
-    form.classList.add(CONFIG.CLASSES.RESETTING);
+    form.classList.add(SUBMISSION_CONFIG.CLASSES.RESETTING);
 
     // Reset form inputs (excluding specified fields)
     resetFormInputs(form, state.excludeFields);
@@ -575,7 +603,7 @@
     clearFormMemory(form);
 
     // Reset visual states
-    form.classList.remove(CONFIG.CLASSES.SUCCESS, CONFIG.CLASSES.SUBMITTING);
+    form.classList.remove(SUBMISSION_CONFIG.CLASSES.SUCCESS, SUBMISSION_CONFIG.CLASSES.SUBMITTING);
     
     // Show form and hide success message (restore Webflow state)
     restoreWebflowFormState(form);
@@ -585,7 +613,7 @@
     state.isSubmitting = false;
 
     setTimeout(() => {
-      form.classList.remove(CONFIG.CLASSES.RESETTING);
+      form.classList.remove(SUBMISSION_CONFIG.CLASSES.RESETTING);
     }, 300);
 
     const logger = window.ContactFormCoordinator?.Logger || console;
@@ -614,6 +642,11 @@
       : submitButton.textContent;
 
     try {
+      // Validate API configuration before proceeding
+      if (!FORMSPARK_ACTION_URL) {
+        throw new Error('Formspark URL not configured. Add data-formspark-url attribute to your form.');
+      }
+      
       // 1. Show loading state
       showLoadingState(form, submitButton);
 
@@ -694,8 +727,8 @@
     state.hasSubmitted = true;
     state.isSubmitting = false;
     
-    form.classList.remove(CONFIG.CLASSES.SUBMITTING);
-    form.classList.add(CONFIG.CLASSES.SUCCESS);
+    form.classList.remove(SUBMISSION_CONFIG.CLASSES.SUBMITTING);
+    form.classList.add(SUBMISSION_CONFIG.CLASSES.SUCCESS);
 
     // Show success message
     showSuccessMessage(form);
@@ -737,12 +770,15 @@
   function initializeForm(form) {
     // Skip if already initialized or disabled
     if (FORM_STATES.has(form) || 
-        form.hasAttribute(CONFIG.ATTRIBUTES.DISABLE)) {
+        form.hasAttribute(SUBMISSION_CONFIG.ATTRIBUTES.DISABLE)) {
       return;
     }
 
+    // Read API configuration from data attributes
+    readAPIConfig(form);
+
     // Find submit button
-    const submitButton = form.querySelector(CONFIG.SELECTORS.SUBMIT_BUTTON);
+    const submitButton = form.querySelector(SUBMISSION_CONFIG.SELECTORS.SUBMIT_BUTTON);
     if (!submitButton) {
       const logger = window.ContactFormCoordinator?.Logger || console;
       logger.warn("Contact form or submit button not found in:", form);
@@ -753,13 +789,13 @@
     const state = {
       isSubmitting: false,
       hasSubmitted: false,
-      ixTrigger: form.querySelector(CONFIG.SELECTORS.IX_TRIGGER),
-      resetButton: form.querySelector(CONFIG.SELECTORS.RESET_BUTTON),
-      delay: parseInt(form.getAttribute(CONFIG.ATTRIBUTES.DELAY)) || CONFIG.DEFAULT_DELAY,
-      autoReset: form.hasAttribute(CONFIG.ATTRIBUTES.AUTO_RESET),
-      excludeFields: parseExcludeFields(form.getAttribute(CONFIG.ATTRIBUTES.EXCLUDE)),
-      redirectUrl: form.getAttribute(CONFIG.ATTRIBUTES.REDIRECT),
-      shouldReload: form.hasAttribute(CONFIG.ATTRIBUTES.RELOAD)
+      ixTrigger: form.querySelector(SUBMISSION_CONFIG.SELECTORS.IX_TRIGGER),
+      resetButton: form.querySelector(SUBMISSION_CONFIG.SELECTORS.RESET_BUTTON),
+      delay: parseInt(form.getAttribute(SUBMISSION_CONFIG.ATTRIBUTES.DELAY)) || SUBMISSION_CONFIG.DEFAULT_DELAY,
+      autoReset: form.hasAttribute(SUBMISSION_CONFIG.ATTRIBUTES.AUTO_RESET),
+      excludeFields: parseExcludeFields(form.getAttribute(SUBMISSION_CONFIG.ATTRIBUTES.EXCLUDE)),
+      redirectUrl: form.getAttribute(SUBMISSION_CONFIG.ATTRIBUTES.REDIRECT),
+      shouldReload: form.hasAttribute(SUBMISSION_CONFIG.ATTRIBUTES.RELOAD)
     };
 
     FORM_STATES.set(form, state);
@@ -801,7 +837,7 @@
     // Handle custom submit elements that might not trigger form submit event
     if (submitButton && submitButton.tagName.toLowerCase() !== 'input') {
       // Mark as handled by Formspark to prevent conflicts with validation script
-      submitButton.setAttribute(CONFIG.ATTRIBUTES.FORMSPARK_HANDLED, 'true');
+      submitButton.setAttribute(SUBMISSION_CONFIG.ATTRIBUTES.FORMSPARK_HANDLED, 'true');
       
       submitButton.addEventListener('click', (event) => {
         event.preventDefault();
@@ -822,7 +858,7 @@
     }
     
     // Store reset preference for use by logic script  
-    if (submitButton && submitButton.hasAttribute(CONFIG.ATTRIBUTES.FORM_RESET)) {
+    if (submitButton && submitButton.hasAttribute(SUBMISSION_CONFIG.ATTRIBUTES.FORM_RESET)) {
       form.dataset.shouldReset = "true";
     }
 
@@ -833,7 +869,7 @@
 
     form.addEventListener('webflow-error', () => {
       state.isSubmitting = false;
-      form.classList.remove(CONFIG.CLASSES.SUBMITTING);
+      form.classList.remove(SUBMISSION_CONFIG.CLASSES.SUBMITTING);
       const logger = window.ContactFormCoordinator?.Logger || console;
       logger.warn('Form submission error:', form);
     });
@@ -848,10 +884,10 @@
    */
   function initFormSubmission(container = document) {
     // Find all forms with live validation (main trigger)
-    const formContainers = container.querySelectorAll(CONFIG.SELECTORS.FORM_CONTAINER);
+    const formContainers = container.querySelectorAll(SUBMISSION_CONFIG.SELECTORS.FORM_CONTAINER);
 
     formContainers.forEach((formContainer) => {
-      const form = formContainer.querySelector(CONFIG.SELECTORS.FORM);
+      const form = formContainer.querySelector(SUBMISSION_CONFIG.SELECTORS.FORM);
       if (form && !FORM_STATES.has(form)) {
         initializeForm(form);
       }
@@ -883,7 +919,7 @@
     
     initForm: function(form) {
       // Check if form should have submission handling
-      const formContainer = form.closest(CONFIG.SELECTORS.FORM_CONTAINER);
+      const formContainer = form.closest(SUBMISSION_CONFIG.SELECTORS.FORM_CONTAINER);
       if (formContainer && !FORM_STATES.has(form)) {
         initializeForm(form);
       }
@@ -906,28 +942,27 @@
         resetForm(form, state);
       }
     },
-    config: CONFIG
+    config: SUBMISSION_CONFIG
   };
 
-  // Expose configuration for easy updates
-  window.ContactFormConfig = {
-    setFormspark: (actionUrl) => {
-      FORMSPARK_ACTION_URL = actionUrl;
-    },
-    setBotpoison: (publicKey) => {
-      BOTPOISON_PUBLIC_KEY = publicKey;
-    },
-  };
 
   /* ─────────────────────────────────────────────────────────────
        11. Auto-initialization
     ────────────────────────────────────────────────────────────────*/
   
-  // Register with coordinator
-  if (window.ContactFormCoordinator) {
-    window.ContactFormCoordinator.register('submission', SubmissionModule);
-  } else {
-    // Fallback if coordinator not available
-    initFormSubmission();
+// Add initialization guard
+if (!window.__ContactFormSubmissionInitialized) {
+  window.__ContactFormSubmissionInitialized = true;
+  
+  try {
+    // Register with coordinator
+    if (window.ContactFormCoordinator) {
+      window.ContactFormCoordinator.register('submission', SubmissionModule);
+    } else {
+      // Fallback if coordinator not available
+      initFormSubmission();
+    }
+  } catch (error) {
+    console.error('[Contact Form Submission] Initialization failed:', error);
   }
-})();
+}
