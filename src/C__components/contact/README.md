@@ -1,141 +1,267 @@
 # Contact Form Component
 
-A simplified, single-file contact form handler for Webflow with built-in validation and Formspark/Botpoison integration.
+A production-ready contact form validation system for Webflow with real-time validation, error messaging, and modal support.
 
 ## Features
 
-- **Real-time field validation** with error messages
-- **Dutch phone number formatting** (06 numbers)
-- **Email validation**
+- **Real-time field validation** with inline error messages
+- **Accessible error handling** with ARIA attributes
+- **Email validation** with regex pattern matching
+- **Min/max length validation** for text fields
 - **Required field validation**
-- **Formspark submission** with Botpoison bot protection
-- **Success/error handling** with custom messages
-- **Automatic form reset** after successful submission
-- **Webflow interaction triggers** for modals/animations
-- **Webflow form compatibility** (hides default success/error states)
-- **Finsweet-style features** (delayed actions, manual reset buttons)
-- **Slater-optimized** (no DOMContentLoaded, dual initialization)
+- **Anti-spam protection** (5-second submission threshold)
+- **Retry logic** with exponential backoff
+- **Modal support** for success messages (using Motion.dev)
+- **Webflow compatibility** with proper state management
+- **Slater-optimized** (no DOMContentLoaded required)
+- **Memory-efficient** event handler cleanup
+- **Performance optimized** with debounced validation (300ms)
+- **Smart error lifecycle** - removes dynamic errors when fields become valid
+- **Unique ID generation** - guaranteed unique IDs for accessibility
+- **Flexible submit button** - specify custom submit button with data attribute
+
+## Installation
+
+### 1. Add JavaScript
+Include `contact--form.js` in your Webflow project via Slater or custom code.
+
+### 2. Add CSS
+Include `contact--form.css` for validation states and error styling.
+
+### 3. Style in Webflow
+Create your modal and form styles directly in Webflow. The CSS only provides validation states.
 
 ## Usage
 
-### Basic Setup
+### Form Setup
 
-1. Add these data attributes to your form:
-   ```html
-   <form data-live-validate 
-         data-formspark-url="https://submit-form.com/your-form-id"
-         data-botpoison-key="your-public-key">
-   ```
+Add these attributes to your form:
 
-2. The form will automatically initialize when the page loads.
+```html
+<form data-form-validate 
+      action="https://your-endpoint.com/submit"
+      data-success-modal="#success-modal">
+```
 
 ### Required Data Attributes
 
-- `data-live-validate` or `data-validation-form` - Enables form validation
-- `data-formspark-url` - Your Formspark endpoint URL
-- `data-botpoison-key` - Your Botpoison public key (optional but recommended)
+#### Form Attributes
+- `data-form-validate` - Enables form validation on this form
+- `action` or `data-form-action` - Form submission endpoint
+- `data-success-modal` (optional) - Selector for success modal
+- `data-submit-button` (optional) - Custom selector for submit button
 
-### Optional Data Attributes
+#### Field Wrapper Attributes
+- `data-validate` - Required wrapper for each field that needs validation
 
-- `data-success-trigger` or `data-submit-trigger` - CSS selector for element to click on success (for Webflow interactions)
-- `data-success-message` - Element to show on success
-- `data-error-message` - Element to show on error
-- `data-submit-delay` - Delay in milliseconds before redirect/reload (default: 0)
-- `data-submit-redirect` - URL to redirect to after successful submission
-- `data-submit-reload` - Reload page after successful submission
-- `data-submit-reset` or `data-form-reset` - Button to manually reset the form
+#### Submit Button Attributes
+- `data-submit` - Default submit button wrapper (optional)
+- Or use `data-submit-button=".my-submit"` on form for custom selector
 
-### Field Validation
+### Field Structure
 
-Fields are validated based on their HTML5 attributes:
-- `required` - Field must have a value
-- `type="email"` - Valid email format
-- `type="tel"` or `name="phone"` - Valid phone number
-
-### CSS Classes
-
-The component adds these classes for styling:
-- `.validation-valid` - Field is valid
-- `.validation-invalid` - Field has errors
-- `.field-error` - Error message container
-- `.error-visible` - Error is shown
-- `.form-submitting` - Form is being submitted
-- `.form-success` - Form submitted successfully
-
-## Webflow/Slater Compatibility
-
-This form handler is designed to work seamlessly with Webflow and Slater:
-
-- **No DOMContentLoaded** - Follows Slater best practices
-- **Dual initialization** - Works with both immediate load and Webflow.push()
-- **Webflow form wrapper support** - Automatically hides Webflow's success/error divs
-- **Interaction triggers** - Click elements to trigger Webflow interactions on success
-- **Collection List compatible** - Re-initializes when Webflow updates the DOM
-
-## Example HTML
+Each field must be wrapped in an element with `data-validate`:
 
 ```html
-<div class="contact-form-wrapper w-form">
-  <form data-live-validate 
-        data-formspark-url="https://submit-form.com/ABC123"
-        data-botpoison-key="pk_abc123">
+<div data-validate>
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" required>
+  <!-- Error message will be inserted here automatically -->
+</div>
+```
+
+### Custom Error Elements
+
+You can provide custom error elements:
+
+```html
+<div data-validate>
+  <input type="email" name="email" required>
+  <div data-error><!-- Custom error will appear here --></div>
+</div>
+```
+
+**Note**: Dynamic error elements (created by the script) are automatically removed when fields become valid, while custom error elements (with `data-error` attribute) are only hidden.
+
+## HTML Example
+
+```html
+<div class="form-wrapper w-form">
+  <form data-form-validate 
+        action="https://submit-form.com/your-form-id"
+        data-success-modal="#contact-success-modal">
     
-    <!-- Name field -->
-    <div class="form-field">
-      <label for="name">Name</label>
+    <!-- Name Field -->
+    <div class="field-wrapper" data-validate>
+      <label for="name">Name *</label>
       <input type="text" id="name" name="name" required>
     </div>
     
-    <!-- Email field -->
-    <div class="form-field">
-      <label for="email">Email</label>
+    <!-- Email Field -->
+    <div class="field-wrapper" data-validate>
+      <label for="email">Email *</label>
       <input type="email" id="email" name="email" required>
     </div>
     
-    <!-- Phone field -->
-    <div class="form-field">
+    <!-- Phone Field (optional) -->
+    <div class="field-wrapper" data-validate>
       <label for="phone">Phone</label>
       <input type="tel" id="phone" name="phone">
     </div>
     
-    <!-- Message field -->
-    <div class="form-field">
-      <label for="message">Message</label>
-      <textarea id="message" name="message" required></textarea>
+    <!-- Message Field -->
+    <div class="field-wrapper" data-validate>
+      <label for="message">Message *</label>
+      <textarea id="message" name="message" required min="10"></textarea>
     </div>
     
-    <!-- Submit button -->
-    <button type="submit">Send Message</button>
+    <!-- Submit Button (Option 1: Default wrapper) -->
+    <div data-submit>
+      <input type="submit" value="Send Message">
+    </div>
     
-    <!-- Optional: Manual reset button -->
-    <button type="button" data-form-reset>Clear Form</button>
+    <!-- Submit Button (Option 2: Custom selector) -->
+    <!-- Add data-submit-button="#custom-submit" to form -->
+    <!-- <button type="submit" id="custom-submit">Send Message</button> -->
   </form>
   
-  <!-- Optional: Webflow interaction trigger (hidden) -->
-  <div data-submit-trigger=".success-modal" style="display: none;"></div>
-  
-  <!-- Success message (hidden by default) -->
-  <div data-success-message style="display: none;">
-    Thank you! Your message has been sent.
+  <!-- Webflow default messages (will be hidden) -->
+  <div class="w-form-done">
+    <div>Thank you! Your submission has been received!</div>
   </div>
-  
-  <!-- Error message (hidden by default) -->
-  <div data-error-message style="display: none;">
-    Something went wrong. Please try again.
+  <div class="w-form-fail">
+    <div>Oops! Something went wrong while submitting the form.</div>
+  </div>
+</div>
+
+<!-- Success Modal (styled in Webflow) -->
+<div id="contact-success-modal" style="display: none;">
+  <div class="modal-content">
+    <button data-modal-close>×</button>
+    <h2>Message Sent!</h2>
+    <p>Thank you for contacting us. We'll get back to you soon.</p>
   </div>
 </div>
 ```
 
-## Files
+## Validation Rules
 
-- `contact-form.js` - Main JavaScript file with all functionality
-- `contact--form-validation.css` - Styling for validation states
-- `README.md` - This documentation
+### Built-in Validations
+- **Required**: Add `required` attribute
+- **Email**: Use `type="email"`
+- **Min Length**: Add `min="5"` attribute
+- **Max Length**: Add `max="100"` attribute
 
-## Manual Initialization
+### Validation Messages
+- Required: "This field is required"
+- Email: "Please enter a valid email address"
+- Min Length: "Too short"
+- Max Length: "Too long"
 
-If you need to manually initialize a form:
+## CSS Classes
+
+The component automatically adds these classes:
+
+### Field States
+- `.is--filled` - Field has content
+- `.is--success` - Field is valid
+- `.is--error` - Field has validation error
+
+### Form States
+- `.form-submitting` - Form is being submitted
+- `.form-success` - Form submitted successfully
+
+### Error Display
+- `.field-error` - Error message element
+- `.error-visible` - Error is visible
+
+## JavaScript API
+
+The component exposes a public API:
 
 ```javascript
-window.ContactForm.init(formElement);
+window.ContactFormValidator = {
+  init: function,        // Re-initialize forms
+  FormValidator: class,  // Access to validator class
+  modalManager: object,  // Modal management instance
+  validateField: function, // Manual field validation
+  CONFIG: object        // Configuration object
+};
 ```
+
+### Configuration Options
+
+```javascript
+// Access configuration
+window.ContactFormValidator.CONFIG = {
+  SPAM_THRESHOLD: 5000,      // Anti-spam delay (ms)
+  VALIDATION_DEBOUNCE: 300,  // Input validation delay (ms)
+  MESSAGES: {                // Customize error messages
+    required: "This field is required",
+    email: "Please enter a valid email address",
+    // ... etc
+  }
+};
+```
+
+### Manual Initialization
+
+```javascript
+// Initialize all forms
+window.ContactFormValidator.init();
+
+// Or initialize specific form
+const form = document.querySelector('#my-form');
+new window.ContactFormValidator.FormValidator(form);
+```
+
+## Webflow Integration
+
+### Automatic Features
+- Hides Webflow's default success/error messages
+- Removes Webflow form state classes
+- Compatible with Webflow's form structure
+- Works with Collection Lists
+
+### Modal Animations
+If Motion.dev is available, modals will animate smoothly. Otherwise, they appear instantly.
+
+## Best Practices
+
+1. **Always wrap fields** in `data-validate` elements
+2. **Use semantic HTML5 input types** for better validation
+3. **Add `required` attribute** for mandatory fields
+4. **Test with keyboard navigation** for accessibility
+5. **Style error messages** to be clearly visible
+6. **Provide clear labels** for all form fields
+7. **Use custom error elements** for persistent error placement
+8. **Specify submit button** if you have multiple buttons
+
+## Troubleshooting
+
+### Form not validating
+- Check that form has `data-form-validate` attribute
+- Ensure fields are wrapped in `data-validate` elements
+- Verify JavaScript file is loaded
+
+### Errors not showing
+- Check CSS is loaded
+- Inspect if `.field-error` elements are created
+- Ensure no CSS conflicts hiding errors
+
+### Modal not showing
+- Verify modal selector in `data-success-modal`
+- Check modal HTML exists on page
+- Ensure Motion.dev is loaded (if using animations)
+
+## Browser Support
+
+- All modern browsers (Chrome, Firefox, Safari, Edge)
+- IE11 not supported (uses modern JavaScript features)
+
+## Performance Notes
+
+- Field validation is debounced by 300ms to prevent excessive validation
+- Dynamic error elements are removed from DOM when not needed
+- Event handlers are properly cleaned up to prevent memory leaks
+- Form uses passive event listeners where appropriate

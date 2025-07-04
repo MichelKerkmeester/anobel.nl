@@ -1,106 +1,77 @@
 /* ───────────────────────────────────────────────────────────────
   Contact Form
-  Live Validation & Modal Styles
+  Validation State Styles
 ─────────────────────────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────────────────────
    1. Field States (Filled, Success, Error)
 ────────────────────────────────────────────────────────────────*/
 
-/* Filled state */
+/* Filled state - when field has content */
 [data-validate].is--filled label {
   transform: translateY(-1.5rem) scale(0.85);
   color: var(--_color-tokens---text--secondary);
 }
 
-/* Success state */
+/* Success state - field is valid */
 [data-validate].is--success input,
 [data-validate].is--success textarea {
   border-color: var(--_color-tokens---state--success, #10b981);
   background-color: var(--_color-tokens---bg-input--valid, rgba(16, 185, 129, 0.05));
 }
 
-/* Error state */
+/* Error state - field has validation error */
 [data-validate].is--error input,
 [data-validate].is--error textarea {
-  border-color: var(--_color-tokens---state--warning);
-  background-color: var(--_color-tokens---bg-input--error);
+  border-color: var(--_color-tokens---state--warning, #ef4444);
+  background-color: var(--_color-tokens---bg-input--error, rgba(239, 68, 68, 0.05));
 }
 
 /* ─────────────────────────────────────────────────────────────
-   2. Form States
+   2. Error Messages
 ────────────────────────────────────────────────────────────────*/
 
-/* Submitting state */
+/* Error message display */
+.field-error,
+[data-error] {
+  color: var(--_color-tokens---state--warning, #ef4444);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.field-error.error-visible,
+[data-error].error-visible {
+  display: block;
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. Form States
+────────────────────────────────────────────────────────────────*/
+
+/* Submitting state - form is being processed */
 .form-submitting {
   opacity: 0.7;
   pointer-events: none;
 }
 
-/* Success state */
-.form-success {
-  /* Add success styling if needed */
-}
-
-/* Submit button disabled */
+/* Submit button states */
 [data-submit] {
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
 
+[data-submit].submit-disabled,
 [data-submit][style*="pointer-events: none"] {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3. Modal Styles
-────────────────────────────────────────────────────────────────*/
-
-/* Modal base styles */
-[data-success-modal] {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-/* Modal content */
-[data-success-modal] > div {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 2rem;
-  max-width: 500px;
-  width: 100%;
-  position: relative;
-}
-
-/* Close button */
-[data-modal-close] {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-}
-
-[data-modal-close]:hover {
-  opacity: 1;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   4. Transitions
+   4. Transitions & Animations
 ────────────────────────────────────────────────────────────────*/
 
 /* Smooth transitions for validation states */
@@ -110,29 +81,36 @@
   transition: all 0.2s ease;
 }
 
-/* Respect reduced motion */
+/* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   [data-validate] input,
   [data-validate] textarea,
   [data-validate] label,
   [data-submit],
-  [data-modal-close] {
+  .field-error,
+  [data-error] {
     transition: none;
   }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   5. Accessibility & High Contrast
+   5. Accessibility & Focus States
 ────────────────────────────────────────────────────────────────*/
 
-/* Focus states */
+/* Clear focus indicator */
 [data-validate] input:focus,
 [data-validate] textarea:focus {
-  outline: 2px solid var(--_color-tokens---primary);
+  outline: 2px solid var(--_color-tokens---primary, #3b82f6);
   outline-offset: 2px;
 }
 
-/* High contrast support */
+/* Invalid field focus state */
+[data-validate].is--error input:focus,
+[data-validate].is--error textarea:focus {
+  outline-color: var(--_color-tokens---state--warning, #ef4444);
+}
+
+/* High contrast mode support */
 @media (prefers-contrast: high) {
   [data-validate].is--error input,
   [data-validate].is--error textarea {
@@ -143,32 +121,22 @@
   [data-validate].is--success textarea {
     border-width: 2px;
   }
+  
+  .field-error,
+  [data-error] {
+    font-weight: bold;
+  }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   6. Backwards Compatibility
-────────────────────────────────────────────────────────────────*/
-
-/* Support old validation classes */
-[data-contact-field-group].validation-invalid input,
-[data-contact-field-group].validation-invalid textarea,
-[data-validation-group].validation-invalid input,
-[data-validation-group].validation-invalid textarea {
-  background-color: var(--_color-tokens---bg-input--error);
-  border-color: var(--_color-tokens---state--warning);
-}
-
-/* Legacy error messages */
-.field-error {
-  color: var(--_color-tokens---state--warning);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.field-error.error-visible {
-  display: block;
-  opacity: 1;
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

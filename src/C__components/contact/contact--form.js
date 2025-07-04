@@ -22,6 +22,7 @@
 
     // Timing configurations
     SPAM_THRESHOLD: 5000, // Minimum time before submission (5 seconds)
+    VALIDATION_DEBOUNCE: 300, // Debounce validation input (milliseconds)
 
     // User-facing messages
     MESSAGES: {
@@ -34,6 +35,9 @@
       submitSuccess: "Thank you! Your message has been sent.",
     },
   };
+
+  // ID generation counter for uniqueness
+  let fieldIdCounter = 0;
 
   /* ─────────────────────────────────────────────────────────────
      2. Modal Manager Class
@@ -229,7 +233,88 @@
       parent.classList.add(CONFIG.CLASSES.ERROR);
     }
 
+    // Update error message display
+    updateErrorMessage(field, parent, isValid, message);
+
     return { isValid, message };
+  }
+
+  /**
+   * Update or create error message for a field
+   * @param {HTMLInputElement|HTMLTextAreaElement} field - Field element
+   * @param {HTMLElement} parent - Parent element with data-validate
+   * @param {boolean} isValid - Whether field is valid
+   * @param {string} message - Error message to display
+   */
+  function updateErrorMessage(field, parent, isValid, message) {
+    // Check for custom error element first
+    let errorElement = parent.querySelector('[data-error]') || 
+                      parent.querySelector('.field-error');
+    
+    const isCustomError = errorElement && errorElement.hasAttribute('data-error');
+    
+    // Create error element if it doesn't exist and we need it
+    if (!errorElement && !isValid && message) {
+      errorElement = document.createElement('div');
+      errorElement.className = 'field-error';
+      errorElement.setAttribute('role', 'alert');
+      errorElement.setAttribute('aria-live', 'polite');
+      errorElement.setAttribute('data-dynamic-error', 'true'); // Mark as dynamically created
+      
+      // Insert after the field or at the end of parent
+      if (field.nextSibling) {
+        field.parentNode.insertBefore(errorElement, field.nextSibling);
+      } else {
+        parent.appendChild(errorElement);
+      }
+    }
+    
+    if (errorElement) {
+      if (!isValid && message) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        errorElement.classList.add('error-visible');
+        
+        // Generate unique field ID if needed
+        if (!field.id) {
+          field.id = `field-${Date.now()}-${++fieldIdCounter}`;
+        }
+        
+        errorElement.id = `${field.id}-error`;
+        field.setAttribute('aria-describedby', errorElement.id);
+        field.setAttribute('aria-invalid', 'true');
+      } else {
+        // Clear error
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+        errorElement.classList.remove('error-visible');
+        field.removeAttribute('aria-describedby');
+        field.removeAttribute('aria-invalid');
+        
+        // Remove dynamically created error elements when valid
+        if (isValid && errorElement.hasAttribute('data-dynamic-error')) {
+          errorElement.remove();
+        }
+      }
+    }
+  }
+
+  /**
+   * Debounce function for performance optimization
+   * @param {Function} func - Function to debounce
+   * @param {number} wait - Wait time in milliseconds
+   * @returns {Function} Debounced function
+   */
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
   }
 
   /* ─────────────────────────────────────────────────────────────
@@ -249,10 +334,20 @@
       this.fields = form.querySelectorAll(
         "[data-validate] input, [data-validate] textarea"
       );
-      this.submitButtonDiv = form.querySelector("[data-submit]");
-      this.submitInput = this.submitButtonDiv?.querySelector(
-        'input[type="submit"]'
-      );
+      // Support custom submit button specification
+      const submitSelector = form.getAttribute('data-submit-button') || '[data-submit]';
+      this.submitButtonDiv = form.querySelector(submitSelector);
+      
+      // Find the actual submit input/button
+      if (this.submitButtonDiv) {
+        this.submitInput = this.submitButtonDiv.querySelector('input[type="submit"], button[type="submit"]') ||
+                          (this.submitButtonDiv.matches('input[type="submit"], button[type="submit"]') ? this.submitButtonDiv : null);
+      }
+      
+      // Fallback to first submit button if custom selector not found
+      if (!this.submitInput) {
+        this.submitInput = form.querySelector('input[type="submit"], button[type="submit"]');
+      }
       this.formLoadTime = Date.now(); // Track form load time for anti-spam
       this.isLiveValidating = false; // Track if live validation is active
       this.retryCount = 0; // Track submission retry attempts
@@ -268,26 +363,56 @@
       // Hide Webflow's default success/error messages
       this.hideWebflowMessages();
 
-      // Handle custom submit button click
-      if (this.submitButtonDiv) {
-        this.submitButtonDiv.addEventListener("click", (e) => {
+      // Store bound event handlers for cleanup
+      this._boundHandlers = {
+        submit: (e) => {
           e.preventDefault();
           this.handleSubmit();
-        });
-      }
-
-      // Handle Enter key submission (except in textareas)
-      this.form.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+        },
+        keydown: (e) => {
+          if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+            e.preventDefault();
+            this.handleSubmit();
+          }
+        },
+        submitClick: (e) => {
           e.preventDefault();
           this.handleSubmit();
         }
-      });
+      };
+
+      // Handle custom submit button click
+      if (this.submitButtonDiv) {
+        this.submitButtonDiv.addEventListener("click", this._boundHandlers.submitClick);
+      }
+
+      // Handle Enter key submission (except in textareas)
+      this.form.addEventListener("keydown", this._boundHandlers.keydown);
 
       // Prevent default form submission
-      this.form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        this.handleSubmit();
+      this.form.addEventListener("submit", this._boundHandlers.submit);
+    }
+
+    /**
+     * Cleanup event handlers
+     */
+    destroy() {
+      if (this._boundHandlers) {
+        this.form.removeEventListener("submit", this._boundHandlers.submit);
+        this.form.removeEventListener("keydown", this._boundHandlers.keydown);
+        
+        if (this.submitButtonDiv) {
+          this.submitButtonDiv.removeEventListener("click", this._boundHandlers.submitClick);
+        }
+      }
+      
+      // Clear field validation handlers
+      this.fields.forEach((field) => {
+        if (field._liveValidationStarted && field._validationHandler) {
+          field.removeEventListener("input", field._validationHandler);
+          delete field._validationHandler;
+        }
+        field._liveValidationStarted = false;
       });
     }
 
@@ -295,32 +420,15 @@
      * Hide Webflow's default form messages to prevent conflicts
      */
     hideWebflowMessages() {
-      // Find Webflow form wrapper - could be parent or ancestor
-      const webflowForm = this.form.closest(".w-form") || 
-                         this.form.parentElement?.closest(".w-form");
+      // Find and hide all Webflow form messages in the form's container
+      const container = this.form.closest(".w-form") || this.form.parentElement;
       
-      if (webflowForm) {
-        // Hide success message
-        const successMsg = webflowForm.querySelector(".w-form-done");
-        if (successMsg) {
-          successMsg.style.display = "none";
-        }
-
-        // Hide error message
-        const errorMsg = webflowForm.querySelector(".w-form-fail");
-        if (errorMsg) {
-          errorMsg.style.display = "none";
-        }
-      }
-      
-      // Also check if messages are siblings of the form
-      const parentEl = this.form.parentElement;
-      if (parentEl) {
-        const siblingSuccess = parentEl.querySelector(".w-form-done");
-        const siblingError = parentEl.querySelector(".w-form-fail");
-        
-        if (siblingSuccess) siblingSuccess.style.display = "none";
-        if (siblingError) siblingError.style.display = "none";
+      if (container) {
+        const messages = container.querySelectorAll(".w-form-done, .w-form-fail");
+        messages.forEach(msg => {
+          msg.style.display = "none";
+          msg.setAttribute('aria-hidden', 'true');
+        });
       }
     }
 
@@ -331,14 +439,21 @@
     startLiveValidation(field) {
       if (!field._liveValidationStarted) {
         field._liveValidationStarted = true;
-        field.addEventListener("input", () => {
+        
+        // Create debounced validation handler
+        const validationHandler = () => {
           const parent = field.closest("[data-validate]");
           validateField(field, parent);
           // Update submit button state on input
           if (this.isLiveValidating) {
             this.updateSubmitButtonState();
           }
-        });
+        };
+        
+        // Debounce the validation for performance
+        field._validationHandler = debounce(validationHandler, CONFIG.VALIDATION_DEBOUNCE);
+        
+        field.addEventListener("input", field._validationHandler);
       }
     }
 
@@ -595,6 +710,10 @@
 
       // Clear live validation handlers
       this.fields.forEach((field) => {
+        if (field._liveValidationStarted && field._validationHandler) {
+          field.removeEventListener("input", field._validationHandler);
+          delete field._validationHandler;
+        }
         field._liveValidationStarted = false;
       });
 
@@ -609,33 +728,17 @@
      * Reset Webflow's form state to prevent glitches
      */
     resetWebflowState() {
-      // Find Webflow form wrapper - check multiple possible locations
-      const webflowForm = this.form.closest(".w-form") || 
-                         this.form.parentElement?.closest(".w-form");
+      const container = this.form.closest(".w-form") || this.form.parentElement;
       
-      if (webflowForm) {
-        // Ensure Webflow messages stay hidden
-        const successMsg = webflowForm.querySelector(".w-form-done");
-        const errorMsg = webflowForm.querySelector(".w-form-fail");
-
-        if (successMsg) successMsg.style.display = "none";
-        if (errorMsg) errorMsg.style.display = "none";
-
-        // Remove any Webflow state classes
-        webflowForm.classList.remove("w--form-done", "w--form-fail");
-      }
-
-      // Also handle sibling messages
-      const parentEl = this.form.parentElement;
-      if (parentEl) {
-        const siblingSuccess = parentEl.querySelector(".w-form-done");
-        const siblingError = parentEl.querySelector(".w-form-fail");
+      if (container) {
+        // Hide messages and remove state classes
+        const messages = container.querySelectorAll(".w-form-done, .w-form-fail");
+        messages.forEach(msg => {
+          msg.style.display = "none";
+          msg.setAttribute('aria-hidden', 'true');
+        });
         
-        if (siblingSuccess) siblingSuccess.style.display = "none";
-        if (siblingError) siblingError.style.display = "none";
-        
-        // Remove state classes from parent if it has them
-        parentEl.classList.remove("w--form-done", "w--form-fail");
+        container.classList.remove("w--form-done", "w--form-fail");
       }
 
       // Trigger Webflow's form reset if available
@@ -644,7 +747,6 @@
           window.Webflow.reset(this.form);
         } catch (e) {
           // Fail silently if Webflow reset doesn't work
-          console.log('Webflow reset not available');
         }
       }
     }
