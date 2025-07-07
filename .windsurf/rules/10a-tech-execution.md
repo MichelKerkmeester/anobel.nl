@@ -1,9 +1,8 @@
 ---
 trigger: always_on
-description: 
-globs: 
 ---
-## 🛠️ 9A. TECH EXECUTION
+
+## 🛠️ 10a. TECH EXECUTION
 
 1. **Bind events** with `document.querySelector`.
 2. **Start with CSS transitions**; escalate only if needed.

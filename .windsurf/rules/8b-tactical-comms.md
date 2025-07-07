@@ -1,9 +1,8 @@
 ---
 trigger: always_on
-description: 
-globs: 
 ---
-## 💬 7B. TACTICAL COMMS
+
+## 💬 8b. TACTICAL COMMS
 
 1. Give **concise explanations** with clear next steps.
 2. Use **plain-English comments** for designers.
