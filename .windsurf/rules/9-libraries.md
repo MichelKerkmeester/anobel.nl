@@ -9,4 +9,3 @@ trigger: always_on
 3. **Forms**: Formly
 4. **Video**: Flowplay
 5. **Add-ons**: Finsweet
-6. **ALWAYS check Context7** for library documentation before implementation.

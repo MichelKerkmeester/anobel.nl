@@ -2,7 +2,9 @@
 trigger: always_on
 ---
 
-## 🌲 4c. MCP - DECISION TREE
+## 🌲 4b. MCP DECISION TREE
+
+### Decision Tree:
 | Category | Trigger/Decision Point | Condition | If YES | If NO | Tools |
 |----------|------------------------|-----------|---------|--------|-------|
 | **Internal Reasoning** | Complete? | Have I fully thought through this? | Check complexity | Continue thinking | - |

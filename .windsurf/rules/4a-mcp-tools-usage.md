@@ -2,7 +2,9 @@
 trigger: always_on
 ---
 
-## 🛠️ 4a. MCP - AVAILABLE TOOLS
+## 🛠️ 4. MCP TOOLS & USAGE
+
+### Tools Available:
 1. **Code-Reasoning (Validation Engine)**:
    - Validate complex logic and edge cases
    - Explore alternatives when stuck  
@@ -18,3 +20,6 @@ trigger: always_on
    - Latest techniques and compatibility
    - Platform-specific best practices
    - Performance benchmarks
+
+### Core Principle:
+**Think First, Validate Second**: Always start with internal reasoning. MCP tools enhance, not replace, critical thinking.
